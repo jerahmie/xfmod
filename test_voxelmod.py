@@ -1,11 +1,11 @@
+#!/usr/bin/env python
 """
 Test voxelmod
 """
 
-from voxelmod import *
+import voxelmod
 
-f = open('voxelmod/Duke_34y_V5_2mm.txt', 'r')
-a = voxelmod.VoxelInfo(f)
+a = voxelmod.VoxelInfo('voxelmod/Duke_34y_V5_2mm.txt')
 a.loadVoxelInfo()
-
+a.printVoxelInfo()
 print("Success!")

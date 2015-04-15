@@ -1,2 +1,2 @@
 __all__ = ['voxelmod']
-import voxelmod
+from voxelmod import *
