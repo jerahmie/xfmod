@@ -25,9 +25,9 @@ class VoxelData(object):
             raise Exception("File name: ", fileName, " does not exist.")
         try:
             #self._fileHandle = open(self._fileName, 'rb')
-#            self._voxelData = np.fromfile(fileName, dtype=np.byte).reshape((self._voxelInfo.nx, self._voxelInfo.ny, self._voxelInfo.nz))
+            self._voxelData = np.fromfile(fileName, dtype=np.byte).reshape((self._voxelInfo.nx, self._voxelInfo.ny, self._voxelInfo.nz))
 #            self._voxelData = np.fromfile(fileName, dtype=np.byte).reshape((self._voxelInfo.nz, self._voxelInfo.ny, self._voxelInfo.nx))            
-            self._voxelData = np.fromfile(fileName, dtype=np.byte)
+#            self._voxelData = np.fromfile(fileName, dtype=np.byte)
             print(np.amax(self._voxelData))
 
             print(self._voxelData.shape)
@@ -71,8 +71,11 @@ class VoxelData(object):
         # Set alpha channel (transparency)
         alphaChannelFunc = vtk.vtkPiecewiseFunction()
         alphaChannelFunc.AddPoint(0, 0.0)
-        alphaChannelFunc.AddPoint(1, 1.0)
-        alphaChannelFunc.AddPoint(77, 1.0)
+        alphaChannelFunc.AddPoint(1, 0.1)
+        alphaChannelFunc.AddPoint(5, 0.1)        
+        alphaChannelFunc.AddPoint(6, 1.0)
+        alphaChannelFunc.AddPoint(7, 0.1)        
+        alphaChannelFunc.AddPoint(77, 0.1)
         
         # Set colors
         funcColor = vtk.vtkColorTransferFunction()
@@ -100,6 +103,11 @@ class VoxelData(object):
         volume.SetMapper(volumeMapper)
         volume.SetProperty(volumeProperty)
 
+        # create a camera
+        camera = vtk.vtkCamera()
+        camera.SetPosition(0,10,0)
+        camera.SetFocalPoint(0,0,0)
+
         # Create the graphics structure. The renderer renders into the render
         # window. The render window interactor captures mouse events and will
         # perform appropriate camera or actor manipulation depending on the
@@ -115,6 +123,8 @@ class VoxelData(object):
 
         # set background and size
         renderer.SetBackground(0.1, 0.2, 0.4)
+        renderer.SetActiveCamera(camera)
+        renderer.ResetCamera()
         renderWin.SetSize(400, 300)
 
         # This allows the interactor to initalize itself. It has to be
@@ -124,4 +134,7 @@ class VoxelData(object):
 
         renderWin.Render()
 
+
         iren.Start()
+
+        
