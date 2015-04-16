@@ -1,14 +1,11 @@
 """
-A python class to manipulate voxel representations.
+A python class to represent voxel model info.  This 
 """
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 import sys, os.path, ntpath
 import re
-import numpy
-import vtk
-
 
 class VoxelInfo(object):
     """A class to set and retrieve voxel metadata."""
@@ -19,26 +16,21 @@ class VoxelInfo(object):
     _NXYZ_RE_PATTERN = "^n([xyz])\s([0-9]*)"
     _DXYZ_RE_PATTERN = "^d([xyz])\s([0-9.]*)"
 
-    def __init__(self, fileName):
+    def __init__(self):
         """
         Initialize instance variables and compile regular expressions.
         """
-        if os.path.isfile(fileName):
-            self._fileName = fileName
-        else:
-            raise Exception("File name: ", fileName, " does not exist." )
-        print("fileName: ", self._fileName)
+        self._fileName = None
         self._fileHandle = None
-        self._material = []
+        self._material = [[int('0'),
+                           'Free Space'.encode('utf8'),
+                           float('0'), float('0'), float('0')]]
         self._nx = 0; self._ny = 0; self._nz = 0
         self._dx = 0; self._dy = 0; self._dz = 0
         self._prog_mat = re.compile(self._MAT_RE_PATTERN)
         self._prog_nxyz = re.compile(self._NXYZ_RE_PATTERN)
         self._prog_dxyz = re.compile(self._DXYZ_RE_PATTERN)
-
-        filePath, fileTail = ntpath.split(fileName)
-        m = re.match(self._VOXEL_MODEL_NAME_RE, fileTail)        
-        self._modelName = m.group(1)
+        self._modelName = None
 
     @property
     def nx(self):
@@ -64,6 +56,10 @@ class VoxelInfo(object):
     def dz(self):
         return self._dz
 
+    @property
+    def numMaterials(self):
+        return len(self._material)
+
     def material(self, matNum):
         if (0 <= matNum) and (matNum < len(self._material)):
             return self._material[matNum]
@@ -72,10 +68,20 @@ class VoxelInfo(object):
                   " is out of range.  Valid range is [0,",
                   len(matNum)-1, ")")
     
-    def loadVoxelInfo(self):
+    def loadVoxelInfo(self, fileName):
         """
         Load voxel metadata from .txt file
         """
+        if os.path.isfile(fileName):
+            self._fileName = fileName
+        else:
+            raise Exception("File name: ", fileName, " does not exist.")
+        print("fileName: ", self._fileName)
+        
+        filePath, fileTail = ntpath.split(fileName)
+        m = re.match(self._VOXEL_MODEL_NAME_RE, fileTail)        
+        self._modelName = m.group(1)        
+
         try:
             self._fileHandle = open(self._fileName, 'r')
             for line in self._fileHandle:
@@ -85,11 +91,11 @@ class VoxelInfo(object):
                 if m_mat:
                     # material list item has format:
                     # ['material number', 'name', RGB_Red, RGB_Green, RGB_Blue]
-                    self._material.append([ m_mat.group(1),
+                    self._material.append([ int(m_mat.group(1)),
                                             m_mat.group(5),
-                                            m_mat.group(2),
-                                            m_mat.group(3),
-                                            m_mat.group(4) ])
+                                            float(m_mat.group(2)),
+                                            float(m_mat.group(3)),
+                                            float(m_mat.group(4)) ])
                 elif m_nxyz:
                     if m_nxyz.group(1) == "x":
                         self._nx = int(m_nxyz.group(2))
@@ -131,18 +137,4 @@ class VoxelInfo(object):
         print( "\tdx = ", self.dx )
         print( "\tdy = ", self.dy )
         print( "\tdz = ", self.dz )
-
-class VoxelData(object):
-    """A class to store voxel data"""
-    def __init__(self, voxelInfo):
-        self._voxelData = numpy.empty([voxelInfo.nx,
-                                       voxelInfo.ny,
-                                       voxelInfo.nz],
-                                      dtype=byte,order='C')
-    def plotVoxelData(self):
-        print("plot voxel data")
-#class VoxelMod(object):
-#    """A class to modify voxel data."""
-#    def __init__(self, voxelInfo):
-
 

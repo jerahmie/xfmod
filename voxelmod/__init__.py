@@ -1,2 +1,3 @@
-__all__ = ['voxelmod']
-from voxelmod import *
+__all__ = ['voxelinfo', 'voxeldata']
+from voxelinfo import *
+from voxeldata import *
