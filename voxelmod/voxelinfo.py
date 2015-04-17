@@ -11,7 +11,7 @@ class VoxelInfo(object):
     """A class to set and retrieve voxel metadata."""
 
     # Class variables regular expression patterns
-    _VOXEL_MODEL_NAME_RE = "([a-zA-Z0-9_]*).txt$"
+    _VOXEL_MODEL_NAME_RE = "([a-zA-Z0-9_.]*).txt$"
     _MAT_RE_PATTERN = "(^[0-9]+)\s([0|0.[0-9]*|1])\s([0|0.[0-9]*|1])\s([0|0.[0-9]*|1])\s[a-zA-Z0-9_]*/([a-zA-Z0-9_]*)"
     _NXYZ_RE_PATTERN = "^n([xyz])\s([0-9]*)"
     _DXYZ_RE_PATTERN = "^d([xyz])\s([0-9.]*)"

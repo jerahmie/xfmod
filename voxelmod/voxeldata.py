@@ -1,6 +1,8 @@
 """
 A python class to represent voxel data.
 """
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
 import sys, os.path, ntpath
 import csv
 import numpy as np
@@ -13,7 +15,10 @@ class VoxelData(object):
     """
     def __init__(self, voxelInfo):
         self._voxelInfo = voxelInfo
+        # Active voxel data for display and manipulation
         self._voxelData = None
+        # Original voxel data for revert
+        self._voxelDataOriginal = None
         self._fileName = None
         self._fileHandle = None
 
@@ -25,9 +30,9 @@ class VoxelData(object):
             raise Exception("File name: ", fileName, " does not exist.")
         try:
             #self._fileHandle = open(self._fileName, 'rb')
-            self._voxelData = np.fromfile(fileName, dtype=np.byte).reshape((self._voxelInfo.nx, self._voxelInfo.ny, self._voxelInfo.nz))
-#            self._voxelData = np.fromfile(fileName, dtype=np.byte).reshape((self._voxelInfo.nz, self._voxelInfo.ny, self._voxelInfo.nx))            
-#            self._voxelData = np.fromfile(fileName, dtype=np.byte)
+            self._voxelDataOriginal = np.fromfile(fileName, count=(self._voxelInfo.nx*self._voxelInfo.ny*self._voxelInfo.nz),dtype=np.uint8).reshape((self._voxelInfo.nz, self._voxelInfo.ny, self._voxelInfo.nx))
+#            self._voxelDataOriginal = np.fromfile(fileName, count=(self._voxelInfo.nx*self._voxelInfo.ny*self._voxelInfo.nz),dtype=np.uint8)            
+            self._voxelData = np.copy(self._voxelDataOriginal)
             print(np.amax(self._voxelData))
 
             print(self._voxelData.shape)
@@ -50,23 +55,23 @@ class VoxelData(object):
         print("\tq - exit\n")
 
     def plotVoxelData(self):
+        """Plot voxel data in a python vtk window"""
         print("Plotting voxel data....")
         # Following this example:
         #  http://www.vtk.org/Wiki/VTK/Examples/Python/vtkWithNumpy
         dataString = self._voxelData.tostring()
 
-        
         # Import data
         dataImporter = vtk.vtkImageImport()
         dataImporter.CopyImportVoidPointer(dataString, len(dataString))
         dataImporter.SetDataScalarTypeToUnsignedChar()
         dataImporter.SetNumberOfScalarComponents(1)
-        dataImporter.SetDataExtent( 0, self._voxelInfo.nx-1,
-                                    0, self._voxelInfo.ny-1,
-                                    0, self._voxelInfo.nz-1)
-        dataImporter.SetWholeExtent(0, self._voxelInfo.nx-1,
-                                    0, self._voxelInfo.ny-1,
-                                    0, self._voxelInfo.nz-1)
+        dataImporter.SetDataExtent( 0, self._voxelData.shape[2]-1,
+                                    0, self._voxelData.shape[1]-1,
+                                    0, self._voxelData.shape[0]-1)
+        dataImporter.SetWholeExtent(0, self._voxelData.shape[2]-1,
+                                    0, self._voxelData.shape[1]-1,
+                                    0, self._voxelData.shape[0]-1)
 
         # Set alpha channel (transparency)
         alphaChannelFunc = vtk.vtkPiecewiseFunction()
@@ -117,7 +122,7 @@ class VoxelData(object):
         renderWin.AddRenderer(renderer)
         iren = vtk.vtkRenderWindowInteractor()
         iren.SetRenderWindow(renderWin)
-
+    
         # add volume to renderer
         renderer.AddVolume(volume)
 
@@ -133,8 +138,56 @@ class VoxelData(object):
         self._printVTKInteractorInstructions()
 
         renderWin.Render()
-
-
         iren.Start()
 
         
+    def voxelDataSubRegion(self, rangeX, rangeY, rangeZ):
+        """
+        Set set the voxelRegion as a subregion of the original data.
+
+        Keyword arguments:
+        rangeX -- 
+        rangeY --
+        rangeZ -- 
+        """
+        print("Obtain voxel data subregion:")
+        print(self._voxelData.shape)
+        if (len(rangeX) == 2) and (len(rangeY) ==2) and (len(rangeZ) == 2):
+            self._voxelData = np.copy(
+                self._voxelDataOriginal[rangeZ[0]:rangeZ[1],
+                                        rangeY[0]:rangeY[1],
+                                        rangeX[0]:rangeX[1]])
+        else:
+            print("Range values were not correct")
+        print(self._voxelData.shape)
+
+    def saveVoxelData(self, fileName):
+        """
+        Save the active voxelData array to a file.
+        """
+        self._voxelData.tofile(fileName)
+
+    def saveVoxelInfo(self, fileName):
+        """
+        Save material data to file
+        """
+        f = open(fileName, 'w')
+        # write material info: [Material Index] [R] [G] [B] [Material Name]
+        for idx in range(1,self._voxelInfo.numMaterials):
+            f.write(str(idx) + '\t' + str(self._voxelInfo.material(idx)[2]) +
+                    '\t' + str(self._voxelInfo.material(idx)[3]) +
+                    '\t' + str(self._voxelInfo.material(idx)[4]) +
+                    '\t' + self._voxelInfo.material(idx)[1] +'\n')
+
+        # write grid extent
+        f.write('\nGrid extent (number of cells)\n')
+        f.write('nx\t' + str(self._voxelData.shape[2]) + '\n')
+        f.write('ny\t' + str(self._voxelData.shape[1]) + '\n')
+        f.write('nz\t' + str(self._voxelData.shape[0]) + '\n')
+
+        # write spatial steps (resolution)
+        f.write('\nSpatial steps [m]\n')
+        f.write('dx\t' + str(self._voxelInfo.dx) + '\n')
+        f.write('dy\t' + str(self._voxelInfo.dy) + '\n')
+        f.write('dz\t' + str(self._voxelInfo.dz) + '\n')
+        f.close()
