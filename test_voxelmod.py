@@ -15,8 +15,10 @@ VOXEL_MODEL_FILE_NAME_RE = "(Billie|Ella|Thelonious|Duke)([a-zA-Z0-9_.]*).(txt|r
 
 # voxelInfoFileName = '/mnt/DATA/itis_Virtual_Family/Virtual Family Voxel Models V1.0/Duke_34y_V5_1mm.txt'
 # voxelDataFileName = '/mnt/DATA/itis_Virtual_Family/Virtual Family Voxel Models V1.0/Duke_34y_V5_1mm.raw'
-voxelInfoFileName = 'Duke_Head_34y_V5_1mm.txt'
-voxelDataFileName = 'Duke_Head_34y_V5_1mm.raw'
+voxelInfoFileName = 'Duke_34y_V5_2mm.txt'
+voxelDataFileName = 'Duke_34y_V5_2mm.raw'
+#voxelInfoFileName = 'Duke_Head_34y_V5_2mm.txt'
+#voxelDataFileName = 'Duke_Head_34y_V5_2mm.raw'
 
 
 # construct 
