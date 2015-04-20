@@ -77,8 +77,12 @@ class VoxelData(object):
         print("\te - exit")
         print("\tq - exit\n")
 
-    def plotVoxelData(self):
-        """Plot voxel data in a python vtk window"""
+    def plotVoxelData(self, savePng = False):
+        """
+        Plot voxel data in a python vtk window.
+        Keyword arguments
+        savePng -- If True, save a png of the voxel plot window
+        """
 
         print("Plotting voxel data....")
         # Following this example:
@@ -173,6 +177,16 @@ class VoxelData(object):
         self._printVTKInteractorInstructions()
 
         renderWin.Render()
+
+        # save png
+        if savePng:
+            w2i = vtk.vtkWindowToImageFilter()
+            w2i.SetInput(renderWin)
+            png = vtk.vtkPNGWriter()
+            png.SetInputConnection(w2i.GetOutputPort())
+            png.SetFileName("voxelImage.png")
+            png.Write()
+
         iren.Start()
 
     def restoreVoxelData(self):
