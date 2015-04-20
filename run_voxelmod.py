@@ -23,13 +23,14 @@ VOXEL_MODEL_FILE_NAME_RE = "(Billie|Ella|Thelonious|Duke)([a-zA-Z0-9_.]*).(txt|r
 
 
 # Begin Settings 
-voxelInfoFileName = '/mnt/DATA/itis_Virtual_Family/Virtual Family Voxel Models V1.0/Duke_34y_V5_0.5mm.txt'
-voxelDataFileName = '/mnt/DATA/itis_Virtual_Family/Virtual Family Voxel Models V1.0/Duke_34y_V5_0.5mm.raw'
+voxelInfoFileName = '/mnt/DATA/itis_Virtual_Family/Virtual Family Voxel Models V1.0/Duke_34y_V5_5mm.txt'
+voxelDataFileName = '/mnt/DATA/itis_Virtual_Family/Virtual Family Voxel Models V1.0/Duke_34y_V5_5mm.raw'
 #voxelInfoFileName = '/mnt/DATA/itis_Virtual_Family/Virtual Family Voxel Models V1.0/Billie_11y_V2_1mm.txt'
 #voxelDataFileName = '/mnt/DATA/itis_Virtual_Family/Virtual Family Voxel Models V1.0/Billie_11y_V2_1mm.raw'
 
 # fraction of data to be saved
-dataFraction = 0.25  # 25% is a good value for head
+#dataFraction = 0.15 # Head only
+dataFraction = 0.25  # 25% is a good value for head and shoulders
 #dataFraction = 1.0   # entire body
 
 # simple data descriptor to insert after model name in output file
