@@ -42,8 +42,12 @@ class VoxelData(object):
         else:
             raise Exception("File name: ", fileName, " does not exist.")
         try:
+            print("In loadVoxelData()...")
+            print("fileName: ", fileName)
             self._voxelDataOrig = np.fromfile(fileName, count=(self._voxelInfo.nx*self._voxelInfo.ny*self._voxelInfo.nz),dtype=np.uint8).reshape((self._voxelInfo.nz, self._voxelInfo.ny, self._voxelInfo.nx))
             self._voxelData = np.copy(self._voxelDataOrig)
+            print(self._voxelDataOrig.shape)
+            print(self._voxelData.shape)
             self._nxOrig = self._voxelDataOrig.shape[2]
             self._nyOrig = self._voxelDataOrig.shape[1]
             self._nzOrig = self._voxelDataOrig.shape[0]
