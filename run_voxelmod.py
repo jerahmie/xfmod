@@ -22,7 +22,7 @@ def isDuke(fileName):
 VOXEL_MODEL_FILE_NAME_RE = "(Billie|Ella|Thelonious|Duke)([a-zA-Z0-9_.]*).(txt|raw)$"
 
 
-# Begin Settings 
+# Begin Settings
 voxelInfoFileName = '/mnt/DATA/itis_Virtual_Family/Virtual Family Voxel Models V1.0/Duke_34y_V5_5mm.txt'
 voxelDataFileName = '/mnt/DATA/itis_Virtual_Family/Virtual Family Voxel Models V1.0/Duke_34y_V5_5mm.raw'
 #voxelInfoFileName = '/mnt/DATA/itis_Virtual_Family/Virtual Family Voxel Models V1.0/Billie_11y_V2_1mm.txt'

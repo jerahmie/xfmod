@@ -107,13 +107,18 @@ class VoxelData(object):
 
         # Set alpha channel (transparency)
         alphaChannelFunc = vtk.vtkPiecewiseFunction()
+        # semi-transparent with solid bones
         alphaChannelFunc.AddPoint(0, 0.0)
         alphaChannelFunc.AddPoint(1, 0.1)
         alphaChannelFunc.AddPoint(5, 0.1)        
         alphaChannelFunc.AddPoint(6, 1.0) # Bones for Duke
         alphaChannelFunc.AddPoint(7, 0.1)        
         alphaChannelFunc.AddPoint(77, 0.1)
-        
+        # completely opaque
+        # alphaChannelFunc.AddPoint(0,0.0)
+        # alphaChannelFunc.AddPoint(1,1.0)
+        # alphaChannelFunc.AddPoint(77,1.0)
+
         # Set colors
         funcColor = vtk.vtkColorTransferFunction()
 

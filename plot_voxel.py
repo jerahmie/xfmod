@@ -8,7 +8,7 @@ from __future__ import (absolute_import, division,
 
 import sys, os.path, ntpath
 import voxelmod
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 def usage():
     print()
