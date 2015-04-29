@@ -8,6 +8,7 @@ import numpy as np
 from scipy import pi, sqrt
 from scipy.special import ellipe, ellipeinc
 from scipy.optimize import fsolve
+import matplotlib.pyplot as plt
 
 def usage():
     print()
@@ -68,25 +69,25 @@ def ellipCoil(a, b, N):
     # Start the first coil element centered around theta
     L0 = L/2  # shift coil 0 by half the coil element spacing
     t0 = fsolve(arcLenFunc, 0, args=(L0, a, m, 0.0))[0]
-
+    #t0 = 0.0
     theta = []
-    theta.append(t0)
     rho = []
-    rho.append(a)
 
     ellipPoints = []
     ellipPoints.append((t0,a))
-    while (t0 < 2.0*pi):
-        t0 = fsolve(arcLenFunc, 0, args=(L, a, m, t0))[0]
-        theta.append(t0)
-        rho0 = ((np.sin(t0))**2/b**2 + (np.cos(t0))**2/a**2)**(-0.5)
-        rho.append(rho0)
+    while True:
+        if t0 > 2.0*pi:
+            break
+        else:
+            theta.append(t0)
+            rho0 = ((np.sin(t0))**2/b**2 + (np.cos(t0))**2/a**2)**(-0.5)
+            rho.append(rho0)
+            t0 = fsolve(arcLenFunc, 0, args=(L, a, m, t0))[0]
 
     x0 = rho*np.cos(theta)
     y0 = rho*np.sin(theta)
-
     x, y = rotatePointsAboutAxis(x0,y0, np.pi/2.0)
-
+    
     return x, y
 
 if __name__ == '__main__':
@@ -97,5 +98,9 @@ if __name__ == '__main__':
         scriptName, a, b, N = sys.argv
         x, y = ellipCoil(float(a), float(b), int(N))
         printPoints(x, y)
+        plt.figure()
+        plt.plot(x,y,'*-r')
+        plt.axis('equal')
+        plt.show()
     else:
         usage()
