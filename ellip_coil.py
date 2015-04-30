@@ -1,5 +1,6 @@
 """
-Generate a list of coordinates for an ellipsoidal coil.
+Generate a list of coordinates and unit normal vector components
+for an ellipsoidal coil.
 """
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
@@ -8,20 +9,32 @@ import numpy as np
 from scipy import pi, sqrt
 from scipy.special import ellipe, ellipeinc
 from scipy.optimize import fsolve
-import matplotlib.pyplot as plt
 
 def usage():
+    """
+    Display usage message and exit.
+    """
     print()
-    print("usage: ellip_coil.py a b theta")
+    print("Usage: ellip_coil.py a b N")
     print("  a: the major axis (x-axis) of ellipse")
     print("  b: the minor axis (y-axis) of ellipse")
     print("  N: number of coils")
-    print("  theta: the rotation from the x-axis")
     print()
+    print("Example: ")
+    print("  $ python ellip_coil.py 12.0 10.0 16 > ellip_coil_points.txt")
+    print()
+    sys.exit()
 
-def rotatePointsAboutAxis(x0, y0, theta):
+def rotatePointsAboutOrigin(x0, y0, theta):
     """
     Apply a rotation to the coil element coordinates about origin.
+    x0 : list
+    y0 : list
+         x0, y0 are list of points to rotate about origin (x=0, y=0)
+    theta : float
+         The rotation angle (radians)
+    list, list
+         The rotated x, y points
     """
     if len(x0) == len(y0):
         rho0 = [np.sqrt(x0[i]**2 + y0[i]**2) for i in range(len(x0))]
@@ -30,7 +43,7 @@ def rotatePointsAboutAxis(x0, y0, theta):
         y1 = [rho0[i]*np.sin(theta+theta0[i]) for i in range(len(x0))]
         return x1, y1
     else:
-        print("rotatePointsAboutAxis: x0 and y0 must be same length.")
+        print("rotatePointsAboutOrigin: x0 and y0 must be same length.")
 
 def arcLenFunc(x, *data):
     """
@@ -42,27 +55,34 @@ def arcLenFunc(x, *data):
     x0 = data[3]
     return L/a - (ellipeinc(x,m) - ellipeinc(x0,m))
 
-def printPoints(x,y):
+def printPoints(x, y, z, ux, uy, uz):
     """
     Print the coordinates of the ellipsoidal elements.
+    x : list
+    y : list
+    z : list
+    ux : list
+    uy : list
+    uz : list
     """
-    print("\nEllipse Coil Element Points:\n")
-    print("Coil\nElement\t\tx\t\ty")
-    print("--------------------------------------")
-    if len(x) == len(y):
-        for i in range(len(x)):
-            print(i,"\t","{:10.4f}".format(x[i]), "\t","{:10.4f}".format(y[i]))
-    else:
-        print("printPoints: x and y must be same length.")
-        print("len(x): ", len(x))
-        print("len(y): ", len(y))
+    print("\nEllipse Coil Element Points (meters)\n")
+    print("Coil\nElement\t\tx\t\ty\t\tz\t\tux\t\tuy\t\tuz")
+    print("---------------------------------------------------------------------------------------------------")
+    for i in range(len(x)):
+        print(i,"\t",
+              "{:10.6f}".format(x[i]), "\t",
+              "{:10.6f}".format(y[i]), "\t",
+              "{:10.6f}".format(z[i]), "\t",
+              "{:10.6f}".format(ux[i]),"\t",
+              "{:10.6f}".format(uy[i]),"\t",
+              "{:10.6f}".format(uz[i]) )
+
 
 def ellipCoil(a, b, N):
     """
     Caclulate the x,y points for rf coil elements positioned uniformly around
     ellipse.  Coil is centered at origin.
     """
-    print("Generating ellipsoidal coil...")
     m = 1 - (b/a)**2
     L = (4*a/N) * ellipe(m)
 
@@ -73,8 +93,6 @@ def ellipCoil(a, b, N):
     theta = []
     rho = []
 
-    ellipPoints = []
-    ellipPoints.append((t0,a))
     while True:
         if t0 > 2.0*pi:
             break
@@ -86,9 +104,14 @@ def ellipCoil(a, b, N):
 
     x0 = rho*np.cos(theta)
     y0 = rho*np.sin(theta)
-    x, y = rotatePointsAboutAxis(x0,y0, np.pi/2.0)
+    ux0 = [ (2.0*x0[i]/a**2)/np.sqrt((2.0*x0[i]/a**2)**2+(2.0*y0[i]/b**2)**2) \
+            for i in range(len(x0))]
+    uy0 = [ (2.0*y0[i]/b**2)/np.sqrt((2.0*x0[i]/a**2)**2+(2.0*y0[i]/b**2)**2) \
+            for i in range(len(y0))] 
+    x, y = rotatePointsAboutOrigin(x0, y0, np.pi/2.0)
+    ux, uy = rotatePointsAboutOrigin(ux0, uy0, np.pi/2.0)
     
-    return x, y
+    return x, y, ux, uy
 
 if __name__ == '__main__':
     """
@@ -96,11 +119,9 @@ if __name__ == '__main__':
     """
     if len(sys.argv) == 4:
         scriptName, a, b, N = sys.argv
-        x, y = ellipCoil(float(a), float(b), int(N))
-        printPoints(x, y)
-        plt.figure()
-        plt.plot(x,y,'*-r')
-        plt.axis('equal')
-        plt.show()
+        x, y, ux, uy = ellipCoil(float(a), float(b), int(N))
+        z = [0 for i in range(len(x))]
+        uz = [0 for i in range(len(x))]
+        printPoints(x, y, z, ux, uy, uz)
     else:
         usage()
