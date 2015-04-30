@@ -92,16 +92,23 @@ def ellipCoil(a, b, N):
     #t0 = 0.0
     theta = []
     rho = []
-
-    while True:
-        if t0 > 2.0*pi:
-            break
-        else:
-            theta.append(t0)
-            rho0 = ((np.sin(t0))**2/b**2 + (np.cos(t0))**2/a**2)**(-0.5)
-            rho.append(rho0)
-            t0 = fsolve(arcLenFunc, 0, args=(L, a, m, t0))[0]
-
+    if ( a > b ):
+        # proper ellipse 
+        while True:
+            if t0 > 2.0*pi:
+                break
+            else:
+                theta.append(t0)
+                rho0 = ((np.sin(t0))**2/b**2 + (np.cos(t0))**2/a**2)**(-0.5)
+                rho.append(rho0)
+                t0 = fsolve(arcLenFunc, 0, args=(L, a, m, t0))[0]
+    elif ( abs(a-b) < sys.float_info.epsilon ):
+        # this is a circle
+        t0 = 2.0*np.pi/N
+        for i in range(N):
+            theta.append(t0 * float(i))
+            rho.append(a)
+    
     x0 = rho*np.cos(theta)
     y0 = rho*np.sin(theta)
     ux0 = [ (2.0*x0[i]/a**2)/np.sqrt((2.0*x0[i]/a**2)**2+(2.0*y0[i]/b**2)**2) \
