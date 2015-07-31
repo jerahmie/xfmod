@@ -1,4 +1,3 @@
-
 class XFMaterial:
     """Class to store material properties"""
     def __init__(self):

@@ -1,7 +1,4 @@
-#!/usr/bin/python
-
 import sys, re
-import xfmaterial
 
 class GeometryXF:
     """A class to hold coil geometry info."""
