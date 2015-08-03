@@ -1,51 +1,55 @@
+"""
+Class to store materials extracted from XFdtd geometry.input
+"""
 class XFMaterial:
     """Class to store material properties"""
+
     def __init__(self):
-        self._matName = ''
-        self._matConductivity = ''
-        self._matDensity = ""
-    
+        self._name = ''
+        self._conductivity = ''
+        self._density = ""
+
     @property
-    def matName(self):
+    def name(self):
         """Returns material name."""
-        return self._matName
-    
-    @matName.setter
-    def matName(self, value):
+        return self._name
+
+    @name.setter
+    def name(self, value):
         """Set material name."""
-        self._matName = value
+        self._name = value
 
-    @matName.deleter
-    def matName(self):
+    @name.deleter
+    def name(self):
         """Delete material name."""
-        del(self._matName)
+        del self._name
 
     @property
-    def matConductivity(self):
+    def conductivity(self):
         """Return material conductivity."""
-        return self._matConductivity
+        return self._conductivity
 
-    @matConductivity.setter
-    def matConductivity(self, value):
+    @conductivity.setter
+    def conductivity(self, value):
         """Set material conductivity."""
-        self._matConductivity = value
+        self._conductivity = value
 
-    @matConductivity.deleter
-    def matConductivity(self):
+    @conductivity.deleter
+    def conductivity(self):
         """Delete material conductivity."""
-        del(self._matName)
+        del self._conductivity
 
     @property
-    def matDensity(self):
+    def density(self):
         """Returns material density."""
-        return self._matDensity
+        return self._density
 
-    @matDensity.setter
-    def matDensity(self, value):
+    @density.setter
+    def density(self, value):
         """Set material density."""
-        self._matDensity = value
+        self._density = value
 
-    @matDensity.deleter
-    def matDensity(self):
+    @density.deleter
+    def density(self):
         """Delete material density."""
-        del(self._matDensity)
+        del self._density

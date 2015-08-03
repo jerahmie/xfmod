@@ -64,7 +64,6 @@ origVoxelData.voxelDataSubRegion((0,origVoxelInfo.nx),
                                  (0,origVoxelInfo.ny),
                                  (0,int(dataFraction*origVoxelInfo.nz)))
 
-    
 origVoxelData.plotVoxelData()
 
 #prompt for save?
@@ -79,17 +78,14 @@ while True:
             newVoxelInfo = voxelmod.VoxelInfo()
             newVoxelInfo.loadVoxelInfo(newVoxelInfoFileName)
             newVoxelInfo.printVoxelInfo()
-            
+
             newVoxelData = voxelmod.VoxelData(newVoxelInfo)
             newVoxelData.loadVoxelData(newVoxelDataFileName)
             newVoxelData.plotVoxelData()
-        
+
         break
-        
+
     elif save_choice == 'n':
         break
     else:
         print("Press <y> or <n>")
-
-    
-
