@@ -3,7 +3,7 @@ Parse XFdtd geometry.input file and populate a data structure with materials
 and properties.
 """
 
-import re
+import re, os
 from pathlib import Path
 from xfmatmod import *
 
@@ -90,6 +90,7 @@ class XFGeometry:
         self._grid_delta = re.compile(self._GRID_DELTA, re.MULTILINE)
 
         # file info
+        self._file_path = ''
         self._file_name = ''
 
         # geometry info
@@ -99,75 +100,91 @@ class XFGeometry:
 
     @property
     def file_name(self):
-        """Return the current file name."""
+        """Return full file name of geometry file."""
         return self._file_name
-    
-    @file_name.setter
-    def file_name(self, value):
-        """Set the file path name."""
-        self._file_name = value
 
-    @file_name.deleter
-    def file_name(self):
-        """Delete the file path name."""
+    @property
+    def file_path(self):
+        """Return the current path containing geometry.input."""
+        return self._file_path
+    
+    @file_path.setter
+    def file_path(self, value):
+        """Set the file path name containing geometry.input."""
+        self._file_path = value
+        self._file_name = os.path.join(self._file_path, 'geometry.input')
+        if not os.path.exists(self._file_name):
+            print("Could not find: ", self._file_name)
+
+    @file_path.deleter
+    def file_path(self):
+        """Delete the file path name containing geometry.input."""
+        self._file_path = ''
         self._file_name = ''
 
     def load_materials(self):
-        """Load materials from file with valid file handle."""
-        print("Loading materials from ", self._file_name)
-        del self.materials
-        self.materials = []
-        fh = open(self._file_name,'r')
-        self._geom_info = fh.read()
-        fh.close()
-        # load free space (always material 0)
-        mat_fs = self._mat_free_space.search(self._geom_info)
-        self.materials.append(XFMaterial())
-        self.materials[0].name = mat_fs.group(1)
-        self.materials[0].conductivity = mat_fs.group(3)
-        self.materials[0].density = mat_fs.group(5)
-
-        # load PEC (always material 1)
-        mat_pec = self._mat_pec.search(self._geom_info)
-        self.materials.append(XFMaterial())
-        self.materials[1].name = mat_pec.group(1)
-
-        # load normal electric values
-        mat1 = self._mat_norm_electric.findall(self._geom_info)
-        for mat_index in range(len(mat1)):
+        """Load materials from material.input."""
+        if os.path.exists(self._file_name):
+            print("Loading materials from ", self._file_name)
+            del self.materials
+            self.materials = []
+            fh = open(self._file_name,'r')
+            self._geom_info = fh.read()
+            fh.close()
+            # load free space (always material 0)
+            mat_fs = self._mat_free_space.search(self._geom_info)
             self.materials.append(XFMaterial())
-            self.materials[-1].name = mat1[mat_index][self.NAME]
-            self.materials[-1].conductivity = mat1[mat_index][self.CONDUCTIVITY]
-            self.materials[-1].density = mat1[mat_index][self.DENSITY]
-        print("Done loading materials.")
+            self.materials[0].name = mat_fs.group(1)
+            self.materials[0].conductivity = mat_fs.group(3)
+            self.materials[0].density = mat_fs.group(5)
+            
+            # load PEC (always material 1)
+            mat_pec = self._mat_pec.search(self._geom_info)
+            self.materials.append(XFMaterial())
+            self.materials[1].name = mat_pec.group(1)
+
+            # load normal electric values
+            mat1 = self._mat_norm_electric.findall(self._geom_info)
+            for mat_index in range(len(mat1)):
+                self.materials.append(XFMaterial())
+                self.materials[-1].name = mat1[mat_index][self.NAME]
+                self.materials[-1].conductivity = mat1[mat_index][self.CONDUCTIVITY]
+                self.materials[-1].density = mat1[mat_index][self.DENSITY]
+            print("Done loading materials.")
+        else:
+            print("Could not find file: ", self._file_name)
 
     def load_grid_data(self):
-        print("Loading grid data from ", self._file_name)
-        fh = open(self._file_name,'r')
-        self._geom_info = fh.read()
-        fh.close()
-        # load grid information
-        grid_def1 = self._grid_definition.search(self._geom_info)
-        self.grid_data.origin = [ float(grid_def1.group(1)), \
-                                  float(grid_def1.group(2)), \
-                                  float(grid_def1.group(3)) ]
-        self.grid_data.num_x_cells = int(grid_def1.group(4))
-        self.grid_data.num_y_cells = int(grid_def1.group(5))
-        self.grid_data.num_z_cells = int(grid_def1.group(6))
+        """Load grid data from material.input"""
+        if os.path.exists(self._file_name):
+            print("Loading grid data from ", self._file_name)
+            fh = open(self._file_name,'r')
+            self._geom_info = fh.read()
+            fh.close()
+            # load grid information
+            grid_def1 = self._grid_definition.search(self._geom_info)
+            self.grid_data.origin = [ float(grid_def1.group(1)), \
+                                      float(grid_def1.group(2)), \
+                                      float(grid_def1.group(3)) ]
+            self.grid_data.num_x_cells = int(grid_def1.group(4))
+            self.grid_data.num_y_cells = int(grid_def1.group(5))
+            self.grid_data.num_z_cells = int(grid_def1.group(6))
 
-        ind_begin_delx = self._begin_delx.search(self._geom_info).span()[1]
-        ind_end_delx = self._end_delx.search(self._geom_info).span()[0]
-        ind_begin_dely = self._begin_dely.search(self._geom_info).span()[1]
-        ind_end_dely = self._end_dely.search(self._geom_info).span()[0]
-        ind_begin_delz = self._begin_delz.search(self._geom_info).span()[1]
-        ind_end_delz = self._end_delz.search(self._geom_info).span()[0]
-        self.grid_data.x_deltas = self._grid_delta.findall( \
+            ind_begin_delx = self._begin_delx.search(self._geom_info).span()[1]
+            ind_end_delx = self._end_delx.search(self._geom_info).span()[0]
+            ind_begin_dely = self._begin_dely.search(self._geom_info).span()[1]
+            ind_end_dely = self._end_dely.search(self._geom_info).span()[0]
+            ind_begin_delz = self._begin_delz.search(self._geom_info).span()[1]
+            ind_end_delz = self._end_delz.search(self._geom_info).span()[0]
+            self.grid_data.x_deltas = self._grid_delta.findall( \
                                   self._geom_info[ind_begin_delx:ind_end_delx])
-        self.grid_data.y_deltas = self._grid_delta.findall( \
+            self.grid_data.y_deltas = self._grid_delta.findall( \
                                   self._geom_info[ind_begin_dely:ind_end_dely])
-        self.grid_data.z_deltas = self._grid_delta.findall( \
+            self.grid_data.z_deltas = self._grid_delta.findall( \
                                   self._geom_info[ind_begin_delz:ind_end_delz])
-        print("Done loading grid data.")
+            print("Done loading grid data.")
+        else:
+            print("Could not find file: ", self._file_name)
 
     def print_grid_data(self):
         """Print XFdtd project grid data."""
@@ -176,12 +193,15 @@ class XFGeometry:
         print("Num X Cells: ", self.grid_data.num_x_cells)
         print("Num Y Cells: ", self.grid_data.num_y_cells)
         print("Num Z Cells: ", self.grid_data.num_z_cells)
-        print("X Grid Data: ", len(self.grid_data.x_coods()))
-        print(self.grid_data.x_coods())
-        print("Y Grid Data: ", len(self.grid_data.y_coods()))
-        print(self.grid_data.y_coods())
-        print("Z Grid Data: ", len(self.grid_data.z_coods()))
-        print(self.grid_data.z_coods())
+        if self.grid_data.num_x_cells > 0:
+            print("X Grid Data: ", len(self.grid_data.x_coods()))
+            print(self.grid_data.x_coods())
+        if self.grid_data.num_y_cells > 0:
+            print("Y Grid Data: ", len(self.grid_data.y_coods()))
+            print(self.grid_data.y_coods())
+        if self.grid_data.num_z_cells > 0:
+            print("Z Grid Data: ", len(self.grid_data.z_coods()))
+            print(self.grid_data.z_coods())
 
     def print_materials(self):
         """Print materials in data structure"""
