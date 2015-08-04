@@ -4,6 +4,7 @@ and properties.
 """
 
 import re
+from pathlib import Path
 from xfmatmod import *
 
 class XFGeometry:
@@ -71,7 +72,7 @@ class XFGeometry:
     _GRID_END_DELZ = r'end_<DelZ>\s*'
     _GRID_DELTA = r'(\d*)\s([\d\-.]*)\n'
 
-    def __init__(self, file_handle):
+    def __init__(self):
         # compile patterns
         self._mat_free_space = re.compile(self._MAT_FREESPACE_PATTERN, \
                                               re.MULTILINE)
@@ -88,23 +89,37 @@ class XFGeometry:
         self._end_delz = re.compile(self._GRID_END_DELZ)
         self._grid_delta = re.compile(self._GRID_DELTA, re.MULTILINE)
 
-        # geometry info
-        self._geom_info = file_handle.read()
+        # file info
+        self._file_name = ''
 
+        # geometry info
+        self._geom_info = ''
         self.materials = []
         self.grid_data = XFGridData()
 
-        # load materials from file
-        self.load_materials()
+    @property
+    def file_name(self):
+        """Return the current file name."""
+        return self._file_name
+    
+    @file_name.setter
+    def file_name(self, value):
+        """Set the file path name."""
+        self._file_name = value
 
-        # load grid data from file
-        self.load_grid_data()
+    @file_name.deleter
+    def file_name(self):
+        """Delete the file path name."""
+        self._file_name = ''
 
     def load_materials(self):
         """Load materials from file with valid file handle."""
+        print("Loading materials from ", self._file_name)
         del self.materials
         self.materials = []
-
+        fh = open(self._file_name,'r')
+        self._geom_info = fh.read()
+        fh.close()
         # load free space (always material 0)
         mat_fs = self._mat_free_space.search(self._geom_info)
         self.materials.append(XFMaterial())
@@ -124,9 +139,13 @@ class XFGeometry:
             self.materials[-1].name = mat1[mat_index][self.NAME]
             self.materials[-1].conductivity = mat1[mat_index][self.CONDUCTIVITY]
             self.materials[-1].density = mat1[mat_index][self.DENSITY]
+        print("Done loading materials.")
 
     def load_grid_data(self):
-        print("Loading grid data.")
+        print("Loading grid data from ", self._file_name)
+        fh = open(self._file_name,'r')
+        self._geom_info = fh.read()
+        fh.close()
         # load grid information
         grid_def1 = self._grid_definition.search(self._geom_info)
         self.grid_data.origin = [ float(grid_def1.group(1)), \
@@ -148,7 +167,7 @@ class XFGeometry:
                                   self._geom_info[ind_begin_dely:ind_end_dely])
         self.grid_data.z_deltas = self._grid_delta.findall( \
                                   self._geom_info[ind_begin_delz:ind_end_delz])
-
+        print("Done loading grid data.")
 
     def print_grid_data(self):
         """Print XFdtd project grid data."""
