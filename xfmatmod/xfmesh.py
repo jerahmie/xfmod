@@ -3,12 +3,157 @@ Class XFMesh processes XFDtd mesh.input file.
 """
 
 # Ensure python 2 and 3 compatibility
-from __future__ import (absolute_import, division, generators, 
+from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 
 from pathlib import Path
 import sys, os
 import struct
+
+
+class XFMeshEdgeRun:
+    """
+    XFMeshEdgeRun: class to hold edge run data.
+    """
+    def __init__(self):
+        self._run_type = ''
+        self._x_ind = None
+        self._y_ind = None
+        self._z_ind = None
+        self._stop_ind = None
+        self._mat = None
+
+    @property
+    def run_type(self):
+        """Returns run type: 'X', 'Y', or 'Z'."""
+        return self._run_type
+
+    @run_type.setter
+    def run_type(self, value):
+        """Sets run_type.  Valid values are 'X', 'Y', or 'Z'."""
+        if value.upper() == 'X':
+            self._run_type = 'X'
+        elif value.upper() == 'Y':
+            self._run_type = 'Y'
+        elif value.uppper() == 'Z':
+            self._run_type = 'Z'
+        else:
+            print("Invalid run_type specified.  Valid values are " + \
+                  "'X', 'Y', or 'Z'")
+
+    @run_type.deleter
+    def run_type(self):
+        """Delete the run type value."""
+        self._run_type = ''
+
+    @property
+    def x_ind(self):
+        """Returns X index or run start index if run_type is 'X'."""
+        return self._x_ind
+
+    @x_ind.setter
+    def x_ind(self, value):
+        """Set the X index value."""
+        if isinstance(value, int):
+            self._x_ind = value
+        else:
+            print('X index must be of type integer.')
+
+    @x_ind.deleter
+    def x_ind(self):
+        """Delete the X index value."""
+        self._x_ind = None
+
+    @property
+    def y_ind(self):
+        """Returns Y index or run start index if run_type is 'Y'."""
+        return self._y_ind
+
+    @y_ind.setter
+    def y_ind(self, value):
+        """Sets the Y index value."""
+        if isinstance(value, int):
+            self._y_ind = value
+        else:
+            print('Y index must be of type integer.')
+            
+    @y_ind.deleter
+    def y_ind(self):
+        """Deletes the Y index value."""
+        self._y_ind = None
+
+    @property
+    def z_ind(self):
+        """Returns Z index or run start index if run_type is 'Z'."""
+        return self._z_ind
+
+    @z_ind.setter
+    def z_ind(self, value):
+        """Set the Z index value."""
+        if isinstance(value, int):
+            self._z_ind = value
+        else:
+            print('Z index must be of type integer.')
+
+    @z_ind.deleter
+    def z_ind(self):
+        """Delete the Z index value."""
+        self._z_ind = None
+
+    @property
+    def stop_ind(self):
+        """Returns run stop index for run_type."""
+        return self._stop_ind
+    
+    @stop_ind.setter
+    def stop_ind(self, value):
+        """Set the run stop index."""
+        if isinstance(value, int):
+            self._stop_ind = value
+        else:
+            print('Stop index must be of type integer.')
+
+    @stop_ind.deleter
+    def stop_ind(self):
+        """Delete the stop index value."""
+        self._stop_ind = None
+
+    @property
+    def mat(self):
+        """Return material in edge run."""
+        return self._mat
+
+    @mat.setter
+    def mat(self, value):
+        """Set the edge run material."""
+        if isinstance(value, int):
+            if value >= 0 and value <= 256:
+                self._mat = value
+        else:
+            print('Material value must be an integer between 0 and 256.')
+            
+    @mat.deleter
+    def mat(self):
+        """Delete the edge run material."""
+        self._mat = None
+
+def read_edge_run_data(file_handle, num_edge_runs ):
+    """
+    read_edge_run_data: Helper function for XFMesh that reads edge run
+    data and returns an instance of XFMeshEdgeRun.
+    """
+    edge_runs = []
+    for run_index in range(num_edge_runs):
+        cur_run = XFMeshEdgeRun()        
+        cur_run.x_ind = struct.unpack('I', file_handle.read(4))[0]
+        cur_run.y_ind = struct.unpack('I', file_handle.read(4))[0]
+        cur_run.z_ind = struct.unpack('I', file_handle.read(4))[0]
+        cur_run.stop_ind = struct.unpack('I', file_handle.read(4))[0]
+        cur_run.mat = struct.unpack('B', file_handle.read(1))[0]
+        edge_runs.append(cur_run)
+
+    return edge_runs
+
 
 class XFMesh:
     """
@@ -23,9 +168,15 @@ class XFMesh:
         self._num_ex_edge_runs = None
         self._num_ey_edge_runs = None
         self._num_ez_edge_runs = None
+        self._ex_edge_runs = None
+        self._ey_edge_runs = None
+        self._ez_edge_runs = None
         self._num_hx_edge_runs = None
         self._num_hy_edge_runs = None
         self._num_hz_edge_runs = None
+        self._hx_edge_runs = None
+        self._hy_edge_runs = None
+        self._hz_edge_runs = None
         self._num_e_avg_mats = None
         self._num_h_avg_mats = None
         self._num_e_mesh_edges_e_avg = None
@@ -33,7 +184,6 @@ class XFMesh:
         self._start_ex_edge_run = 0
         self._start_ey_edge_run = 0
         self._start_ez_edge_run = 0
-        
         
     @property
     def file_path(self):
@@ -143,78 +293,58 @@ class XFMesh:
         print(fh.tell())
         # read Ex edges
         if self._num_ex_edge_runs > 0:
-            for runIndex in range(self._num_ex_edge_runs):
-                xStart = struct.unpack('I', fh.read(4))[0]
-                yInd = struct.unpack('I', fh.read(4))[0] 
-                zInd = struct.unpack('I', fh.read(4))[0]
-                xStop = struct.unpack('I', fh.read(4))[0]
-                mat = struct.unpack('B', fh.read(1))[0]
-                if mat == 1:
-                    print(runIndex, mat)
-                # Assign Ex material data
-                # Ex Sigma data
-                # Ey Density data
-        print(fh.tell())
+            self._ex_edge_runs = read_edge_run_data(fh, self._num_ex_edge_runs)
+
         # read Ey edges
         if self._num_ey_edge_runs > 0:
-            for runIndex in range(self._num_ey_edge_runs):
-                xInd = struct.unpack('I', fh.read(4))[0]
-                yStart = struct.unpack('I', fh.read(4))[0]
-                zInd = struct.unpack('I', fh.read(4))[0]
-                yStop = struct.unpack('I', fh.read(4))[0]
-                mat = struct.unpack('B', fh.read(1))[0]
-                if mat == 1:
-                    print(runIndex, mat)
-                # Assign Ey material data
-                # Ey Sigma data
-                # Ey Density data
-        print(fh.tell())
+            self._ey_edge_runs = read_edge_run_data(fh, self._num_ey_edge_runs)
+
         # read Ez edges
         if self._num_ez_edge_runs > 0:
-            for runIndex in range(self._num_ez_edge_runs):
-                xInd = struct.unpack('I', fh.read(4))[0]
-                yInd = struct.unpack('I', fh.read(4))[0]
-                zStart = struct.unpack('I', fh.read(4))[0]
-                zStop = struct.unpack('I', fh.read(4))[0]
-                mat = struct.unpack('B', fh.read(1))[0]
-                if mat == 1:
-                    print(runIndex, mat)
-                # Assign Ez material data
-                # Ez Sigma data
-                # Ez Density data
-        print(fh.tell())
+            self._ez_edge_runs = read_edge_run_data(fh, self._num_ez_edge_runs)
 
         # read Hx edges
         if self._num_hx_edge_runs > 0:
-            for runIndex in range(self._num_hx_edge_runs):
-                xStart = struct.unpack('I', fh.read(4))[0]
-                yInd = struct.unpack('I', fh.read(4))[0]
-                zInd = struct.unpack('I', fh.read(4))[0]
-                xStop = struct.unpack('I', fh.read(4))[0]
-                mat = struct.unpack('B', fh.read(1))[0]
-                # Assign Hx material data
+            self._hx_edge_runs = read_edge_run_data(fh, self._num_hx_edge_runs)
                 
         # read Hy edges
         if self._num_hy_edge_runs > 0:
-            for runIndex in range(self._num_hy_edge_runs):
-                xInd = struct.unpack('I', fh.read(4))[0]
-                yStart = struct.unpack('I', fh.read(4))[0]
-                zInd = struct.unpack('I', fh.read(4))[0]
-                yStop = struct.unpack('I', fh.read(4))[0]
-                mat = struct.unpack('B', fh.read(1))[0]
-                # Assign Hy material data
+            self._hy_edge_runs = read_edge_run_data(fh, self._num_hy_edge_runs)
                 
         # read Hz edges
         if self._num_hz_edge_runs > 0:
-            for runIndex in range(self._num_hz_edge_runs):
-                xInd = struct.unpack('I', fh.read(4))[0]
-                yInd = struct.unpack('I', fh.read(4))[0]
-                zStart = struct.unpack('I', fh.read(4))[0]
-                zStop = struct.unpack('I', fh.read(4))[0]
-                mat = struct.unpack('B', fh.read(1))[0]
-                # Assign Hz material data
+            self._hz_edge_runs = read_edge_run_data(fh, self._num_hz_edge_runs)
 
         # Averaged material definitions
         # this is not implemented yet.
-            
         fh.close()
+
+    @property
+    def ex_edge_runs(self):
+        """Retrun Ex edge runs."""
+        return self._ex_edge_runs
+
+    @property
+    def ey_edge_runs(self):
+        """Retrun Ey edge runs."""
+        return self._ex_edge_runs
+    
+    @property
+    def ez_edge_runs(self):
+        """Retrun Ez edge runs."""
+        return self._ez_edge_runs
+
+    @property
+    def hx_edge_runs(self):
+        """Retrun Hx edge runs."""
+        return self._hx_edge_runs
+
+    @property
+    def hy_edge_runs(self):
+        """Retrun Hy edge runs."""
+        return self._hy_edge_runs
+
+    @property
+    def hz_edge_runs(self):
+        """Return Hz edge runs."""
+        return self._hz_edge_runs
