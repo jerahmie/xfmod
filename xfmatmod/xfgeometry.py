@@ -3,9 +3,12 @@ Parse XFdtd geometry.input file and populate a data structure with materials
 and properties.
 """
 
+# Ensure python 2 and 3 compatibility
+from __future__ import (absolute_import, division, generators,
+                        print_function, unicode_literals)
+
 import re, os
-from pathlib import Path
-from xfmatmod import *
+from xfmatmod import XFGridData, XFMaterial
 
 class XFGeometry:
     """A class to hold coil geometry info."""
@@ -95,7 +98,7 @@ class XFGeometry:
 
         # geometry info
         self._geom_info = ''
-        self.materials = []
+        self._materials = []
         self.grid_data = XFGridData()
 
     @property
@@ -107,7 +110,7 @@ class XFGeometry:
     def file_path(self):
         """Return the current path containing geometry.input."""
         return self._file_path
-    
+
     @file_path.setter
     def file_path(self, value):
         """Set the file path name containing geometry.input."""
@@ -126,46 +129,47 @@ class XFGeometry:
         """Load materials from material.input."""
         if os.path.exists(self._file_name):
             print("Loading materials from ", self._file_name)
-            del self.materials
-            self.materials = []
-            fh = open(self._file_name,'r')
-            self._geom_info = fh.read()
-            fh.close()
+            self._materials = []
+            file_handle = open(self._file_name, 'r')
+            self._geom_info = file_handle.read()
+            file_handle.close()
             # load free space (always material 0)
             mat_fs = self._mat_free_space.search(self._geom_info)
-            self.materials.append(XFMaterial())
-            self.materials[0].name = mat_fs.group(1)
-            self.materials[0].conductivity = mat_fs.group(3)
-            self.materials[0].density = mat_fs.group(5)
-            
+            self._materials.append(XFMaterial())
+            self._materials[0].name = mat_fs.group(1)
+            self._materials[0].conductivity = mat_fs.group(3)
+            self._materials[0].density = mat_fs.group(5)
+
             # load PEC (always material 1)
             mat_pec = self._mat_pec.search(self._geom_info)
-            self.materials.append(XFMaterial())
-            self.materials[1].name = mat_pec.group(1)
+            self._materials.append(XFMaterial())
+            self._materials[1].name = mat_pec.group(1)
 
             # load normal electric values
             mat1 = self._mat_norm_electric.findall(self._geom_info)
             for mat_index in range(len(mat1)):
-                self.materials.append(XFMaterial())
-                self.materials[-1].name = mat1[mat_index][self.NAME]
-                self.materials[-1].conductivity = mat1[mat_index][self.CONDUCTIVITY]
-                self.materials[-1].density = mat1[mat_index][self.DENSITY]
+                self._materials.append(XFMaterial())
+                self._materials[-1].name = mat1[mat_index][self.NAME]
+                self._materials[-1].conductivity = mat1[mat_index][self.CONDUCTIVITY]
+                self._materials[-1].density = mat1[mat_index][self.DENSITY]
             print("Done loading materials.")
         else:
             print("Could not find file: ", self._file_name)
+
+        return self._materials
 
     def load_grid_data(self):
         """Load grid data from material.input"""
         if os.path.exists(self._file_name):
             print("Loading grid data from ", self._file_name)
-            fh = open(self._file_name,'r')
-            self._geom_info = fh.read()
-            fh.close()
+            file_handle = open(self._file_name, 'r')
+            self._geom_info = file_handle.read()
+            file_handle.close()
             # load grid information
             grid_def1 = self._grid_definition.search(self._geom_info)
-            self.grid_data.origin = [ float(grid_def1.group(1)), \
-                                      float(grid_def1.group(2)), \
-                                      float(grid_def1.group(3)) ]
+            self.grid_data.origin = [float(grid_def1.group(1)), \
+                                     float(grid_def1.group(2)), \
+                                     float(grid_def1.group(3))]
             self.grid_data.num_x_cells = int(grid_def1.group(4))
             self.grid_data.num_y_cells = int(grid_def1.group(5))
             self.grid_data.num_z_cells = int(grid_def1.group(6))
@@ -189,7 +193,7 @@ class XFGeometry:
     def print_grid_data(self):
         """Print XFdtd project grid data."""
         print("\nGrid Data:")
-        print("Origin: ", self.grid_data.origin )
+        print("Origin: ", self.grid_data.origin)
         print("Num X Cells: ", self.grid_data.num_x_cells)
         print("Num Y Cells: ", self.grid_data.num_y_cells)
         print("Num Z Cells: ", self.grid_data.num_z_cells)
@@ -206,12 +210,12 @@ class XFGeometry:
     def print_materials(self):
         """Print materials in data structure"""
         print("\nMaterials: ")
-        for mat_index in range(len(self.materials)):
-            print("\n            Name: " + self.materials[mat_index].name)
+        for mat_index in range(len(self._materials)):
+            print("\n            Name: " + self._materials[mat_index].name)
             print("         Density: " + \
-                  self.materials[mat_index].density + \
+                  self._materials[mat_index].density + \
                   " (kg/m^3)")
             print("    Conductivity: " + \
-                  self.materials[mat_index].conductivity + \
+                  self._materials[mat_index].conductivity + \
                   " (S/m) ")
             print("\n")

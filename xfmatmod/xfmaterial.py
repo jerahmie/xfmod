@@ -1,6 +1,11 @@
 """
 Class to store materials extracted from XFdtd geometry.input
 """
+
+# Ensure python 2 and 3 compatibility
+from __future__ import (absolute_import, division, generators,
+                        print_function, unicode_literals)
+
 class XFMaterial:
     """Class to store material properties"""
 

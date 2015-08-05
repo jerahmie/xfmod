@@ -1,6 +1,10 @@
 """
 Class to store grid data extracted from XFdtd geometry.input
 """
+# Ensure python 2 and 3 compatibility
+from __future__ import (absolute_import, division, generators,
+                        print_function, unicode_literals)
+
 class XFGridData:
     """Class to store grid data properties."""
 
@@ -149,8 +153,8 @@ class XFGridData:
         """Return the X coordinate values from origin and deltas."""
         cood_cumulative = self._origin_x  # cumulative x value
         coods = []                        # x value array
-        
-        for i in range(0,len(self._x_deltas)-1):
+
+        for i in range(0, len(self._x_deltas)-1):
             for j in range(int(self._x_deltas[i][0]), \
                            int(self._x_deltas[i+1][0])):
                 coods.append(cood_cumulative)
@@ -167,7 +171,7 @@ class XFGridData:
         cood_cumulative = self._origin_y  # cumulative y value
         coods = []                        # y value array
 
-        for i in range(0,len(self._y_deltas)-1):
+        for i in range(0, len(self._y_deltas)-1):
             for j in range(int(self._y_deltas[i][0]), \
                            int(self._y_deltas[i+1][0])):
                 coods.append(cood_cumulative)
@@ -184,7 +188,7 @@ class XFGridData:
         cood_cumulative = self._origin_z  # cumulative z value
         coods = []                        # z value array
 
-        for i in range(0,len(self._z_deltas)-1):
+        for i in range(0, len(self._z_deltas)-1):
             for j in range(int(self._z_deltas[i][0]), \
                            int(self._z_deltas[i+1][0])):
                 coods.append(cood_cumulative)

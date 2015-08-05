@@ -7,9 +7,7 @@ from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 
 from pathlib import Path
-import sys, os
-import struct
-
+import os, struct
 
 class XFMeshEdgeRun:
     """
@@ -76,7 +74,7 @@ class XFMeshEdgeRun:
             self._y_ind = value
         else:
             print('Y index must be of type integer.')
-            
+
     @y_ind.deleter
     def y_ind(self):
         """Deletes the Y index value."""
@@ -104,7 +102,7 @@ class XFMeshEdgeRun:
     def stop_ind(self):
         """Returns run stop index for run_type."""
         return self._stop_ind
-    
+
     @stop_ind.setter
     def stop_ind(self, value):
         """Set the run stop index."""
@@ -131,20 +129,20 @@ class XFMeshEdgeRun:
                 self._mat = value
         else:
             print('Material value must be an integer between 0 and 256.')
-            
+
     @mat.deleter
     def mat(self):
         """Delete the edge run material."""
         self._mat = None
 
-def read_edge_run_data(file_handle, num_edge_runs ):
+def read_edge_run_data(file_handle, num_edge_runs):
     """
     read_edge_run_data: Helper function for XFMesh that reads edge run
     data and returns an instance of XFMeshEdgeRun.
     """
     edge_runs = []
     for run_index in range(num_edge_runs):
-        cur_run = XFMeshEdgeRun()        
+        cur_run = XFMeshEdgeRun()
         cur_run.x_ind = struct.unpack('I', file_handle.read(4))[0]
         cur_run.y_ind = struct.unpack('I', file_handle.read(4))[0]
         cur_run.z_ind = struct.unpack('I', file_handle.read(4))[0]
@@ -184,7 +182,7 @@ class XFMesh:
         self._start_ex_edge_run = 0
         self._start_ey_edge_run = 0
         self._start_ez_edge_run = 0
-        
+
     @property
     def file_path(self):
         """Return full file path name for mesh.input"""
@@ -206,67 +204,68 @@ class XFMesh:
 
     def read_mesh_header(self):
         """Read the mesh header."""
-        fh = open(self._file_path, 'rb')
-        if fh:
+        file_handle = open(self._file_path, 'rb')
+        if file_handle:
             # check remcom 11-byte header
-            if fh.read(11) != b'!remcomfdtd':
+            if file_handle.read(11) != b'!remcomfdtd':
                 print("Mesh input header appears malformed: ")
                 return
-            if fh.read(1) != b'L':
+            if file_handle.read(1) != b'L':
                 print("Expected little endian file format.")
                 return
-            if struct.unpack('H', fh.read(2))[0] != 0:
+            if struct.unpack('H', file_handle.read(2))[0] != 0:
                 print("Mesh input header: mesh.input not 'mesh data' type.")
                 return
-            self._mesh_version = struct.unpack('H', fh.read(2))[0] 
-            if self._mesh_version == 0: 
+            self._mesh_version = struct.unpack('H', file_handle.read(2))[0]
+            if self._mesh_version == 0:
                 self._edge_run_bytes = 4
                 self._edge_run_fmt = 'I'
-            elif self._mesh_version == 1: 
+            elif self._mesh_version == 1:
                 self._edge_run_bytes = 8
                 self._edge_run_fmt = 'Q'
             else:
                 print("Mesh input header: mesh.input not version 0 or 1.")
                 return
-            if struct.unpack('B', fh.read(1))[0] != 0:
+            if struct.unpack('B', file_handle.read(1))[0] != 0:
                 print("Mesh input header: mesh.input format " + \
                       "indicator not zeros")
                 return
-            # Number of Ex edge runs 
+            # Number of Ex edge runs
             print(self._edge_run_fmt, self._edge_run_bytes)
             self._num_ex_edge_runs = struct.unpack(self._edge_run_fmt, \
-                                     fh.read(self._edge_run_bytes))[0]
+                                     file_handle.read(self._edge_run_bytes))[0]
             # Number of Ey edge runs
             self._num_ey_edge_runs = struct.unpack(self._edge_run_fmt, \
-                                     fh.read(self._edge_run_bytes))[0]
+                                     file_handle.read(self._edge_run_bytes))[0]
             # Number of Ez edge runs
             self._num_ez_edge_runs = struct.unpack(self._edge_run_fmt, \
-                                     fh.read(self._edge_run_bytes))[0]
+                                     file_handle.read(self._edge_run_bytes))[0]
             # Number of Hx edge runs
             self._num_hx_edge_runs = struct.unpack(self._edge_run_fmt, \
-                                     fh.read(self._edge_run_bytes))[0]
+                                     file_handle.read(self._edge_run_bytes))[0]
             # Number of Hy edge runs
             self._num_hy_edge_runs = struct.unpack(self._edge_run_fmt, \
-                                     fh.read(self._edge_run_bytes))[0]
+                                     file_handle.read(self._edge_run_bytes))[0]
             # Number of Hz edge runs
             self._num_hz_edge_runs = struct.unpack(self._edge_run_fmt, \
-                                     fh.read(self._edge_run_bytes))[0]
-            # Number of electric averaged materials 
-            self._num_e_avg_mats = struct.unpack('I', fh.read(4))[0]
+                                     file_handle.read(self._edge_run_bytes))[0]
+            # Number of electric averaged materials
+            self._num_e_avg_mats = struct.unpack('I', file_handle.read(4))[0]
             # Number of magnetic averaged materials
-            self._num_h_avg_mats = struct.unpack('I', fh.read(4))[0]
+            self._num_h_avg_mats = struct.unpack('I', file_handle.read(4))[0]
             # Number of electric mesh edges using electric averaged materials
-            self._num_e_mesh_edges_e_avg = struct.unpack('Q', fh.read(8))[0]
+            self._num_e_mesh_edges_e_avg = struct.unpack('Q', \
+                                                       file_handle.read(8))[0]
             # Number of magnetic mesh edges using magnetic averaged materials
-            self._num_h_mesh_edges_h_avg = struct.unpack('Q', fh.read(8))[0]
-            self._start_ex_edge_run = fh.tell()
+            self._num_h_mesh_edges_h_avg = struct.unpack('Q', \
+                                                       file_handle.read(8))[0]
+            self._start_ex_edge_run = file_handle.tell()
 
         else:
             print("Could not open Mesh file.")
             return
-        fh.close()
-        
-        
+        file_handle.close()
+
     def dump_header_info(self):
         """Dump header info."""
         print("        Filename: ", self._file_name)
@@ -285,39 +284,43 @@ class XFMesh:
               "averaged materials: ", self._num_e_mesh_edges_e_avg)
         print("Number of magnetic mesh edges using electric " + \
               "averaged materials: ", self._num_h_mesh_edges_h_avg)
-        
+
     def read_edge_run_data(self):
         """Read Edge run data"""
-        fh = open(self._file_path, 'rb')
-        fh.seek(self._start_ex_edge_run)
-        print(fh.tell())
+        file_handle = open(self._file_path, 'rb')
+        file_handle.seek(self._start_ex_edge_run)
+        print(file_handle.tell())
         # read Ex edges
         if self._num_ex_edge_runs > 0:
-            self._ex_edge_runs = read_edge_run_data(fh, self._num_ex_edge_runs)
+            self._ex_edge_runs = read_edge_run_data(file_handle, \
+                                                    self._num_ex_edge_runs)
 
         # read Ey edges
         if self._num_ey_edge_runs > 0:
-            self._ey_edge_runs = read_edge_run_data(fh, self._num_ey_edge_runs)
+            self._ey_edge_runs = read_edge_run_data(file_handle, \
+                                                    self._num_ey_edge_runs)
 
         # read Ez edges
         if self._num_ez_edge_runs > 0:
-            self._ez_edge_runs = read_edge_run_data(fh, self._num_ez_edge_runs)
+            self._ez_edge_runs = read_edge_run_data(file_handle, \
+                                                    self._num_ez_edge_runs)
 
         # read Hx edges
         if self._num_hx_edge_runs > 0:
-            self._hx_edge_runs = read_edge_run_data(fh, self._num_hx_edge_runs)
-                
+            self._hx_edge_runs = read_edge_run_data(file_handle, \
+                                                    self._num_hx_edge_runs)
         # read Hy edges
         if self._num_hy_edge_runs > 0:
-            self._hy_edge_runs = read_edge_run_data(fh, self._num_hy_edge_runs)
-                
+            self._hy_edge_runs = read_edge_run_data(file_handle, \
+                                                    self._num_hy_edge_runs)
         # read Hz edges
         if self._num_hz_edge_runs > 0:
-            self._hz_edge_runs = read_edge_run_data(fh, self._num_hz_edge_runs)
+            self._hz_edge_runs = read_edge_run_data(file_handle, \
+                                                    self._num_hz_edge_runs)
 
         # Averaged material definitions
         # this is not implemented yet.
-        fh.close()
+        file_handle.close()
 
     @property
     def ex_edge_runs(self):
@@ -327,8 +330,8 @@ class XFMesh:
     @property
     def ey_edge_runs(self):
         """Retrun Ey edge runs."""
-        return self._ex_edge_runs
-    
+        return self._ey_edge_runs
+
     @property
     def ez_edge_runs(self):
         """Retrun Ez edge runs."""
