@@ -19,7 +19,7 @@ def main(argv):
     xf_export.grid_x = xf_geom.grid_data.x_coods()
     xf_export.grid_y = xf_geom.grid_data.y_coods()
     xf_export.grid_z = xf_geom.grid_data.z_coods()
-    #xf_geom.print_materials()
+    xf_geom.print_materials()
     #xf_geom.print_grid_data()
 
     # Load XFdtd Mesh data file

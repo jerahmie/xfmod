@@ -15,7 +15,7 @@ class XFGeometry(object):
     NAME = 0
     MATERIAL_NUMBER = 1
     CONDUCTIVITY = 2
-    PERMITTIVITY = 3
+    PERMITTIVITY = 4
     DENSITY = 8
     WATER_RATIO = 9
 
@@ -214,11 +214,14 @@ class XFGeometry(object):
         """Print materials in data structure"""
         print("\nMaterials: ")
         for mat_index in range(len(self._materials)):
-            print("\n            Name: " + self._materials[mat_index].name)
-            print("         Density: ", \
+            print("\n                 Name: " + \
+                  self._materials[mat_index].name)
+            print("                Density: ", \
                   self._materials[mat_index].density, \
                   " (kg/m^3)")
-            print("    Conductivity: ",  \
+            print("           Conductivity: ",  \
                   self._materials[mat_index].conductivity,  \
                   " (S/m) ")
+            print(" Relaltive Permittivity: ", \
+                  self._materials[mat_index].epsilon_r)
             print("\n")
