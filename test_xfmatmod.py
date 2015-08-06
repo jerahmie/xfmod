@@ -25,7 +25,7 @@ def main(argv):
     #print(xf_export.grid_y)
     #print(xf_export.grid_z)
 
-    #xf_geom.print_materials()
+    xf_geom.print_materials()
     #xf_geom.print_grid_data()
 
     # Load XFdtd Mesh data file
@@ -40,6 +40,7 @@ def main(argv):
     xf_export.hx_edge_runs = xf_mesh.hx_edge_runs
     xf_export.hy_edge_runs = xf_mesh.hy_edge_runs
     xf_export.hz_edge_runs = xf_mesh.hz_edge_runs
+    print(xf_export.materials_list) 
     xf_export.set_mesh_data()
     xf_export.export_mesh_data('test.mat')
 

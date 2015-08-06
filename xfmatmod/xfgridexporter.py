@@ -37,46 +37,6 @@ class XFGridExporter:
         self._mesh_hz_sigma = None
 
     @property
-    def x_dim(self):
-        """Return the x dimension of the output data."""
-        return self._x_dim
-
-    @x_dim.setter
-    def x_dim(self, value):
-        """Set the x dimension of the output data."""
-        self._x_dim = value
-
-    @x_dim.deleter
-    def x_dim(self):
-        """Delete x dimension."""
-        self._x_dim = 0
-
-    @property
-    def y_dim(self):
-        """Return the x dimension of the output data."""
-        return self._y_dim
-
-    @y_dim.setter
-    def y_dim(self, value):
-        """Set the y dimensin of the output data."""
-        self._y_dim = value
-
-    @y_dim.deleter
-    def y_dim(self):
-        """Delete the y dimension."""
-        self._y_dim = 0
-
-    @property
-    def z_dim(self):
-        """Return the z dimension of the output data."""
-        return self._z_dim
-
-    @z_dim.setter
-    def z_dim(self, value):
-        """Set the z dimension of the output data."""
-        self._z_dim = value
-
-    @property
     def grid_x(self):
         """Return X grid values."""
         return self._grid_x
@@ -85,12 +45,14 @@ class XFGridExporter:
     def grid_x(self, value):
         """Set X grid values."""
         self._grid_x = value
+        self._x_dim = len(self._grid_x)
 
     @grid_x.deleter
-    def grid_y(self):
+    def grid_x(self):
         """Delete x grid values."""
         del self._grid_x
-        self.grid_x = None
+        self._grid_x = None
+        self._x_dim = 0
 
     @property
     def grid_y(self):
@@ -101,12 +63,14 @@ class XFGridExporter:
     def grid_y(self, value):
         """Set Y grid values."""
         self._grid_y = value
+        self._y_dim = len(self._grid_y)
 
     @grid_y.deleter
     def grid_y(self):
         """Delete Y grid values."""
         del self._grid_y
         self.grid_y = None
+        self._y_dim = 0
 
     @property
     def grid_z(self):
@@ -117,12 +81,14 @@ class XFGridExporter:
     def grid_z(self, value):
         """Set Z grid values."""
         self._grid_z = value
+        self._z_dim = len(self._grid_z)
 
     @grid_z.deleter
     def grid_z(self):
         """Delete Z grid values."""
         del self._grid_z
         self.grid_z = None
+        self._z_dim = 0
 
     @property
     def materials_list(self):
@@ -239,54 +205,108 @@ class XFGridExporter:
         """Set mesh data from edge run data."""
         if self._ex_edge_runs is not None:
             print('Calculating Ex mesh values.')
-            self._mesh_ex_density = np.zeros(shape=(self._x_dim, \
-                                                    self._y_dim, \
-                                                    self._z_dim))
-            self._mesh_ex_sigma = np.zeros(shape=(self._x_dim, \
+            self._mesh_ex_density = np.empty((self._x_dim, \
+                                              self._y_dim, \
+                                              self._z_dim))
+
+            self._mesh_ex_sigma = np.empty(shape=(self._x_dim, \
                                                   self._y_dim, \
                                                   self._z_dim))
+            self._mesh_ex_density[:] = np.NAN
+            self._mesh_ex_sigma[:] = np.NAN
+
+            # set Ex material properties
+            for edge_run in self._ex_edge_runs:
+                for index in range(edge_run.x_ind, edge_run.stop_ind):
+                    if edge_run.mat >= 2:
+                        self._mesh_ex_density[index, edge_run.y_ind, edge_run.z_ind] = self._materials_list[edge_run.mat].density
+                        self._mesh_ex_sigma[index, edge_run.y_ind, edge_run.z_ind] = self._materials_list[edge_run.mat].conductivity
 
         if self._ey_edge_runs is not None:
             print('Calculating Ey mesh values.')
-            self._mesh_ey_density = np.zeros(shape=(self._x_dim, \
-                                                    self._y_dim, \
-                                                    self._z_dim))
-            self._mesh_ey_sigma = np.zeros(shape=(self._x_dim, \
-                                                  self._y_dim, \
-                                                  self._z_dim))
+            self._mesh_ey_density = np.empty((self._x_dim, \
+                                              self._y_dim, \
+                                              self._z_dim))
+            self._mesh_ey_sigma = np.empty((self._x_dim, \
+                                            self._y_dim, \
+                                            self._z_dim))
+            self._mesh_ey_density[:] = np.NAN
+            self._mesh_ey_sigma[:] = np.NAN
+
+            for edge_run in self._ey_edge_runs:
+                for index in range(edge_run.y_ind, edge_run.stop_ind):
+                    if edge_run.mat >= 2:
+                        self._mesh_ey_density[edge_run.x_ind, index, edge_run.z_ind] = self._materials_list[edge_run.mat].density
+                        self._mesh_ey_sigma[edge_run.x_ind, index, edge_run.z_ind] = self._materials_list[edge_run.mat].conductivity
+
 
         if self._ez_edge_runs is not None:
             print('Calculating Ez mesh values.')
-            self._mesh_ez_density = np.zeros(shape=(self._x_dim, \
-                                                    self._y_dim, \
-                                                    self._z_dim))
-            self._mesh_ez_sigma = np.zeros(shape=(self._x_dim, \
-                                                  self._y_dim, \
-                                                  self._z_dim))
+            self._mesh_ez_density = np.empty((self._x_dim, \
+                                              self._y_dim, \
+                                              self._z_dim))
+            self._mesh_ez_sigma = np.empty((self._x_dim, \
+                                            self._y_dim, \
+                                            self._z_dim))
+            self._mesh_ez_density[:] = np.NAN
+            self._mesh_ez_sigma[:] = np.NAN
+            # set Ez material properties
+            for edge_run in self._ez_edge_runs:
+                for index in range(edge_run.z_ind, edge_run.stop_ind):
+                    if edge_run.mat >= 2:
+                        self._mesh_ez_density[edge_run.x_ind, edge_run.y_ind, index] = self._materials_list[edge_run.mat].density
+                        self._mesh_ez_sigma[edge_run.x_ind, edge_run.y_ind, index] = self._materials_list[edge_run.mat].conductivity
+
         if self._hx_edge_runs is not None:
             print('Calculating Hx mesh values.')
-            self._mesh_hx_density = np.zeros(shape=(self._x_dim, \
-                                                    self._y_dim, \
-                                                    self._z_dim))
-            self._mesh_hx_sigma = np.zeros(shape=(self._x_dim, \
-                                                  self._y_dim, \
-                                                  self._z_dim))
+            self._mesh_hx_density = np.empty((self._x_dim, \
+                                              self._y_dim, \
+                                              self._z_dim))
+            self._mesh_hx_sigma = np.empty((self._x_dim, \
+                                            self._y_dim, \
+                                            self._z_dim))
+            self._mesh_hx_density[:] = np.NAN
+            self._mesh_hx_sigma[:] = np.NAN
+            # set Hx material properties
+            for edge_run in self._hx_edge_runs:
+                for index in range(edge_run.x_ind, edge_run.stop_ind):
+                    if edge_run.mat >= 2:
+                        self._mesh_hx_density[index, edge_run.y_ind, edge_run.z_ind] = self._materials_list[edge_run.mat].density
+                        self._mesh_hx_sigma[index, edge_run.y_ind, edge_run.z_ind] = self._materials_list[edge_run.mat].conductivity
+
         if self._hy_edge_runs is not None:
             print('Calculating Hy mesh values.')
-            self._mesh_hy_density = np.zeros(shape=(self._x_dim, \
-                                                    self._y_dim, \
-                                                    self._z_dim))
-            self._mesh_hy_sigma = np.zeros(shape=(self._x_dim, \
-                                                  self._y_dim, \
-                                                  self._z_dim))
+            self._mesh_hy_density = np.empty((self._x_dim, \
+                                              self._y_dim, \
+                                              self._z_dim))
+            self._mesh_hy_sigma = np.empty((self._x_dim, \
+                                            self._y_dim, \
+                                            self._z_dim))
+            self._mesh_hy_density[:] = np.NAN
+            self._mesh_hy_sigma[:] = np.NAN
+            # set Hy material properties
+            for edge_run in self._hy_edge_runs:
+                for index in range(edge_run.y_ind, edge_run.stop_ind):
+                    if edge_run.mat >= 2:
+                        self._mesh_hy_density[edge_run.x_ind, index, edge_run.z_ind] = self._materials_list[edge_run.mat].density
+                        self._mesh_hy_sigma[edge_run.x_ind, index, edge_run.z_ind] = self._materials_list[edge_run.mat].conducivity
+
         if self._hz_edge_runs is not None:
             print('Calculating Hz mesh values.')
-            self._mesh_hz_density = np.zeros(shape=(self._x_dim, \
-                                                    self._y_dim, \
-                                                    self._z_dim))
-            self._mesh_hz_sigma = np.zeros(shape=(self._x_dim, \
-                                                  self._y_dim, \
-                                                  self._z_dim))
+            self._mesh_hz_density = np.empty((self._x_dim, \
+                                              self._y_dim, \
+                                              self._z_dim))
+            self._mesh_hz_sigma = np.empty((self._x_dim, \
+                                            self._y_dim, \
+                                            self._z_dim))
+            self._mesh_hz_density[:] = np.NAN
+            self._mesh_hz_sigma[:] = np.NAN
+            # set Hz material properties
+            for edge_run in self._hz_edge_runs:
+                for index in range(edge_run.z_ind, edge_run.stop_ind):
+                    if edge_run.mat >= 2:
+                        self._mesh_hz_density[edge_run.x_ind, edge_run.y_ind, index] = self._materials_list[edge_run.mat].density
+                        self._mesh_hz_sigma[edge_run.x_ind, edge_run.y_ind, index] = self._materials_list[edge_run.mat].conducivity
 
     def export_mesh_data(self, file_name):
         """Export mesh data to matlab file."""

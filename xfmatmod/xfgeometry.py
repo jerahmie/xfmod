@@ -137,8 +137,8 @@ class XFGeometry:
             mat_fs = self._mat_free_space.search(self._geom_info)
             self._materials.append(XFMaterial())
             self._materials[0].name = mat_fs.group(1)
-            self._materials[0].conductivity = mat_fs.group(3)
-            self._materials[0].density = mat_fs.group(5)
+            self._materials[0].conductivity = float(mat_fs.group(3))
+            self._materials[0].density = float(mat_fs.group(5))
 
             # load PEC (always material 1)
             mat_pec = self._mat_pec.search(self._geom_info)
@@ -150,8 +150,8 @@ class XFGeometry:
             for mat_index in range(len(mat1)):
                 self._materials.append(XFMaterial())
                 self._materials[-1].name = mat1[mat_index][self.NAME]
-                self._materials[-1].conductivity = mat1[mat_index][self.CONDUCTIVITY]
-                self._materials[-1].density = mat1[mat_index][self.DENSITY]
+                self._materials[-1].conductivity = float(mat1[mat_index][self.CONDUCTIVITY])
+                self._materials[-1].density = float(mat1[mat_index][self.DENSITY])
             print("Done loading materials.")
         else:
             print("Could not find file: ", self._file_name)
@@ -212,10 +212,10 @@ class XFGeometry:
         print("\nMaterials: ")
         for mat_index in range(len(self._materials)):
             print("\n            Name: " + self._materials[mat_index].name)
-            print("         Density: " + \
-                  self._materials[mat_index].density + \
+            print("         Density: ", \
+                  self._materials[mat_index].density, \
                   " (kg/m^3)")
-            print("    Conductivity: " + \
-                  self._materials[mat_index].conductivity + \
+            print("    Conductivity: ",  \
+                  self._materials[mat_index].conductivity,  \
                   " (S/m) ")
             print("\n")
