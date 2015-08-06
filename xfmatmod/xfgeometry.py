@@ -10,7 +10,7 @@ from __future__ import (absolute_import, division, generators,
 import re, os
 from xfmatmod import XFGridData, XFMaterial
 
-class XFGeometry:
+class XFGeometry(object):
     """A class to hold coil geometry info."""
     NAME = 0
     MATERIAL_NUMBER = 1

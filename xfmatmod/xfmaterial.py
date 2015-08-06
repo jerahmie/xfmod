@@ -6,7 +6,7 @@ Class to store materials extracted from XFdtd geometry.input
 from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 
-class XFMaterial:
+class XFMaterial(object):
     """Class to store material properties"""
 
     def __init__(self):

@@ -7,7 +7,7 @@ from __future__ import (absolute_import, division, generators,
 from scipy.io import savemat
 import numpy as np
 
-class XFGridExporter:
+class XFGridExporter(object):
     """Export grid and mesh info."""
     def __init__(self):
         self._x_dim = 0

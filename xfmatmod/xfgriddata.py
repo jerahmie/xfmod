@@ -5,7 +5,7 @@ Class to store grid data extracted from XFdtd geometry.input
 from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 
-class XFGridData:
+class XFGridData(object):
     """Class to store grid data properties."""
 
     def __init__(self):

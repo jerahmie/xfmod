@@ -9,7 +9,7 @@ from __future__ import (absolute_import, division, generators,
 from pathlib import Path
 import os, struct
 
-class XFMeshEdgeRun:
+class XFMeshEdgeRun(object):
     """
     XFMeshEdgeRun: class to hold edge run data.
     """
@@ -153,7 +153,7 @@ def read_edge_run_data(file_handle, num_edge_runs):
     return edge_runs
 
 
-class XFMesh:
+class XFMesh(object):
     """
     Process mesh.input file
     """
