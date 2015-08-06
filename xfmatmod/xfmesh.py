@@ -229,7 +229,6 @@ class XFMesh(object):
                       "indicator not zeros")
                 return
             # Number of Ex edge runs
-            print(self._edge_run_fmt, self._edge_run_bytes)
             self._num_ex_edge_runs = struct.unpack(self._edge_run_fmt, \
                                      file_handle.read(self._edge_run_bytes))[0]
             # Number of Ey edge runs
@@ -287,22 +286,18 @@ class XFMesh(object):
         """Read Edge run data"""
         file_handle = open(self._file_path, 'rb')
         file_handle.seek(self._start_ex_edge_run)
-        print(file_handle.tell())
         # read Ex edges
         if self._num_ex_edge_runs > 0:
             self._ex_edge_runs = read_edge_run_data(file_handle, \
                                                     self._num_ex_edge_runs)
-
         # read Ey edges
         if self._num_ey_edge_runs > 0:
             self._ey_edge_runs = read_edge_run_data(file_handle, \
                                                     self._num_ey_edge_runs)
-
         # read Ez edges
         if self._num_ez_edge_runs > 0:
             self._ez_edge_runs = read_edge_run_data(file_handle, \
                                                     self._num_ez_edge_runs)
-
         # read Hx edges
         if self._num_hx_edge_runs > 0:
             self._hx_edge_runs = read_edge_run_data(file_handle, \
@@ -315,7 +310,6 @@ class XFMesh(object):
         if self._num_hz_edge_runs > 0:
             self._hz_edge_runs = read_edge_run_data(file_handle, \
                                                     self._num_hz_edge_runs)
-
         # Averaged material definitions
         # this is not implemented yet.
         file_handle.close()

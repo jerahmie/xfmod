@@ -227,7 +227,7 @@ class XFGridExporter(object):
             self._mesh_ex_epsilon_r[:] = np.NAN
             for edge_run in self._ex_edge_runs:
                 for index in range(edge_run.x_ind, edge_run.stop_ind):
-                    if edge_run.mat >= 2:
+                    if edge_run.mat != 1:
                         self._mesh_ex_density[index, edge_run.y_ind, \
                             edge_run.z_ind] = \
                             self._materials_list[edge_run.mat].density
@@ -255,7 +255,7 @@ class XFGridExporter(object):
             self._mesh_ey_epsilon_r[:] = np.NAN
             for edge_run in self._ey_edge_runs:
                 for index in range(edge_run.y_ind, edge_run.stop_ind):
-                    if edge_run.mat >= 2:
+                    if edge_run.mat != 1:
                         self._mesh_ey_density[edge_run.x_ind, \
                             index, edge_run.z_ind] = \
                             self._materials_list[edge_run.mat].density
@@ -283,14 +283,14 @@ class XFGridExporter(object):
             self._mesh_ez_epsilon_r[:] = np.NAN
             for edge_run in self._ez_edge_runs:
                 for index in range(edge_run.z_ind, edge_run.stop_ind):
-                    if edge_run.mat >= 2:
+                    if edge_run.mat != 1:
                         self._mesh_ez_density[edge_run.x_ind, \
                             edge_run.y_ind, index] = \
                             self._materials_list[edge_run.mat].density
                         self._mesh_ez_sigma[edge_run.x_ind, \
                             edge_run.y_ind, index] = \
                             self._materials_list[edge_run.mat].conductivity
-                        self._mesh_ez_density[edge_run.x_ind, \
+                        self._mesh_ez_epsilon_r[edge_run.x_ind, \
                             edge_run.y_ind, index] = \
                             self._materials_list[edge_run.mat].epsilon_r
 
@@ -307,7 +307,7 @@ class XFGridExporter(object):
             self._mesh_hx_sigma[:] = np.NAN
             for edge_run in self._hx_edge_runs:
                 for index in range(edge_run.x_ind, edge_run.stop_ind):
-                    if edge_run.mat >= 2:
+                    if edge_run.mat != 1:
                         self._mesh_hx_density[index, \
                             edge_run.y_ind, edge_run.z_ind] = \
                             self._materials_list[edge_run.mat].density
@@ -329,7 +329,7 @@ class XFGridExporter(object):
 
             for edge_run in self._hy_edge_runs:
                 for index in range(edge_run.y_ind, edge_run.stop_ind):
-                    if edge_run.mat >= 2:
+                    if edge_run.mat != 1:
                         self._mesh_hy_density[edge_run.x_ind, \
                             index, edge_run.z_ind] = \
                             self._materials_list[edge_run.mat].density
@@ -350,7 +350,7 @@ class XFGridExporter(object):
             self._mesh_hz_sigma[:] = np.NAN
             for edge_run in self._hz_edge_runs:
                 for index in range(edge_run.z_ind, edge_run.stop_ind):
-                    if edge_run.mat >= 2:
+                    if edge_run.mat != 1:
                         self._mesh_hz_density[edge_run.x_ind, \
                             edge_run.y_ind, index] = \
                             self._materials_list[edge_run.mat].density
