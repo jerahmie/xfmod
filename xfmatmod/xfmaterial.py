@@ -12,11 +12,12 @@ class XFMaterial(object):
     def __init__(self):
         self._name = ''
         self._conductivity = ''
-        self._density = ""
+        self._density = ''
+        self._epsilon_r = ''
 
     @property
     def name(self):
-        """Returns material name."""
+        """Return material name."""
         return self._name
 
     @name.setter
@@ -28,6 +29,7 @@ class XFMaterial(object):
     def name(self):
         """Delete material name."""
         del self._name
+        self._name = ''
 
     @property
     def conductivity(self):
@@ -43,6 +45,7 @@ class XFMaterial(object):
     def conductivity(self):
         """Delete material conductivity."""
         del self._conductivity
+        self._conductivity = ''
 
     @property
     def density(self):
@@ -58,3 +61,20 @@ class XFMaterial(object):
     def density(self):
         """Delete material density."""
         del self._density
+        self._density = ''
+
+    @property
+    def epsilon_r(self):
+        """Return the material relative permittivity."""
+        return self._epsilon_r
+
+    @epsilon_r.setter
+    def epsilon_r(self, value):
+        """Set the material relative permittivity."""
+        self._epsilon_r = value
+
+    @epsilon_r.deleter
+    def epsilon_r(self):
+        """Delete material relative permittivity."""
+        del self._epsilon_r
+        self._epsilon_r = ''

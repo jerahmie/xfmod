@@ -29,12 +29,18 @@ class XFGridExporter(object):
         self._mesh_ex_sigma = None
         self._mesh_ey_sigma = None
         self._mesh_ez_sigma = None
+        self._mesh_ex_epsilon_r = None
+        self._mesh_ey_epsilon_r = None
+        self._mesh_ez_epsilon_r = None
         self._mesh_hx_density = None
         self._mesh_hy_density = None
         self._mesh_hz_density = None
         self._mesh_hx_sigma = None
         self._mesh_hy_sigma = None
         self._mesh_hz_sigma = None
+        self._mesh_hx_epsilon_r = None
+        self._mesh_hy_epsilon_r = None
+        self._mesh_hz_epsilon_r = None
 
     @property
     def grid_x(self):
@@ -210,11 +216,15 @@ class XFGridExporter(object):
                                               self._y_dim, \
                                               self._z_dim))
 
-            self._mesh_ex_sigma = np.empty(shape=(self._x_dim, \
-                                                  self._y_dim, \
-                                                  self._z_dim))
+            self._mesh_ex_sigma = np.empty((self._x_dim, \
+                                            self._y_dim, \
+                                            self._z_dim))
+            self._mesh_ex_epsilon_r = np.empty((self._x_dim, \
+                                                self._y_dim, \
+                                                self._z_dim))
             self._mesh_ex_density[:] = np.NAN
             self._mesh_ex_sigma[:] = np.NAN
+            self._mesh_ex_epsilon_r[:] = np.NAN
             for edge_run in self._ex_edge_runs:
                 for index in range(edge_run.x_ind, edge_run.stop_ind):
                     if edge_run.mat >= 2:
@@ -224,6 +234,9 @@ class XFGridExporter(object):
                         self._mesh_ex_sigma[index, edge_run.y_ind, \
                             edge_run.z_ind] = \
                             self._materials_list[edge_run.mat].conductivity
+                        self._mesh_ex_epsilon_r[index, edge_run.y_ind, \
+                            edge_run.z_ind] = \
+                            self._materials_list[edge_run.mat].epsilon_r
 
         # set Ey material properties
         if self._ey_edge_runs is not None:
@@ -234,8 +247,12 @@ class XFGridExporter(object):
             self._mesh_ey_sigma = np.empty((self._x_dim, \
                                             self._y_dim, \
                                             self._z_dim))
+            self._mesh_ey_epsilon_r = np.empty((self._x_dim, \
+                                                self._y_dim, \
+                                                self._z_dim))
             self._mesh_ey_density[:] = np.NAN
             self._mesh_ey_sigma[:] = np.NAN
+            self._mesh_ey_epsilon_r[:] = np.NAN
             for edge_run in self._ey_edge_runs:
                 for index in range(edge_run.y_ind, edge_run.stop_ind):
                     if edge_run.mat >= 2:
@@ -245,7 +262,9 @@ class XFGridExporter(object):
                         self._mesh_ey_sigma[edge_run.x_ind, \
                             index, edge_run.z_ind] = \
                             self._materials_list[edge_run.mat].conductivity
-
+                        self._mesh_ey_epsilon_r[edge_run.x_ind, \
+                            index, edge_run.z_ind] = \
+                            self._materials_list[edge_run.mat].epsilon_r
 
         # set Ez material properties
         if self._ez_edge_runs is not None:
@@ -256,8 +275,12 @@ class XFGridExporter(object):
             self._mesh_ez_sigma = np.empty((self._x_dim, \
                                             self._y_dim, \
                                             self._z_dim))
+            self._mesh_ez_epsilon_r = np.empty((self._x_dim, \
+                                                self._y_dim, \
+                                                self._z_dim))
             self._mesh_ez_density[:] = np.NAN
             self._mesh_ez_sigma[:] = np.NAN
+            self._mesh_ez_epsilon_r[:] = np.NAN
             for edge_run in self._ez_edge_runs:
                 for index in range(edge_run.z_ind, edge_run.stop_ind):
                     if edge_run.mat >= 2:
@@ -267,6 +290,9 @@ class XFGridExporter(object):
                         self._mesh_ez_sigma[edge_run.x_ind, \
                             edge_run.y_ind, index] = \
                             self._materials_list[edge_run.mat].conductivity
+                        self._mesh_ez_density[edge_run.x_ind, \
+                            edge_run.y_ind, index] = \
+                            self._materials_list[edge_run.mat].epsilon_r
 
         # set Hx material properties
         if self._hx_edge_runs is not None:
@@ -341,18 +367,27 @@ class XFGridExporter(object):
         if self._mesh_ex_sigma is not None:
             print('Adding MeshExSigma to export mat file.')
             export_dict['MeshExSigma'] = self._mesh_ex_sigma
+        if self._mesh_ex_epsilon_r is not None:
+            print('Adding MeshExEpsilon_r to export mat file.')
+            export_dict['MeshExEpsilon_r'] = self._mesh_ex_epsilon_r
         if self._mesh_ey_density is not None:
             print('Adding MeshEyDensity to export mat file.')
             export_dict['MeshEyDensity'] = self._mesh_ey_density
         if self._mesh_ey_sigma is not None:
             print('Adding MeshEySigma to export mat file.')
             export_dict['MeshEySigma'] = self._mesh_ey_sigma
+        if self._mesh_ey_epsilon_r is not None:
+            print('Adding MeshEyEpsilon_r to export mat file.')
+            export_dict['MeshEyEpsilon_r'] = self._mesh_ey_epsilon_r
         if self._mesh_ez_density is not None:
             print('Adding MeshEzDensity to export mat file.')
             export_dict['MeshEzDensity'] = self._mesh_ez_density
-        if self._mesh_ey_sigma is not None:
+        if self._mesh_ez_sigma is not None:
             print('Adding MeshEzSigma to export mat file.')
             export_dict['MeshEzSigma'] = self._mesh_ez_sigma
+        if self._mesh_ez_epsilon_r is not None:
+            print('Adding MeshEzEpsilon_r to export mat file.')
+            export_dict['MeshEzEpsilon_r'] = self._mesh_ez_epsilon_r
         if self._mesh_hx_density is not None:
             print('Adding MeshHxDensity to export mat file.')
             export_dict['MeshHxDensity'] = self._mesh_hx_density
@@ -371,6 +406,15 @@ class XFGridExporter(object):
         if self._mesh_hz_sigma is not None:
             print('Adding MeshHzSigma to export mat file.')
             export_dict['MeshHzSigma'] = self._mesh_hz_sigma
+        if self._grid_x is not None:
+            print('Adding grid_X to export mat file.')
+            export_dict['grid_X'] = self._grid_x
+        if self._grid_y is not None:
+            print('Adding grid_Y to export mat file.')
+            export_dict['grid_Y'] = self._grid_y
+        if self._grid_z is not None:
+            print('Adding grid_Z to export mat file.')
+            export_dict['grid_Z'] = self._grid_z
 
         # writing data to mat file (file_name)
         print("Saving mesh data to Mat file.")

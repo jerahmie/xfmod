@@ -138,7 +138,9 @@ class XFGeometry(object):
             self._materials.append(XFMaterial())
             self._materials[0].name = mat_fs.group(1)
             self._materials[0].conductivity = float(mat_fs.group(3))
+            self._materials[0].epsilon_r = float(mat_fs.group(4))
             self._materials[0].density = float(mat_fs.group(5))
+
 
             # load PEC (always material 1)
             mat_pec = self._mat_pec.search(self._geom_info)
@@ -152,6 +154,7 @@ class XFGeometry(object):
                 self._materials[-1].name = mat1[mat_index][self.NAME]
                 self._materials[-1].conductivity = float(mat1[mat_index][self.CONDUCTIVITY])
                 self._materials[-1].density = float(mat1[mat_index][self.DENSITY])
+                self._materials[-1].epsilon_r = float(mat1[mat_index][self.PERMITTIVITY])
             print("Done loading materials.")
         else:
             print("Could not find file: ", self._file_name)
