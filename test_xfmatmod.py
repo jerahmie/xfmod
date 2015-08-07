@@ -35,6 +35,7 @@ def main(argv):
     xf_export.hy_edge_runs = xf_mesh.hy_edge_runs
     xf_export.hz_edge_runs = xf_mesh.hz_edge_runs
 
+    xf_export.units = 'cm'
     xf_export.set_mesh_data()
     xf_export.export_mesh_data('test.mat')
 

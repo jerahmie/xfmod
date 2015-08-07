@@ -1,4 +1,7 @@
-"""XFGridExporter: class to export grid and mesh information."""
+"""
+XFGridExporter: class to export grid and mesh information.
+This class constructs the numpy matrices and writes them to a mat file.
+"""
 
 # Ensure python 2 and 3 compatibility
 from __future__ import (absolute_import, division, generators,
@@ -13,6 +16,8 @@ class XFGridExporter(object):
         self._x_dim = 0
         self._y_dim = 0
         self._z_dim = 0
+        self._export_units = 'm'          # grid/mesh units (default = meters)
+        self._export_units_scale = 1.0    # scale factor (meters = 1.0)
         self._materials_list = None
         self._grid_x = None
         self._grid_y = None
@@ -43,13 +48,47 @@ class XFGridExporter(object):
         self._mesh_hz_epsilon_r = None
 
     @property
+    def units(self):
+        """Return export grid/mesh units."""
+        return self._export_units
+
+    @units.setter
+    def units(self,value):
+        """Set the export grid/mesh units."""
+        if value == 'm':
+            self._export_units = 'm'
+            self._export_units_scale = 1.0
+        elif value == 'mm':
+            self._export_units = 'mm'
+            self._export_units_scale = 1000.0
+        elif value == 'cm':
+            self._export_units = 'cm'
+            self._export_units_scale = 100.0
+        elif value == 'um':
+            self._export_units = 'um'
+            self._export_units_scale = 1.0e6
+        elif value == 'nm':
+            self._export_units = 'nm'
+            self._export_units_scale = 1.0e9
+        elif (value == 'inches') or (value == 'in'):
+            self._export_units = 'inches'
+            self._export_units_scale = 39.2701
+        else:
+            print('Invalid unit type: ', value)
+        
+    @property
+    def units_scale_factor(self):
+        """Return the grid and meshing scale factor."""
+        return self._units_scale_factor
+
+    @property
     def grid_x(self):
-        """Return X grid values."""
+        """Return X grid values (m)."""
         return self._grid_x
 
     @grid_x.setter
     def grid_x(self, value):
-        """Set X grid values."""
+        """Set X grid values (m)."""
         self._grid_x = value
         self._x_dim = len(self._grid_x)
 
@@ -62,12 +101,12 @@ class XFGridExporter(object):
 
     @property
     def grid_y(self):
-        """Return Y grid values."""
+        """Return Y grid values (m)."""
         return self._grid_y
 
     @grid_y.setter
     def grid_y(self, value):
-        """Set Y grid values."""
+        """Set Y grid values (m)."""
         self._grid_y = value
         self._y_dim = len(self._grid_y)
 
@@ -80,12 +119,12 @@ class XFGridExporter(object):
 
     @property
     def grid_z(self):
-        """Return Z grid values."""
+        """Return Z grid values (m)."""
         return self._grid_z
 
     @grid_z.setter
     def grid_z(self, value):
-        """Set Z grid values."""
+        """Set Z grid values (m)."""
         self._grid_z = value
         self._z_dim = len(self._grid_z)
 
@@ -209,6 +248,8 @@ class XFGridExporter(object):
 
     def set_mesh_data(self):
         """Set mesh data from edge run data."""
+        print('Setting mesh/grid data.')
+        print('Mesh Units: ', self._export_units)
         # set Ex material properties
         if self._ex_edge_runs is not None:
             print('Calculating Ex mesh values.')
@@ -411,13 +452,14 @@ class XFGridExporter(object):
             export_dict['MeshHzSigma'] = self._mesh_hz_sigma
         if self._grid_x is not None:
             print('Adding grid_X to export mat file.')
-            export_dict['grid_X'] = self._grid_x
+            export_dict['grid_X'] = [x*self._export_units_scale for x in self._grid_x] 
         if self._grid_y is not None:
             print('Adding grid_Y to export mat file.')
-            export_dict['grid_Y'] = self._grid_y
+            export_dict['grid_Y'] = [x*self._export_units_scale for x in self._grid_y]
         if self._grid_z is not None:
             print('Adding grid_Z to export mat file.')
-            export_dict['grid_Z'] = self._grid_z
+            export_dict['grid_Z'] = [x*self._export_units_scale for x in self._grid_z]
+            export_dict['units'] = self._export_units
 
         # writing data to mat file (file_name)
         print("Saving mesh data to Mat file.")
