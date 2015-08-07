@@ -223,7 +223,7 @@ class XFGridExporter(object):
                                                 self._y_dim, \
                                                 self._z_dim))
             # initialize to freespace
-            self._mesh_ex_density[:] = self._materials_list[0].density
+            self._mesh_ex_density[:] = np.NAN
             self._mesh_ex_sigma[:] = self._materials_list[0].conductivity
             self._mesh_ex_epsilon_r[:] = self._materials_list[0].epsilon_r
             for edge_run in self._ex_edge_runs:
@@ -252,7 +252,7 @@ class XFGridExporter(object):
                                                 self._y_dim, \
                                                 self._z_dim))
             # initialize to freespace
-            self._mesh_ey_density[:] = self._materials_list[0].density
+            self._mesh_ey_density[:] = np.NAN
             self._mesh_ey_sigma[:] = self._materials_list[0].conductivity
             self._mesh_ey_epsilon_r[:] = self._materials_list[0].epsilon_r
             for edge_run in self._ey_edge_runs:
@@ -281,7 +281,7 @@ class XFGridExporter(object):
                                                 self._y_dim, \
                                                 self._z_dim))
             # initialize to freespace
-            self._mesh_ez_density[:] = self._materials_list[0].density
+            self._mesh_ez_density[:] = np.NAN
             self._mesh_ez_sigma[:] = self._materials_list[0].conductivity
             self._mesh_ez_epsilon_r[:] = self._materials_list[0].epsilon_r
             for edge_run in self._ez_edge_runs:

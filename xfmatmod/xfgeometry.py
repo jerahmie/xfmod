@@ -214,7 +214,7 @@ class XFGeometry(object):
         """Print materials in data structure"""
         print("\nMaterials: ")
         for mat_index in range(len(self._materials)):
-            print("\n                 Name: " + \
+            print("                   Name: " + \
                   self._materials[mat_index].name)
             print("                Density: ", \
                   self._materials[mat_index].density, \
@@ -224,4 +224,3 @@ class XFGeometry(object):
                   " (S/m) ")
             print(" Relaltive Permittivity: ", \
                   self._materials[mat_index].epsilon_r)
-            print("\n")
