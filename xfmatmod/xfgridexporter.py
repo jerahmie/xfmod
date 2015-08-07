@@ -266,7 +266,8 @@ class XFGridExporter(object):
             # initialize to freespace
             self._mesh_ex_density[:] = np.NAN
             self._mesh_ex_sigma[:] = self._materials_list[0].conductivity
-            # self._mesh_ex_epsilon_r[:] = self._materials_list[0].epsilon_r
+            # relative permittivity is set to zero for PEC values (mat type 1)
+            # free space (mat type 0) or material permittivity for all others.
             self._mesh_ex_epsilon_r[:] = 0.0
             for edge_run in self._ex_edge_runs:
                 for index in range(edge_run.x_ind, edge_run.stop_ind):
@@ -277,6 +278,7 @@ class XFGridExporter(object):
                         self._mesh_ex_sigma[edge_run.z_ind, edge_run.y_ind, \
                             index] = \
                             self._materials_list[edge_run.mat].conductivity
+                    if edge_run.mat != 1:
                         self._mesh_ex_epsilon_r[edge_run.z_ind, \
                             edge_run.y_ind, index] = \
                             self._materials_list[edge_run.mat].epsilon_r
@@ -296,7 +298,8 @@ class XFGridExporter(object):
             # initialize to freespace
             self._mesh_ey_density[:] = np.NAN
             self._mesh_ey_sigma[:] = self._materials_list[0].conductivity
-            # self._mesh_ey_epsilon_r[:] = self._materials_list[0].epsilon_r
+            # relative permittivity is set to zero for PEC values (mat type 1)
+            # free space (mat type 0) or material permittivity for all others.
             self._mesh_ey_epsilon_r[:] = 0.0
             for edge_run in self._ey_edge_runs:
                 for index in range(edge_run.y_ind, edge_run.stop_ind):
@@ -307,6 +310,7 @@ class XFGridExporter(object):
                         self._mesh_ey_sigma[edge_run.z_ind, \
                             index, edge_run.x_ind] = \
                             self._materials_list[edge_run.mat].conductivity
+                    if edge_run.mat != 1:
                         self._mesh_ey_epsilon_r[edge_run.z_ind, \
                             index, edge_run.x_ind] = \
                             self._materials_list[edge_run.mat].epsilon_r
@@ -326,7 +330,8 @@ class XFGridExporter(object):
             # initialize to freespace
             self._mesh_ez_density[:] = np.NAN
             self._mesh_ez_sigma[:] = self._materials_list[0].conductivity
-            # self._mesh_ez_epsilon_r[:] = self._materials_list[0].epsilon_r
+            # relative permittivity is set to zero for PEC values (mat type 1)
+            # free space (mat type 0) or material permittivity for all others.
             self._mesh_ez_epsilon_r[:] = 0.0
             for edge_run in self._ez_edge_runs:
                 for index in range(edge_run.z_ind, edge_run.stop_ind):
@@ -337,6 +342,7 @@ class XFGridExporter(object):
                         self._mesh_ez_sigma[index, \
                             edge_run.y_ind, edge_run.x_ind] = \
                             self._materials_list[edge_run.mat].conductivity
+                    if edge_run.mat != 1:
                         self._mesh_ez_epsilon_r[index, \
                             edge_run.y_ind, edge_run.x_ind] = \
                             self._materials_list[edge_run.mat].epsilon_r
