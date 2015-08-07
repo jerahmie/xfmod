@@ -266,7 +266,8 @@ class XFGridExporter(object):
             # initialize to freespace
             self._mesh_ex_density[:] = np.NAN
             self._mesh_ex_sigma[:] = self._materials_list[0].conductivity
-            self._mesh_ex_epsilon_r[:] = self._materials_list[0].epsilon_r
+            # self._mesh_ex_epsilon_r[:] = self._materials_list[0].epsilon_r
+            self._mesh_ex_epsilon_r[:] = 0.0
             for edge_run in self._ex_edge_runs:
                 for index in range(edge_run.x_ind, edge_run.stop_ind):
                     if edge_run.mat > 1:
@@ -295,7 +296,8 @@ class XFGridExporter(object):
             # initialize to freespace
             self._mesh_ey_density[:] = np.NAN
             self._mesh_ey_sigma[:] = self._materials_list[0].conductivity
-            self._mesh_ey_epsilon_r[:] = self._materials_list[0].epsilon_r
+            # self._mesh_ey_epsilon_r[:] = self._materials_list[0].epsilon_r
+            self._mesh_ey_epsilon_r[:] = 0.0
             for edge_run in self._ey_edge_runs:
                 for index in range(edge_run.y_ind, edge_run.stop_ind):
                     if edge_run.mat > 1:
@@ -324,7 +326,8 @@ class XFGridExporter(object):
             # initialize to freespace
             self._mesh_ez_density[:] = np.NAN
             self._mesh_ez_sigma[:] = self._materials_list[0].conductivity
-            self._mesh_ez_epsilon_r[:] = self._materials_list[0].epsilon_r
+            # self._mesh_ez_epsilon_r[:] = self._materials_list[0].epsilon_r
+            self._mesh_ez_epsilon_r[:] = 0.0
             for edge_run in self._ez_edge_runs:
                 for index in range(edge_run.z_ind, edge_run.stop_ind):
                     if edge_run.mat > 1:
