@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 """
-Test xfmatmod
+Test xfgeomod
 """
 
 from __future__ import (absolute_import, division, 
                         print_function, unicode_literals)
 import sys, os
-import xfmatmod
+import xfgeomod
 
 def main(argv):
     # Load XFdtd Geometry info

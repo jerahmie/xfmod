@@ -8,7 +8,7 @@ from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 
 import re, os
-from xfmatmod import XFGridData, XFMaterial
+from xfgeomod import XFGridData, XFMaterial
 
 class XFGeometry(object):
     """A class to hold coil geometry info."""
