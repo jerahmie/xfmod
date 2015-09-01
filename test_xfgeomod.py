@@ -11,8 +11,8 @@ import xfgeomod
 def main(argv):
     # Load XFdtd Geometry info
     fpath = argv
-    xf_geom = xfmatmod.XFGeometry()
-    xf_export = xfmatmod.XFGridExporter()
+    xf_geom = xfgeomod.XFGeometry()
+    xf_export = xfgeomod.XFGridExporter()
     xf_geom.file_path = fpath
     xf_export.materials_list = xf_geom.load_materials()
     xf_geom.load_grid_data()
@@ -23,7 +23,7 @@ def main(argv):
     #xf_geom.print_grid_data()
 
     # Load XFdtd Mesh data file
-    xf_mesh = xfmatmod.XFMesh()
+    xf_mesh = xfgeomod.XFMesh()
     xf_mesh.file_path = fpath
     xf_mesh.read_mesh_header()
     #xf_mesh.dump_header_info()

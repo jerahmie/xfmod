@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 """
-Test xfmatmod
+Convert XFdtd geometry.input and material.input data to Mat file format.
 """
 
 from __future__ import (absolute_import, division, 
                         print_function, unicode_literals)
 import sys, os
-import xfmatmod
+import xfgeomod
 
 def main(input_path, output_path):
     # Load XFdtd Geometry info
-    xf_geom = xfmatmod.XFGeometry()
-    xf_export = xfmatmod.XFGridExporter()
+    xf_geom = xfgeomod.XFGeometry()
+    xf_export = xfgeomod.XFGridExporter()
     xf_geom.file_path = input_path
     xf_export.materials_list = xf_geom.load_materials()
     xf_geom.load_grid_data()
@@ -22,7 +22,7 @@ def main(input_path, output_path):
     #xf_geom.print_grid_data()
 
     # Load XFdtd Mesh data file
-    xf_mesh = xfmatmod.XFMesh()
+    xf_mesh = xfgeomod.XFMesh()
     xf_mesh.file_path = input_path
     xf_mesh.read_mesh_header()
     #xf_mesh.dump_header_info()
