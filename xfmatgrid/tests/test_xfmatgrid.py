@@ -15,16 +15,16 @@ sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
 from xfmatgrid import XFFieldNonUniformGrid
 
+TEST_PROJECT_DIR = os.path.realpath(os.path.relpath(os.path.join('..','..','Test_Data','Test_Coil.xf')))
+
 class TestXFMatGrid(unittest.TestCase):
     """Tests for xfmatgrid module."""
     def setUp(self):
-        self.grid = XFFieldNonUniformGrid
+        self.grid = XFFieldNonUniformGrid()
     
-    def test_units(self):
-        self.grid.units = 'm'
-        self.assertEqual('m', self.grid.units)
-
-    
+    def test_project_file(self):
+        self.grid.project_dir = TEST_PROJECT_DIR
+        self.assertEqual(TEST_PROJECT_DIR, self.grid.units)
 
     def tearDown(self):
         pass

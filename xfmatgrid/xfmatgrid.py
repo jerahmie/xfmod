@@ -25,3 +25,4 @@ class XFFieldNonUniformGrid(object):
         """Set the grid units."""
         self._grid_units = units
         
+
