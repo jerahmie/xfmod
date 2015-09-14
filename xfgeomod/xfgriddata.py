@@ -6,7 +6,7 @@ from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 
 class XFGridData(object):
-    """Class to store grid data properties."""
+    """XFdtd project grid data property class."""
 
     def __init__(self):
         self._origin_x = 0

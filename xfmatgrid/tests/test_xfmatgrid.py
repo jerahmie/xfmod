@@ -3,25 +3,31 @@
 Test xfmatgrid module.
 """
 
-from __future__ import(absolute_import, division,
-                       print_function, unicode_literals)
+from __future__ import(division, print_function, unicode_literals)
 
+import sys, os
 import unittest
 
+PACKAGE_PARENT = '..'
+SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), 
+                                            os.path.expanduser(__file__))))
+sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+
+from xfmatgrid import XFFieldNonUniformGrid
 
 class TestXFMatGrid(unittest.TestCase):
     """Tests for xfmatgrid module."""
-    #def setUp(self):
-    #
+    def setUp(self):
+        self.grid = XFFieldNonUniformGrid
     
-    def test_add(self):
-        a=3
-        b=5
-        result=a+b
-        self.assertEqual(8,result)
+    def test_units(self):
+        self.grid.units = 'm'
+        self.assertEqual('m', self.grid.units)
 
-    #def tearDown(self):
-    #
+    
+
+    def tearDown(self):
+        pass
     
 if __name__ == '__main__':
     unittest.main()
