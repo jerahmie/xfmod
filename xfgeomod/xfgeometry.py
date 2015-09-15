@@ -35,7 +35,7 @@ class XFGeometry(object):
                           r'end_<electricperfectconductor>'
 
     _MAT_NORMALELECTRIC_PATTERN = r'^begin_<normal_electric>\s*' + \
-                                     r'([\w\s\d\-\(\)]+)\s*\n' + \
+                                     r'(["\w\s\d\-\(\)]+)\s*\n' + \
                                      r'material_number (\d+)\n' + \
                                      r'conductivity ([\d\-eE.]*)\n'+ \
                                      r'uncorrected_conductivity ' + \
@@ -149,9 +149,11 @@ class XFGeometry(object):
 
             # load normal electric values
             mat1 = self._mat_norm_electric.findall(self._geom_info)
+            print('len(mat1): ', len(mat1))
             for mat_index in range(len(mat1)):
                 self._materials.append(XFMaterial())
                 self._materials[-1].name = mat1[mat_index][self.NAME]
+                print(self._materials[-1].name)
                 self._materials[-1].conductivity = float(mat1[mat_index][self.CONDUCTIVITY])
                 self._materials[-1].density = float(mat1[mat_index][self.DENSITY])
                 self._materials[-1].epsilon_r = float(mat1[mat_index][self.PERMITTIVITY])
