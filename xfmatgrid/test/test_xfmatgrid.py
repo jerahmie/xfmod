@@ -3,9 +3,11 @@
 Test xfmatgrid module.
 """
 
-from __future__ import(division, print_function, unicode_literals)
+from __future__ import(absolute_import, division, generators,
+                       print_function, unicode_literals)
 
 import sys, os
+import struct
 import unittest
 
 PACKAGE_PARENT = '..'
@@ -25,8 +27,8 @@ MULTIPOINT_SENSOR_FILE = os.path.realpath(os.path.join(TEST_PROJECT_DIR,
 class TestXFMatGrid(unittest.TestCase):
     """Tests for xfmatgrid module."""
     def setUp(self):
-        self.grid = XFFieldNonUniformGrid()
-        self.grid.sim_id = 1
+        self.field_nugrid = XFFieldNonUniformGrid()
+        self.field_nugrid.sim_id = 1
 
     def test_xf_run_id_to_str(self):
         """Verify XFdtd valid run string composition."""
@@ -49,14 +51,13 @@ class TestXFMatGrid(unittest.TestCase):
         self.assertEqual('999999',xf_sim_id_to_str(999999))
 
     def test_project_file(self):
-        self.grid.project_dir = TEST_PROJECT_DIR
-        self.assertEqual(TEST_PROJECT_DIR, self.grid.project_dir)
-        self.assertEqual(MULTIPOINT_SENSOR_FILE, 
-                         self.grid._multipoint_sensor_files[0])
-        
+        self.field_nugrid.project_dir = TEST_PROJECT_DIR
+        self.assertEqual(TEST_PROJECT_DIR, self.field_nugrid.project_dir)
+        self.assertEqual(MULTIPOINT_SENSOR_FILE,
+                         self.field_nugrid._multipoint_sensor_info_files[0])
 
     def tearDown(self):
         pass
-    
+
 if __name__ == '__main__':
     unittest.main()

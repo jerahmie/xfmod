@@ -15,38 +15,60 @@ class XFFieldNonUniformGrid(object):
     """A class to hold XF field data on non-uniform grid."""
     def __init__(self):
         self._project_dir = ''
-        self._multipoint_sensor_files = []
+        self._multipoint_sensor_info_files = []
         self._run_id = 0
         self._sim_id = 0
-        self._field_type = ''
+        self._field_mask = 0
 
     @property
     def project_dir(self):
         """Return the grid units."""
         return self._project_dir
-    
+
     @project_dir.setter
     def project_dir(self, project_dir):
         """Set the project directory and set sensor file location."""
         self._project_dir = project_dir
         if os.path.exists(self._project_dir):
-            self._multipoint_sensor_files = \
+            self._multipoint_sensor_info_files = \
                     glob(os.path.join(self._project_dir,
-                        'Simulations', 
-                        xf_sim_id_to_str(self._sim_id), 'Run0001', 
+                        'Simulations',
+                        xf_sim_id_to_str(self._sim_id), 'Run0001',
                         'output', '*_info.bin'))
     @property
     def sim_id(self):
         """Return the current simulation id."""
         return self._sim_id
-    
+
     @sim_id.setter
     def sim_id(self, sim_id):
         """Set the Simulation ID."""
         self._sim_id = sim_id
 
-    
-    
+class XFMultiPointInfo(object):
+    """Class to hold MultiPoint file info."""
+    def __init__(self):
+        self._file_path = ''
+        self._header = ''
+        self._version = 0
+        self._field_mask = 0
+        self._num_points = 0
+
+    @property
+    def header(self):
+        """Return multipoint sensor file header."""
+        return self._header
+
+    @property
+    def version(self):
+        """Return the multipoint sensor file version."""
+        return self._version
+
+    def get_multipoint_info(self):
+        """Load multipoint sensor info from file."""
+        file_handle = open('/Data/CMRR/rf_coil_scripts/python/Test_Data/Test_Coil.xf/Simulations/000001/Run0001/output/MultiPoint_Solid_Sensor1_0_info.bin','rb')
+        self._header = str(file_handle.read(4))
+        file_handle.close()
 
 # TODO: Helper functions - refactor to xf_utils/ or similar
 def is_valid_run_id(run_id):
