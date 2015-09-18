@@ -8,6 +8,7 @@ from __future__ import (absolute_import, division, generators,
 
 import os
 from glob import glob
+import struct
 from scipy.io import loadmat, savemat
 import scipy.interpolate as interp
 
@@ -48,10 +49,9 @@ class XFFieldNonUniformGrid(object):
 class XFMultiPointInfo(object):
     """Class to hold MultiPoint file info."""
     def __init__(self):
-        self._file_path = ''
         self._header = ''
         self._version = 0
-        self._field_mask = 0
+        self._fields_mask = 0
         self._num_points = 0
 
     @property
@@ -63,11 +63,25 @@ class XFMultiPointInfo(object):
     def version(self):
         """Return the multipoint sensor file version."""
         return self._version
+    
+    @property
+    def fields_mask(self):
+        return self._fields_mask
 
-    def get_multipoint_info(self):
+    @property
+    def num_points(self):
+        return self._num_points
+
+    def load_multipoint_info(self, file_name):
         """Load multipoint sensor info from file."""
-        file_handle = open('/Data/CMRR/rf_coil_scripts/python/Test_Data/Test_Coil.xf/Simulations/000001/Run0001/output/MultiPoint_Solid_Sensor1_0_info.bin','rb')
-        self._header = str(file_handle.read(4))
+        file_handle = open(file_name,'rb')
+        self._header = file_handle.read(4).decode("utf-8")
+        self._version = struct.unpack('B',file_handle.read(1))[0]
+        self._fields_mask = struct.unpack('I', file_handle.read(4))[0]
+        if self._version == 0:
+            self._num_points = struct.unpack('I',file_handle.read(4))[0]
+        else:
+            self._num_points = struct.unpack('Q',file_handle.read(8))[0]
         file_handle.close()
 
 # TODO: Helper functions - refactor to xf_utils/ or similar
