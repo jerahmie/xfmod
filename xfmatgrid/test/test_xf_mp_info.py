@@ -23,8 +23,7 @@ from xfmatgrid import *
 class TestXFMultiPointInfo(unittest.TestCase):
     """Tests for XF Multipoint sensor info."""
     def setUp(self):
-        self.mp_info = XFMultiPointInfo()
-        self.mp_info.load_multipoint_info(TEST_MP_FILE)
+        self.mp_info = XFMultiPointInfo(TEST_MP_FILE)
         
     def test_header_info(self):
         MP_HEADER = 'Rmpt'

@@ -54,7 +54,9 @@ class TestXFMatGrid(unittest.TestCase):
         self.field_nugrid.project_dir = TEST_PROJECT_DIR
         self.assertEqual(TEST_PROJECT_DIR, self.field_nugrid.project_dir)
         self.assertEqual(MULTIPOINT_SENSOR_FILE,
-                         self.field_nugrid._multipoint_sensor_info_files[0])
+                         self.field_nugrid._multipoint_sensor_info_file[0])
+        self.assertEqual(1, len(self.field_nugrid._multipoint_sensor_info))
+        self.assertEqual('Rmpt', self.field_nugrid._multipoint_sensor_info[0].header)
 
     def tearDown(self):
         pass

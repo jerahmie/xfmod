@@ -8,6 +8,7 @@ from __future__ import (absolute_import, division, generators,
 
 import os
 from glob import glob
+from functools import partial
 import struct
 from scipy.io import loadmat, savemat
 import scipy.interpolate as interp
@@ -16,11 +17,12 @@ class XFFieldNonUniformGrid(object):
     """A class to hold XF field data on non-uniform grid."""
     def __init__(self):
         self._project_dir = ''
-        self._multipoint_sensor_info_files = []
+        self._multipoint_sensor_info_file = []
+        self._multipoint_sensor_info = []
         self._run_id = 0
         self._sim_id = 0
         self._field_mask = 0
-
+        
     @property
     def project_dir(self):
         """Return the grid units."""
@@ -31,11 +33,14 @@ class XFFieldNonUniformGrid(object):
         """Set the project directory and set sensor file location."""
         self._project_dir = project_dir
         if os.path.exists(self._project_dir):
-            self._multipoint_sensor_info_files = \
+            self._multipoint_sensor_info_file = \
                     glob(os.path.join(self._project_dir,
                         'Simulations',
                         xf_sim_id_to_str(self._sim_id), 'Run0001',
                         'output', '*_info.bin'))
+            mp_info = XFMultiPointInfo(self._multipoint_sensor_info_file[0])
+            self._multipoint_sensor_info.append(mp_info)
+
     @property
     def sim_id(self):
         """Return the current simulation id."""
@@ -46,13 +51,43 @@ class XFFieldNonUniformGrid(object):
         """Set the Simulation ID."""
         self._sim_id = sim_id
 
+    
+
+class XFMultiPointGeometry(object):
+    """Class to hold Multi Point Geometry Info"""
+    def __init__(self, file_name):
+        self._MP_VERTEX_LEN=12  # (X,Y,Z) = 4-byte uint * 3
+        self._vertices = []
+        self._frequencies = []
+        self._load_vertices(file_name)
+        self._num_points = len(self._vertices)
+
+
+    def _load_vertices(self, file_name):
+        """Load vertices from geom.bin"""
+        print("Loading vertices...")
+        with open(file_name,'rb') as file_handle:
+            while True:
+                chunk = file_handle.read(self._MP_VERTEX_LEN)
+                if len(chunk) < self._MP_VERTEX_LEN:
+                    print('Last chunk length: ', len(chunk))
+                    break
+                else:
+                    x = struct.unpack('I',chunk[0:4])[0]
+                    y = struct.unpack('I',chunk[4:8])[0]
+                    z = struct.unpack('I',chunk[8:12])[0]
+                    self._vertices.append([x,y,z])
+        print("Done.")
+        file_handle.close()
+
 class XFMultiPointInfo(object):
     """Class to hold MultiPoint file info."""
-    def __init__(self):
+    def __init__(self, file_name):
         self._header = ''
         self._version = 0
         self._fields_mask = 0
         self._num_points = 0
+        self._load_multipoint_info(file_name)
 
     @property
     def header(self):
@@ -72,7 +107,7 @@ class XFMultiPointInfo(object):
     def num_points(self):
         return self._num_points
 
-    def load_multipoint_info(self, file_name):
+    def _load_multipoint_info(self, file_name):
         """Load multipoint sensor info from file."""
         file_handle = open(file_name,'rb')
         self._header = file_handle.read(4).decode("utf-8")
