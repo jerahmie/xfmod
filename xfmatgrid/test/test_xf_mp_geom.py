@@ -8,29 +8,27 @@ from __future__ import(absolute_import, division, generators,
 
 import sys, os
 import unittest
+import xfmatgrid
 
-PACKAGE_PARENT = '..'
-SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(),
-                                             os.path.expanduser(__file__))))
-sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
-
-TEST_MP_INFO = '/Data/CMRR/rf_coil_scripts/python/Test_Data/Test_Coil.xf/Simulations/000001/Run0001/output/MultiPoint_Solid_Sensor1_0_info.bin'
-TEST_MP_DIR = '/Data/CMRR/rf_coil_scripts/python/Test_Data/Test_Coil.xf/Simulations/000001/Run0001/output/MultiPoint_Solid_Sensor1_0'
-
-import os
-from xfmatgrid import *
+TEST_COIL_DIR = os.path.join('/Data', 'CMRR', 'rf_coil_scripts', 'python',
+                             'Test_Data', 'Test_Coil.xf')
+RUN_OUT_DIR = os.path.join(TEST_COIL_DIR, 'Simulations', '000001',
+                           'Run0001', 'output')
+TEST_MP_INFO = os.path.join(RUN_OUT_DIR, 'MultiPoint_Solid_Sensor1_0_info.bin')
+TEST_MP_DIR = os.path.join(RUN_OUT_DIR, 'MultiPoint_Solid_Sensor1_0')
+TEST_MP_GEOM = os.path.join(TEST_MP_DIR, 'geom.bin')
 
 class TestXFMultiPointGeometry(unittest.TestCase):
     """Tests for Multipoint sensor info."""
     def setUp(self):
-        self.mp_info = XFMultiPointInfo(TEST_MP_INFO)
-        self.mp_geom = XFMultiPointGeometry(os.path.join(TEST_MP_DIR,
-                                                         'geom.bin'))
+        self.mp_info = xfmatgrid.XFMultiPointInfo(TEST_MP_INFO)
+        self.mp_geom = xfmatgrid.XFMultiPointGeometry(TEST_MP_GEOM,
+                                                      self.mp_info.num_points)
 
     def test_multipoint_geometry(self):
         """Test multipoint geometry file."""
-        self.assertEqual(self.mp_info.num_points, 
-                         self.mp_geom._num_points)
+        self.assertEqual(self.mp_info.num_points,
+                         len(self.mp_geom._vertices))
 
     def tearDown(self):
         pass
