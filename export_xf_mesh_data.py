@@ -3,45 +3,44 @@
 Convert XFdtd geometry.input and material.input data to Mat file format.
 """
 
-from __future__ import (absolute_import, division, 
+from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 import sys, os
+from xfmatgrid.xfutils import xf_run_id_to_str, xf_sim_id_to_str
 import xfgeomod
 
-def main(input_path, output_path):
+def main(input_path, sim_id, run_id, output_path):
+    """ Convert XFdtd grid & mesh data."""
+    xf_sim_run_path = os.path.join(input_path, 'Simulations',
+                                   xf_sim_id_to_str(sim_id),
+                                   xf_run_id_to_str(run_id))
+
+    if not os.path.exists(xf_sim_run_path):
+        print("Error: ", xf_sim_run_path , " does not exist.")
+        return
+
     # Load XFdtd Geometry info
-    xf_geom = xfgeomod.XFGeometry()
-    xf_export = xfgeomod.XFGridExporter()
-    xf_geom.file_path = input_path
-    xf_export.materials_list = xf_geom.load_materials()
-    xf_geom.load_grid_data()
-    xf_export.grid_x = xf_geom.grid_data.x_coods()
-    xf_export.grid_y = xf_geom.grid_data.y_coods()
-    xf_export.grid_z = xf_geom.grid_data.z_coods()
+    xf_geom = xfgeomod.XFGeometry(xf_sim_run_path)
     xf_geom.print_materials()
-    #xf_geom.print_grid_data()
+    xf_geom.print_grid_data()
 
     # Load XFdtd Mesh data file
-    xf_mesh = xfgeomod.XFMesh()
-    xf_mesh.file_path = input_path
-    xf_mesh.read_mesh_header()
-    #xf_mesh.dump_header_info()
-    xf_mesh.read_edge_run_data()
-    xf_export.ex_edge_runs = xf_mesh.ex_edge_runs
-    xf_export.ey_edge_runs = xf_mesh.ey_edge_runs
-    xf_export.ez_edge_runs = xf_mesh.ez_edge_runs
-    xf_export.hx_edge_runs = xf_mesh.hx_edge_runs
-    xf_export.hy_edge_runs = xf_mesh.hy_edge_runs
-    xf_export.hz_edge_runs = xf_mesh.hz_edge_runs
+    xf_mesh = xfgeomod.XFMesh(xf_sim_run_path)
 
+    # Setup exporter and write to mat file
+    xf_export = xfgeomod.XFGridExporter(xf_geom, xf_mesh)
     xf_export.units = 'mm'
-    xf_export.set_mesh_data()
     xf_export.export_mesh_data(output_path)
 
-if __name__ == "__main__":
-    if len(sys.argv) == 3:
-        main(sys.argv[1], sys.argv[2])
-    else:
-        print('Usage: xf_geometry.py <input_path> <output_path>')
-        print(sys.argv)
+def usage():
+    print('Usage: xf_geometry.py <input_path> <sim #> <run #> <output_path>')
 
+if __name__ == "__main__":
+    if len(sys.argv) == 5:
+        if not os.path.exists(sys.argv[1]):
+            print("Could not find: ",  sys.argv[1])
+            usage()
+        main(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), sys.argv[4])
+    else:
+        usage()
+        print(sys.argv)

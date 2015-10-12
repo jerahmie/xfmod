@@ -8,6 +8,7 @@ from __future__ import(absolute_import, division, generators,
 
 import sys, os
 import unittest
+import numpy as np
 import xfmatgrid
 
 TEST_COIL_DIR = os.path.join('/Data', 'CMRR', 'rf_coil_scripts', 'python',
@@ -20,15 +21,18 @@ TEST_MP_GEOM = os.path.join(TEST_MP_DIR, 'geom.bin')
 
 class TestXFMultiPointGeometry(unittest.TestCase):
     """Tests for Multipoint sensor info."""
+    @classmethod
+    def setUpClass(cls):
+        cls.mp_info = xfmatgrid.XFMultiPointInfo(TEST_MP_INFO)
+        cls.mp_geom = xfmatgrid.XFMultiPointGeometry(TEST_MP_GEOM,
+                                                      cls.mp_info.num_points)
     def setUp(self):
-        self.mp_info = xfmatgrid.XFMultiPointInfo(TEST_MP_INFO)
-        self.mp_geom = xfmatgrid.XFMultiPointGeometry(TEST_MP_GEOM,
-                                                      self.mp_info.num_points)
+        pass
 
     def test_multipoint_geometry(self):
         """Test multipoint geometry file."""
-        self.assertEqual(self.mp_info.num_points,
-                         len(self.mp_geom._vertices))
+        self.assertEqual((self.mp_info.num_points,3),
+                         np.shape(self.mp_geom._vertices))
 
     def tearDown(self):
         pass

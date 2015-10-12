@@ -10,6 +10,62 @@ from __future__ import (absolute_import, division, generators,
 import re, os
 from xfgeomod import XFGridData, XFMaterial
 
+# Regex expressions
+_MAT_FREESPACE_PATTERN = r'^begin_<electricfreespace> ' + \
+                         r'(ElectricFreeSpace)\n' + \
+                         r'material_number (\d+)\n' + \
+                         r'conductivity ([\d\-eE.]*)\n' + \
+                         r'permittivity ([\d\-eE.]*)\n' + \
+                         r'density ([\d\-eE.]*)\n' + \
+                         r'water_ratio ([\d\-eE.]*)\n' + \
+                         r'end_<electricfreespace>'
+
+_MAT_PEC_PATTERN = r'^begin_<electricperfectconductor> ' + \
+                   r'(ElectricPerfectConductor)\n' + \
+                   r'material_number (\d+)\n' + \
+                   r'end_<electricperfectconductor>'
+
+_MAT_NORMALELECTRIC_PATTERN = r'^begin_<normal_electric>\s*' + \
+                              r'(["\w\s\d\-\(\)]+)\s*\n' + \
+                              r'material_number (\d+)\n' + \
+                              r'conductivity ([\d\-eE.]*)\n'+ \
+                              r'uncorrected_conductivity ' + \
+                              r'([\d\-eE.]*)\n' + \
+                              r'permittivity ([\d\-eE.]*)\n' + \
+                              r'(effectiveConductivity\s*' +\
+                              r'[\d\-eE.]*\n)?' + \
+                              r'(effectiveUncorrectedConductivity\s*' +\
+                              r'[\d\-eE.]*\n)?' + \
+                              r'(effectiveRelativePermittivity\s*' + \
+                              r'[\d\-eE.]*\n)?' + \
+                              r'density ([\d\-eE.]*)\n' + \
+                              r'water_ratio ([\d\-eE.]*)\nbegin_' + \
+                              r'<TemperatureRiseMaterial' + \
+                              r'Parameters>\s*\n' + \
+                              r'heat_capacity ([\d\-eE.]*)\n' + \
+                              r'thermal_conductivity ([\d\-eE.]*)\n' + \
+                              r'perfusion_rate ([\d\-eE.]*)\n' + \
+                              r'metabolic_heat ([\d\-eE.]*)\n' + \
+                              r'tissue (\d+)\nend_' + \
+                              r'<TemperatureRiseMaterialParameters>' + \
+                              r'\s*\nend_<normal_electric>'
+
+_GRID_DEFINITION = r'^begin_<GridDefinition>\s*\n' + \
+                   r'GridOriginInMeters\s*' + \
+                   r'([\d\-.]+) ([\d\-.]+) ([\d\-.]+)\n' + \
+                   r'NumberOfCellsInX (\d+)\s*\n' + \
+                   r'NumberOfCellsInY (\d+)\s*\n' + \
+                   r'NumberOfCellsInZ (\d+)\s*\n' + \
+                   r'end_<GridDefinition>'
+
+_GRID_BEGIN_DELX = r'begin_<DelX>\s*'
+_GRID_END_DELX = r'end_<DelX>\s*'
+_GRID_BEGIN_DELY = r'begin_<DelY>\s*'
+_GRID_END_DELY = r'end_<DelY>\s*'
+_GRID_BEGIN_DELZ = r'begin_<DelZ>\s*'
+_GRID_END_DELZ = r'end_<DelZ>\s*'
+_GRID_DELTA = r'(\d*)\s([\d\-.]*)\n'
+
 class XFGeometry(object):
     """A class to hold coil geometry info."""
     NAME = 0
@@ -19,87 +75,33 @@ class XFGeometry(object):
     DENSITY = 8
     WATER_RATIO = 9
 
-    # Regex expressions
-    _MAT_FREESPACE_PATTERN = r'^begin_<electricfreespace> ' + \
-                                r'(ElectricFreeSpace)\n' + \
-                                r'material_number (\d+)\n' + \
-                                r'conductivity ([\d\-eE.]*)\n' + \
-                                r'permittivity ([\d\-eE.]*)\n' + \
-                                r'density ([\d\-eE.]*)\n' + \
-                                r'water_ratio ([\d\-eE.]*)\n' + \
-                                r'end_<electricfreespace>'
-
-    _MAT_PEC_PATTERN = r'^begin_<electricperfectconductor> ' + \
-                          r'(ElectricPerfectConductor)\n' + \
-                          r'material_number (\d+)\n' + \
-                          r'end_<electricperfectconductor>'
-
-    _MAT_NORMALELECTRIC_PATTERN = r'^begin_<normal_electric>\s*' + \
-                                     r'(["\w\s\d\-\(\)]+)\s*\n' + \
-                                     r'material_number (\d+)\n' + \
-                                     r'conductivity ([\d\-eE.]*)\n'+ \
-                                     r'uncorrected_conductivity ' + \
-                                     r'([\d\-eE.]*)\n' + \
-                                     r'permittivity ([\d\-eE.]*)\n' + \
-                                     r'(effectiveConductivity\s*' +\
-                                     r'[\d\-eE.]*\n)?' + \
-                                     r'(effectiveUncorrectedConductivity\s*' +\
-                                     r'[\d\-eE.]*\n)?' + \
-                                     r'(effectiveRelativePermittivity\s*' + \
-                                     r'[\d\-eE.]*\n)?' + \
-                                     r'density ([\d\-eE.]*)\n' + \
-                                     r'water_ratio ([\d\-eE.]*)\nbegin_' + \
-                                     r'<TemperatureRiseMaterial' + \
-                                     r'Parameters>\s*\n' + \
-                                     r'heat_capacity ([\d\-eE.]*)\n' + \
-                                     r'thermal_conductivity ([\d\-eE.]*)\n' + \
-                                     r'perfusion_rate ([\d\-eE.]*)\n' + \
-                                     r'metabolic_heat ([\d\-eE.]*)\n' + \
-                                     r'tissue (\d+)\nend_' + \
-                                     r'<TemperatureRiseMaterialParameters>' + \
-                                     r'\s*\nend_<normal_electric>'
-
-    _GRID_DEFINITION = r'^begin_<GridDefinition>\s*\n' + \
-                       r'GridOriginInMeters\s*' + \
-                       r'([\d\-.]+) ([\d\-.]+) ([\d\-.]+)\n' + \
-                       r'NumberOfCellsInX (\d+)\s*\n' + \
-                       r'NumberOfCellsInY (\d+)\s*\n' + \
-                       r'NumberOfCellsInZ (\d+)\s*\n' + \
-                       r'end_<GridDefinition>'
-
-    _GRID_BEGIN_DELX = r'begin_<DelX>\s*'
-    _GRID_END_DELX = r'end_<DelX>\s*'
-    _GRID_BEGIN_DELY = r'begin_<DelY>\s*'
-    _GRID_END_DELY = r'end_<DelY>\s*'
-    _GRID_BEGIN_DELZ = r'begin_<DelZ>\s*'
-    _GRID_END_DELZ = r'end_<DelZ>\s*'
-    _GRID_DELTA = r'(\d*)\s([\d\-.]*)\n'
-
-    def __init__(self):
+    def __init__(self, project_path):
         # compile patterns
-        self._mat_free_space = re.compile(self._MAT_FREESPACE_PATTERN, \
+        self._mat_free_space = re.compile(_MAT_FREESPACE_PATTERN, \
                                               re.MULTILINE)
-        self._mat_pec = re.compile(self._MAT_PEC_PATTERN, re.MULTILINE)
-        self._mat_norm_electric = re.compile(self._MAT_NORMALELECTRIC_PATTERN,\
+        self._mat_pec = re.compile(_MAT_PEC_PATTERN, re.MULTILINE)
+        self._mat_norm_electric = re.compile(_MAT_NORMALELECTRIC_PATTERN,\
                                             re.MULTILINE)
-        self._grid_definition = re.compile(self._GRID_DEFINITION, \
+        self._grid_definition = re.compile(_GRID_DEFINITION, \
                                            re.MULTILINE)
-        self._begin_delx = re.compile(self._GRID_BEGIN_DELX)
-        self._end_delx = re.compile(self._GRID_END_DELX)
-        self._begin_dely = re.compile(self._GRID_BEGIN_DELY)
-        self._end_dely = re.compile(self._GRID_END_DELY)
-        self._begin_delz = re.compile(self._GRID_BEGIN_DELZ)
-        self._end_delz = re.compile(self._GRID_END_DELZ)
-        self._grid_delta = re.compile(self._GRID_DELTA, re.MULTILINE)
+        self._begin_delx = re.compile(_GRID_BEGIN_DELX)
+        self._end_delx = re.compile(_GRID_END_DELX)
+        self._begin_dely = re.compile(_GRID_BEGIN_DELY)
+        self._end_dely = re.compile(_GRID_END_DELY)
+        self._begin_delz = re.compile(_GRID_BEGIN_DELZ)
+        self._end_delz = re.compile(_GRID_END_DELZ)
+        self._grid_delta = re.compile(_GRID_DELTA, re.MULTILINE)
 
         # file info
-        self._file_path = ''
-        self._file_name = ''
+        self._file_path = project_path
+        self._file_name = os.path.join(self._file_path, 'geometry.input')
 
         # geometry info
         self._geom_info = ''
         self._materials = []
         self.grid_data = XFGridData()
+#        self.load_materials()
+        self._load_grid_data()
 
     @property
     def file_name(self):
@@ -110,20 +112,6 @@ class XFGeometry(object):
     def file_path(self):
         """Return the current path containing geometry.input."""
         return self._file_path
-
-    @file_path.setter
-    def file_path(self, value):
-        """Set the file path name containing geometry.input."""
-        self._file_path = value
-        self._file_name = os.path.join(self._file_path, 'geometry.input')
-        if not os.path.exists(self._file_name):
-            print("Could not find: ", self._file_name)
-
-    @file_path.deleter
-    def file_path(self):
-        """Delete the file path name containing geometry.input."""
-        self._file_path = ''
-        self._file_name = ''
 
     def load_materials(self):
         """Load materials from material.input."""
@@ -163,7 +151,7 @@ class XFGeometry(object):
 
         return self._materials
 
-    def load_grid_data(self):
+    def _load_grid_data(self):
         """Load grid data from material.input"""
         if os.path.exists(self._file_name):
             print("Loading grid data from ", self._file_name)

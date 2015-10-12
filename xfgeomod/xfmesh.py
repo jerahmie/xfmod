@@ -155,15 +155,15 @@ class XFMesh(object):
     """
     Process mesh.input file
     """
-    def __init__(self):
-        self._file_path = ''
-        self._file_name = ''
+    def __init__(self, sim_run_path):
+        self._file_path = sim_run_path
+        self._file_name = os.path.join(sim_run_path, 'mesh.input')
         self._mesh_version = None
         self._edge_run_bytes = 0
         self._edge_run_fmt = None
-        self._num_ex_edge_runs = None
-        self._num_ey_edge_runs = None
-        self._num_ez_edge_runs = None
+        self._num_ex_edge_runs = 0
+        self._num_ey_edge_runs = 0
+        self._num_ez_edge_runs = 0
         self._ex_edge_runs = None
         self._ey_edge_runs = None
         self._ez_edge_runs = None
@@ -180,29 +180,18 @@ class XFMesh(object):
         self._start_ex_edge_run = 0
         self._start_ey_edge_run = 0
         self._start_ez_edge_run = 0
+        self._read_mesh_header()
+        self.dump_header_info()
+        self._read_edge_run_data()
 
     @property
     def file_path(self):
         """Return full file path name for mesh.input"""
         return self._file_path
 
-    @file_path.setter
-    def file_path(self, value):
-        """Set the file path for mesh.input"""
-        test_file_name = os.path.join(value, 'mesh.input')
-        if os.path.exists(test_file_name):
-            self._file_path = test_file_name
-        else:
-            print("File not found: ", test_file_name)
-
-    @file_path.deleter
-    def file_path(self):
-        """Delete the file path"""
-        self._file_path = ''
-
-    def read_mesh_header(self):
+    def _read_mesh_header(self):
         """Read the mesh header."""
-        file_handle = open(self._file_path, 'rb')
+        file_handle = open(self._file_name, 'rb')
         if file_handle:
             # check remcom 11-byte header
             if file_handle.read(11) != b'!remcomfdtd':
@@ -282,9 +271,9 @@ class XFMesh(object):
         print("Number of magnetic mesh edges using electric " + \
               "averaged materials: ", self._num_h_mesh_edges_h_avg)
 
-    def read_edge_run_data(self):
+    def _read_edge_run_data(self):
         """Read Edge run data"""
-        file_handle = open(self._file_path, 'rb')
+        file_handle = open(self._file_name, 'rb')
         file_handle.seek(self._start_ex_edge_run)
         # read Ex edges
         if self._num_ex_edge_runs > 0:

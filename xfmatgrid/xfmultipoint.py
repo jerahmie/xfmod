@@ -6,6 +6,7 @@ XFdtd multipoint field file info and geometry.
 from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 import struct
+import numpy as np
 
 MP_VERTEX_LEN = 12   # (X,Y,Z) = 4-byte uint * 3
 MP_FLOAT_LEN = 4      # 4-byte float
@@ -54,7 +55,6 @@ class XFMultiPointInfo(object):
 class XFMultiPointGeometry(object):
     """Multi Point Geometry Info"""
     def __init__(self, file_name, num_points):
-        self._vertices = []
         self._num_points = num_points
         self._load_vertices(file_name)
 
@@ -63,14 +63,10 @@ class XFMultiPointGeometry(object):
         with open(file_name, 'rb') as file_handle:
             chunk = file_handle.read(MP_VERTEX_LEN * self._num_points)
             temp = struct.unpack('I'*3*self._num_points, chunk)
-            x_val = temp[0::3]
-            y_val = temp[1::3]
-            z_val = temp[2::3]
-            self._vertices = [[x_val[i], y_val[i], z_val[i]] 
-                              for i in range(self._num_points)]
-#            for ind in range(self._num_points):
-#                self._vertices.append([x_val[ind], y_val[ind], z_val[ind]])
-            
+            x_val = np.transpose(np.array([temp[0::3]]))
+            y_val = np.transpose(np.array([temp[1::3]]))
+            z_val = np.transpose(np.array([temp[2::3]]))
+            self._vertices = np.hstack((x_val, y_val, z_val))
         file_handle.close()
 
 class XFMultiPointFrequencies(object):
@@ -114,6 +110,3 @@ class XFMultiPointSSField(object):
     def ss_field(self):
         """Return field data."""
         return self._field_data
-    
-        
-

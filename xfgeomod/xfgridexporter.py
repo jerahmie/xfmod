@@ -12,22 +12,24 @@ import numpy as np
 
 class XFGridExporter(object):
     """Export grid and mesh info."""
-    def __init__(self):
-        self._x_dim = 0
-        self._y_dim = 0
-        self._z_dim = 0
+    def __init__(self, grid, mesh):
+        self._mesh = mesh
+        self._grid = grid
+        self._grid_x = self._grid.grid_data.x_coods()
+        self._x_dim = len(self._grid_x)
+        self._grid_y = self._grid.grid_data.y_coods()
+        self._y_dim = len(self._grid_y)
+        self._grid_z = self._grid.grid_data.z_coods()
+        self._z_dim = len(self._grid_z)
         self._export_units = 'm'          # grid/mesh units (default = meters)
         self._export_units_scale = 1.0    # scale factor (meters = 1.0)
-        self._materials_list = None
-        self._grid_x = None
-        self._grid_y = None
-        self._grid_z = None
-        self._ex_edge_runs = None
-        self._ey_edge_runs = None
-        self._ez_edge_runs = None
-        self._hx_edge_runs = None
-        self._hy_edge_runs = None
-        self._hz_edge_runs = None
+        self._materials_list = grid.load_materials()
+        self._ex_edge_runs = self._mesh.ex_edge_runs
+        self._ey_edge_runs = self._mesh.ey_edge_runs
+        self._ez_edge_runs = self._mesh.ez_edge_runs
+        self._hx_edge_runs = self._mesh.hx_edge_runs
+        self._hy_edge_runs = self._mesh.hy_edge_runs
+        self._hz_edge_runs = self._mesh.hz_edge_runs
         self._mesh_ex_density = None
         self._mesh_ey_density = None
         self._mesh_ez_density = None
@@ -46,6 +48,7 @@ class XFGridExporter(object):
         self._mesh_hx_epsilon_r = None
         self._mesh_hy_epsilon_r = None
         self._mesh_hz_epsilon_r = None
+        self._set_mesh_data()
 
     @property
     def units(self):
@@ -86,54 +89,15 @@ class XFGridExporter(object):
         """Return X grid values (m)."""
         return self._grid_x
 
-    @grid_x.setter
-    def grid_x(self, value):
-        """Set X grid values (m)."""
-        self._grid_x = value
-        self._x_dim = len(self._grid_x)
-
-    @grid_x.deleter
-    def grid_x(self):
-        """Delete x grid values."""
-        del self._grid_x
-        self._grid_x = None
-        self._x_dim = 0
-
     @property
     def grid_y(self):
         """Return Y grid values (m)."""
         return self._grid_y
 
-    @grid_y.setter
-    def grid_y(self, value):
-        """Set Y grid values (m)."""
-        self._grid_y = value
-        self._y_dim = len(self._grid_y)
-
-    @grid_y.deleter
-    def grid_y(self):
-        """Delete Y grid values."""
-        del self._grid_y
-        self.grid_y = None
-        self._y_dim = 0
-
     @property
     def grid_z(self):
         """Return Z grid values (m)."""
         return self._grid_z
-
-    @grid_z.setter
-    def grid_z(self, value):
-        """Set Z grid values (m)."""
-        self._grid_z = value
-        self._z_dim = len(self._grid_z)
-
-    @grid_z.deleter
-    def grid_z(self):
-        """Delete Z grid values."""
-        del self._grid_z
-        self.grid_z = None
-        self._z_dim = 0
 
     @property
     def materials_list(self):
@@ -246,7 +210,7 @@ class XFGridExporter(object):
         """Delete the Hz edge runs."""
         self._hz_edge_runs = None
 
-    def set_mesh_data(self):
+    def _set_mesh_data(self):
         """Set mesh data from edge run data."""
         print('Setting mesh/grid data.')
         print('Mesh Units: ', self._export_units)
