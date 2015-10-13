@@ -21,8 +21,10 @@ def main(input_path, sim_id, run_id, output_path):
 
     # Load XFdtd Geometry info
     xf_geom = xfgeomod.XFGeometry(xf_sim_run_path)
-    xf_geom.print_materials()
+    #xf_geom.print_materials()
+    print("-------------------------------")
     xf_geom.print_grid_data()
+    print("-------------------------------")
 
     # Load XFdtd Mesh data file
     xf_mesh = xfgeomod.XFMesh(xf_sim_run_path)

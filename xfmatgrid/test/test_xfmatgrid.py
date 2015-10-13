@@ -23,7 +23,7 @@ FREQUENCIES_BIN = os.path.join(RUN_OUT_DIR, 'MultiPoint_Solid_Sensor1_0',
                                 'frequencies.bin')
 TEST_FREQUENCY = 296500000.0  # 296.5 MHz
 
-TEST_MULTIPOINT_DIRS = ['ss_Hxit', 'ss_Hxrt', 'ss_Hyit', 'ss_Hyrt', 'ss_Hzit', 'ss_Hzrt', 'ss_Jxi', 'ss_Jxr', 'ss_Jyi', 'ss_Jyr', 'ss_Jzi', 'ss_Jzr', 'ss_Bxit', 'ss_Bxrt', 'ss_Byit', 'ss_Byrt', 'ss_Bzit', 'ss_Bzrt', 'ss_PddEx', 'ss_PddEy', 'ss_PddEz', 'ss_PddHx', 'ss_PddHy', 'ss_PddHz']
+TEST_MULTIPOINT_DIRS = ['ss_Exit', 'ss_Exrt', 'ss_Eyit', 'ss_Eyrt', 'ss_Ezit', 'ss_Ezrt', 'ss_Hxit', 'ss_Hxrt', 'ss_Hyit', 'ss_Hyrt', 'ss_Hzit', 'ss_Hzrt', 'ss_Jxi', 'ss_Jxr', 'ss_Jyi', 'ss_Jyr', 'ss_Jzi', 'ss_Jzr', 'ss_Bxit', 'ss_Bxrt', 'ss_Byit', 'ss_Byrt', 'ss_Bzit', 'ss_Bzrt', 'ss_PddEx', 'ss_PddEy', 'ss_PddEz', 'ss_PddHx', 'ss_PddHy', 'ss_PddHz']
 
 class TestXFMatGrid(unittest.TestCase):
     """Tests for xfmatgrid module."""
@@ -67,7 +67,7 @@ class TestXFMatGrid(unittest.TestCase):
 
     def test_field_data(self):
         self.assertEqual(TEST_MULTIPOINT_DIRS, 
-                         self.field_nugrid._mp_field_dirs)
+                         self.field_nugrid._mp_field_types)
 
     def tearDown(self):
         pass

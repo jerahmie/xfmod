@@ -181,7 +181,6 @@ class XFMesh(object):
         self._start_ey_edge_run = 0
         self._start_ez_edge_run = 0
         self._read_mesh_header()
-        self.dump_header_info()
         self._read_edge_run_data()
 
     @property
@@ -253,7 +252,7 @@ class XFMesh(object):
         file_handle.close()
 
     def dump_header_info(self):
-        """Dump header info."""
+        """Dumpp header info."""
         print("        Filename: ", self._file_name)
         print("    Mesh version: ", self._mesh_version)
         print("  Edge run bytes: ", self._edge_run_bytes)
