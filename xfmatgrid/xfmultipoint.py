@@ -67,7 +67,30 @@ class XFMultiPointGeometry(object):
             y_val = np.transpose(np.array([temp[1::3]]))
             z_val = np.transpose(np.array([temp[2::3]]))
             self._vertices = np.hstack((x_val, y_val, z_val))
+            self._x_domain = np.unique(x_val)
+            self._y_domain = np.unique(y_val)
+            self._z_domain = np.unique(z_val)
         file_handle.close()
+
+    @property
+    def x_domain(self):
+        """Return the unique x domain index values."""
+        return self._x_domain
+
+    @property
+    def y_domain(self):
+        """Return the unique y domain index values."""
+        return self._y_domain
+
+    @property
+    def z_domain(self):
+        """Return the unique z domain index values."""
+        return self._z_domain
+
+    @property
+    def vertices(self):
+        """Return the vertex index array."""
+        return self._vertices
 
 class XFMultiPointFrequencies(object):
     """Extract and store steady state frequency data from frequencies.bin"""
@@ -93,20 +116,34 @@ class XFMultiPointFrequencies(object):
 
 class XFMultiPointSSField(object):
     """Extract steady state field values from file."""
-    def __init__(self, file_name, n_points):
-        self._field_data = []
-        self._n_points = n_points
+    def __init__(self, file_name, mp_info, mp_geometry):
+        self._num_points = mp_info.num_points
+        self._mp_geom = mp_geometry
         self._load_field_data(file_name)
 
     def _load_field_data(self, file_name ):
         """Load field data from given binary file."""
         with open(file_name, 'rb') as file_handle:
-            chunk = file_handle.read(MP_FLOAT_LEN*self._n_points)
-            self._field_data = struct.unpack('f'*self._n_points, 
+            chunk = file_handle.read(MP_FLOAT_LEN*self._num_points)
+            temp_field_data = struct.unpack('f'*self._num_points,
                                              chunk)
         file_handle.close()
+        self._ss_field = np.zeros([len(self._mp_geom.x_domain),
+                                   len(self._mp_geom.y_domain),
+                                   len(self._mp_geom.z_domain)])
+
+        min_i_domain = np.amin(self._mp_geom.x_domain)
+        min_j_domain = np.amin(self._mp_geom.y_domain)
+        min_k_domain = np.amin(self._mp_geom.z_domain)
+
+        for index in range(len(temp_field_data)):
+            ind_i = self._mp_geom.vertices[index][0] - min_i_domain
+            ind_j = self._mp_geom.vertices[index][1] - min_j_domain
+            ind_k = self._mp_geom.vertices[index][2] - min_k_domain
+            self._ss_field[ind_i][ind_j][ind_k] = temp_field_data[index]
+
 
     @property
     def ss_field(self):
         """Return field data."""
-        return self._field_data
+        return self._ss_field
