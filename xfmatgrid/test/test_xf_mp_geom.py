@@ -11,8 +11,9 @@ import unittest
 import numpy as np
 import xfmatgrid
 
-TEST_COIL_DIR = os.path.join('/Data', 'CMRR', 'rf_coil_scripts', 'python',
-                             'Test_Data', 'Test_Coil.xf')
+TEST_COIL_DIR = os.path.join(os.path.join(os.getcwd(), '..', '..',
+                                          'Test_Data', 'Test_Coil.xf'))
+
 RUN_OUT_DIR = os.path.join(TEST_COIL_DIR, 'Simulations', '000001',
                            'Run0001', 'output')
 TEST_MP_INFO = os.path.join(RUN_OUT_DIR, 'MultiPoint_Solid_Sensor1_0_info.bin')

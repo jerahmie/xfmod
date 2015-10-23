@@ -10,8 +10,11 @@ import unittest
 from xfmatgrid.xfutils import xf_run_id_to_str, xf_sim_id_to_str 
 import xfgeomod
 
-TEST_PROJECT_DIR = os.path.join('/Data', 'CMRR', 'rf_coil_scripts', 
-                                'python', 'Test_Data', 'Test_Coil.xf')
+#TEST_PROJECT_DIR = os.path.join('/Data', 'CMRR', 'rf_coil_scripts', 
+#                                'python', 'Test_Data', 'Test_Coil.xf')
+TEST_PROJECT_DIR = os.path.normpath(os.path.join(os.getcwd(), '..', '..',
+                                                 'Test_Data', 'Test_Coil.xf'))
+
 TEST_SIM_NUMBER = 1
 TEST_RUN_NUMBER = 1
 

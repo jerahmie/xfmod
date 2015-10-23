@@ -13,9 +13,8 @@ import scipy.io as spio
 import numpy.testing as npt
 import xfmatgrid
 
-TEST_COIL_DIR = os.path.join('/Data', 'CMRR', 'rf_coil_scripts', 'python',
-                             'Test_Data', 'Test_Coil.xf')
-TEST_PROJECT_DIR = os.path.realpath(os.path.relpath(TEST_COIL_DIR))
+TEST_COIL_DIR = os.path.normpath(os.path.join(os.getcwd(), '..', '..',
+                                              'Test_Data', 'Test_Coil.xf'))
 RUN_OUT_DIR = os.path.join(TEST_COIL_DIR, 'Simulations', '000001',
                            'Run0001', 'output')
 MULTIPOINT_SENSOR_FILE = os.path.realpath(os.path.join(RUN_OUT_DIR,
@@ -196,7 +195,7 @@ class TestXFMatGrid(unittest.TestCase):
     """Tests for xfmatgrid module."""
     @classmethod
     def setUpClass(cls):
-        cls.field_nugrid = xfmatgrid.XFFieldNonUniformGrid(TEST_PROJECT_DIR, 1, 1)
+        cls.field_nugrid = xfmatgrid.XFFieldNonUniformGrid(TEST_COIL_DIR, 1, 1)
     def setUp(self):
         self.fieldNameReal = r'ss_Bxrt'
         self.fieldNameImag = r'ss_Bxit'
@@ -222,7 +221,7 @@ class TestXFMatGrid(unittest.TestCase):
         self.assertEqual('999999', xfmatgrid.xfutils.xf_sim_id_to_str(999999))
 
     def test_project_file(self):
-        self.assertEqual(TEST_PROJECT_DIR, self.field_nugrid.project_dir)
+        self.assertEqual(TEST_COIL_DIR, self.field_nugrid.project_dir)
         self.assertEqual(MULTIPOINT_SENSOR_FILE,
                          self.field_nugrid._mp_ss_info_file[0])
         self.assertEqual('Rmpt', self.field_nugrid._mp_ss_info.header)
