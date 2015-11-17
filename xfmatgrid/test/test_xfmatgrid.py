@@ -27,6 +27,11 @@ TEST_FREQUENCY = 296500000.0  # 296.5 MHz
 
 TEST_MULTIPOINT_DIRS = ['ss_Exit', 'ss_Exrt', 'ss_Eyit', 'ss_Eyrt', 'ss_Ezit', 'ss_Ezrt', 'ss_Hxit', 'ss_Hxrt', 'ss_Hyit', 'ss_Hyrt', 'ss_Hzit', 'ss_Hzrt', 'ss_Jxi', 'ss_Jxr', 'ss_Jyi', 'ss_Jyr', 'ss_Jzi', 'ss_Jzr', 'ss_Bxit', 'ss_Bxrt', 'ss_Byit', 'ss_Byrt', 'ss_Bzit', 'ss_Bzrt', 'ss_PddEx', 'ss_PddEy', 'ss_PddEz', 'ss_PddHx', 'ss_PddHy', 'ss_PddHz']
 
+XF_MAT_FILE_NAME = os.path.normpath(os.path.join(os.getcwd(), '..', '..',
+                                                 'Test_Data', 'Test_Coil.xf',
+                                                 'Export', 'Raw', 
+                                                 'total_B_field_data_raw_000001.mat' ))
+
 X_DIM_VALS = [-0.13407564, -0.13207703, -0.13007841, -0.12807979, \
  -0.12608118, -0.12408256, -0.12208394, -0.12008533, -0.11808671, \
  -0.11608809, -0.11408948, -0.11296947, -0.11184946, -0.11046022, \
@@ -197,8 +202,7 @@ class TestXFMatGrid(unittest.TestCase):
     def setUpClass(cls):
         cls.field_nugrid = xfmatgrid.XFFieldNonUniformGrid(TEST_COIL_DIR, 1, 1)
     def setUp(self):
-        self.fieldNameReal = r'ss_Bxrt'
-        self.fieldNameImag = r'ss_Bxit'
+        self.fieldName = r'B'
 
     def test_xf_run_id_to_str(self):
         """Verify XFdtd valid run string composition."""
@@ -243,19 +247,25 @@ class TestXFMatGrid(unittest.TestCase):
     def test_write_matfile(self):
         """Write and verify the x-, y-, and z-dimension values."""
         export_dict = dict()
-        export_dict['xDim'] = self.field_nugrid.xdim
-        export_dict['yDim'] = self.field_nugrid.ydim
-        export_dict['zDim'] = self.field_nugrid.zdim
-        export_dict[self.fieldNameReal] = self.field_nugrid.ss_field_data(self.fieldNameReal)
-        export_dict[self.fieldNameImag] = self.field_nugrid.ss_field_data(self.fieldNameImag)
+        export_dict['X_Dimension_3'] = self.field_nugrid.xdim
+        export_dict['Y_Dimension_2'] = self.field_nugrid.ydim
+        export_dict['Z_Dimension_1'] = self.field_nugrid.zdim
+        export_dict[self.fieldName + 'x'] = self.field_nugrid.ss_field_data(self.fieldName, 'x')
+        export_dict[self.fieldName + 'y'] = self.field_nugrid.ss_field_data(self.fieldName, 'y')
+        export_dict[self.fieldName + 'z'] = self.field_nugrid.ss_field_data(self.fieldName, 'z')
         spio.savemat('test.mat', export_dict)
-        mat_file = spio.loadmat('test.mat')
-        self.assertTrue(np.allclose(X_DIM_VALS, mat_file['xDim']))
-        self.assertTrue(np.allclose(Y_DIM_VALS, mat_file['yDim']))
-        self.assertTrue(np.allclose(Z_DIM_VALS, mat_file['zDim']))
+        py_mat_file = spio.loadmat('test.mat')
+        xf_mat_file = spio.loadmat(XF_MAT_FILE_NAME)
+        self.assertTrue(np.allclose(xf_mat_file['X_Dimension_3'],
+                                    py_mat_file['X_Dimension_3']))
+        self.assertTrue(np.allclose(xf_mat_file['Y_Dimension_2'], 
+                                    py_mat_file['Y_Dimension_2']))
+        self.assertTrue(np.allclose(xf_mat_file['Z_Dimension_1'], 
+                                    py_mat_file['Z_Dimension_1']))
 
-        self.assertEqual(self.field_nugrid._mp_ss_info.num_points, np.size(mat_file[self.fieldNameReal]))
-        self.assertEqual(self.field_nugrid._mp_ss_info.num_points, np.size(mat_file[self.fieldNameImag]))
+        # self.assertEqual(self.field_nugrid._mp_ss_info.num_points, np.size(mat_file[self.fieldName + 'x']))
+        py_mat_file.close()
+        xf_mat_file.close()
 
     def tearDown(self):
         pass

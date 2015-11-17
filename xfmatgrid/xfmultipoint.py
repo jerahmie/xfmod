@@ -7,6 +7,7 @@ from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 import struct
 import numpy as np
+import line_profiler
 
 MP_VERTEX_LEN = 12   # (X,Y,Z) = 4-byte uint * 3
 MP_FLOAT_LEN = 4      # 4-byte float
@@ -121,6 +122,7 @@ class XFMultiPointSSField(object):
         self._mp_geom = mp_geometry
         self._load_field_data(file_name)
 
+    @profile
     def _load_field_data(self, file_name ):
         """Load field data from given binary file."""
         with open(file_name, 'rb') as file_handle:
@@ -128,20 +130,22 @@ class XFMultiPointSSField(object):
             temp_field_data = struct.unpack('f'*self._num_points,
                                              chunk)
         file_handle.close()
-        self._ss_field = np.zeros([len(self._mp_geom.x_domain),
-                                   len(self._mp_geom.y_domain),
-                                   len(self._mp_geom.z_domain)])
+        self._ss_field = np.empty([len(self._mp_geom.x_domain),
+                                  len(self._mp_geom.y_domain),
+                                  len(self._mp_geom.z_domain)])
 
         min_i_domain = np.amin(self._mp_geom.x_domain)
         min_j_domain = np.amin(self._mp_geom.y_domain)
         min_k_domain = np.amin(self._mp_geom.z_domain)
 
+        ind_i = self._mp_geom.vertices[:,0] - min_i_domain
+        ind_j = self._mp_geom.vertices[:,1] - min_j_domain
+        ind_k = self._mp_geom.vertices[:,2] - min_k_domain
+        
+#        self._ss_field[ind_i[:]][ind_j[:]][ind_k[:]] = temp_field_data[:]
         for index in range(len(temp_field_data)):
-            ind_i = self._mp_geom.vertices[index][0] - min_i_domain
-            ind_j = self._mp_geom.vertices[index][1] - min_j_domain
-            ind_k = self._mp_geom.vertices[index][2] - min_k_domain
-            self._ss_field[ind_i][ind_j][ind_k] = temp_field_data[index]
-
+            self._ss_field[ind_i[index]][ind_j[index]][ind_k[index]] = \
+                temp_field_data[index]
 
     @property
     def ss_field(self):

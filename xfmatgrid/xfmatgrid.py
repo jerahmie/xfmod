@@ -20,6 +20,8 @@ MP_SS_RE = r'([0-9A-Za-z/_.]*)(MultiPoint_Solid_Sensor[0-9]*_[0-9]*)'
 class XFFieldNonUniformGrid(object):
     """Holds XF field data on non-uniform grid."""
     def __init__(self, project_dir, sim_id, run_id):
+        self._valid_types = ['E', 'H', 'B', 'J']
+        self._valid_components = ['x', 'y', 'z']
         xf_geometry_dir = os.path.join(project_dir, r'Simulations',
                                        xf_sim_id_to_str(sim_id),
                                        xf_run_id_to_str(run_id))
@@ -168,11 +170,6 @@ class XFFieldNonUniformGrid(object):
         else:
             print(r"Could not find geometry file: " + self._mp_geom_file )
 
-#    def export_ss_mat(self, field_types):
-#        """Export ss sensor field data to Mat files."""
-#        export_dict = dict()
-        
-
     @property
     def xdim(self):
         """Return the X dimension values."""
@@ -187,17 +184,78 @@ class XFFieldNonUniformGrid(object):
     def zdim(self):
         """Return the Z dimension values."""
         return self._zdim
+    
+    def _ss_Pdd_dir_name(self, field_type, component):
+        """
+        Construct the filename for the dissipated power for 
+        field type, component.
+        """
+        return r'ss_P' + filed_type + component
 
-    def ss_field_data(self, field_name):
-        """Return the real components of the field values."""
-        if field_name in self._mp_field_types:
-            (path_head, path_tail) = os.path.split(self._mp_ss_info_file[0])
-            path_tail = ''.join(path_tail.split('_info.bin'))
-            mp_ss_dir = os.path.join(path_head, path_tail)
-            file_name = os.path.join( mp_ss_dir, field_name, r'0.bin')
-            print("Loading field data from: ", file_name)
-            mp_ss_field = XFMultiPointSSField(file_name, self._mp_ss_info, self._mp_geom)
-            self._ss_field_data = mp_ss_field.ss_field
+    def _ss_field_dir_name(self, field_type, field_component, complex_type):
+        """
+        Construct the filename for field value:
+        field_type: 'E', 'H', 'B', 'J', 'P'
+        field_component: 'x', 'y', 'z'
+        complex_type:  'real' ('r') or 'imaginary' ('i')
+        """
+        ff_appendix = ''
+
+        if field_type not in self._valid_types:
+            print("Invalid field type: ", field_type)
+        if field_component not in self._valid_components:
+            print("Invalid field component: ", field_type)
+        if not (complex_type == 'i' or complex_type == 'r'):
+            print("Invalid field complex type: ", complex_type)
+        
+        if (field_type == 'E') or (field_type == 'H') or (field_type == 'B'):
+            ff_appendix = 't'
+
+        field_file_subdir = r'ss_' + field_type + field_component + \
+                            complex_type + ff_appendix
+
+        return field_file_subdir
+
+    def ss_field_data(self, data_type, component):
+        """Return the field or dissipated power values."""
+        (path_head, path_tail) = os.path.split(self._mp_ss_info_file[0])
+        path_tail = ''.join(path_tail.split('_info.bin'))
+        mp_ss_dir = os.path.join(path_head, path_tail)
+
+        # Traditional field type
+        if data_type in self._valid_types:
+            field_dir_real = self._ss_field_dir_name(data_type, 
+                                                     component, r'r')
+            field_dir_imag = self._ss_field_dir_name(data_type, 
+                                                     component, r'i')
+
+
+            file_name_real = os.path.join(mp_ss_dir, field_dir_real, r'0.bin')
+            file_name_imag = os.path.join(mp_ss_dir, field_dir_imag, r'0.bin')
+            print("Loading field data from: ", file_name_real)
+            mp_ss_field_real = XFMultiPointSSField(file_name_real, 
+                                                   self._mp_ss_info, 
+                                                   self._mp_geom)
+            print("Loading field data from: ", file_name_imag)
+            mp_ss_field_imag = XFMultiPointSSField(file_name_imag, 
+                                                   self._mp_ss_info, 
+                                                   self._mp_geom)
+            self._ss_field_data = mp_ss_field_real.ss_field + \
+                                  1j * mp_ss_field_imag.ss_field
+            
+        # Dissipated power
+        elif data_type == 'P':
+            power_dir = self._ss_Pdd_dir_name(field_type, component )
+            file_name = os.path.join(mp_ss_dir, power_dir, r'0.bin')
+            print("Loading dissipated power data from: ", file_name)
+            mp_ss_dissipated_power_data = XFMultiPointSSField(file_name, 
+                                                              self._mp_ss_info,
+                                                              self._mp_geom)
+            self._ss_field_data = mp_ss_dissipated_power_data.ss_field
+
+        else:
+            print(r'Invalid data_type: ', data_type)
+                
 
         return self._ss_field_data
 
