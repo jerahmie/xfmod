@@ -20,7 +20,7 @@ RUN_OUT_DIR = os.path.join(TEST_COIL_DIR, 'Simulations', '000001',
 MULTIPOINT_SENSOR_FILE = os.path.realpath(os.path.join(RUN_OUT_DIR,
                                                        'MultiPoint_Solid_Sensor1_0_info.bin'))
 FREQUENCIES_BIN = os.path.join(RUN_OUT_DIR, 'MultiPoint_Solid_Sensor1_0',
-                                'frequencies.bin')
+                               'frequencies.bin')
 
 # Testing constants
 TEST_FREQUENCY = 296500000.0  # 296.5 MHz
@@ -255,6 +255,9 @@ class TestXFMatGrid(unittest.TestCase):
         export_dict[self.fieldName + 'z'] = self.field_nugrid.ss_field_data(self.fieldName, 'z')
         spio.savemat('test.mat', export_dict)
         py_mat_file = spio.loadmat('test.mat')
+
+        if os.path.exists(XF_MAT_FILE_NAME):
+            print("Found: ", XF_MAT_FILE_NAME)
         xf_mat_file = spio.loadmat(XF_MAT_FILE_NAME)
         self.assertTrue(np.allclose(xf_mat_file['X_Dimension_3'],
                                     py_mat_file['X_Dimension_3']))

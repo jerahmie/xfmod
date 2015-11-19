@@ -122,7 +122,7 @@ class XFMultiPointSSField(object):
         self._mp_geom = mp_geometry
         self._load_field_data(file_name)
 
-    @profile
+#    @profile
     def _load_field_data(self, file_name ):
         """Load field data from given binary file."""
         with open(file_name, 'rb') as file_handle:
@@ -143,9 +143,12 @@ class XFMultiPointSSField(object):
         ind_k = self._mp_geom.vertices[:,2] - min_k_domain
         
 #        self._ss_field[ind_i[:]][ind_j[:]][ind_k[:]] = temp_field_data[:]
-        for index in range(len(temp_field_data)):
-            self._ss_field[ind_i[index]][ind_j[index]][ind_k[index]] = \
-                temp_field_data[index]
+#        for index in range(len(temp_field_data)):
+#            self._ss_field[ind_i[index]][ind_j[index]][ind_k[index]] = \
+#                temp_field_data[index]
+#        for index in range(len(temp_field_data)):
+#            self._ss_field[ind_i[index],ind_j[index],ind_k[index]] = temp_field_data[index]
+        self._ss_field[ind_i,ind_j,ind_k] = temp_field_data
 
     @property
     def ss_field(self):
