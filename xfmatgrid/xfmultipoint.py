@@ -7,7 +7,7 @@ from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 import struct
 import numpy as np
-import line_profiler
+#import line_profiler
 
 MP_VERTEX_LEN = 12   # (X,Y,Z) = 4-byte uint * 3
 MP_FLOAT_LEN = 4      # 4-byte float
