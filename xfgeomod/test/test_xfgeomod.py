@@ -10,11 +10,10 @@ import unittest
 from xfmatgrid.xfutils import xf_run_id_to_str, xf_sim_id_to_str 
 import xfgeomod
 
-#TEST_PROJECT_DIR = os.path.join('/Data', 'CMRR', 'rf_coil_scripts', 
-#                                'python', 'Test_Data', 'Test_Coil.xf')
-TEST_PROJECT_DIR = os.path.normpath(os.path.join(os.getcwd(), '..', '..',
-                                                 'Test_Data', 'Test_Coil.xf'))
-
+# Location of Test_Coil.xf XFdtd project relative to this file.
+TEST_PROJECT_DIR = os.path.normpath(os.path.join(os.path.realpath(__file__),
+                                                 '..', '..', '..',
+                                                  'Test_Data', 'Test_Coil.xf'))
 TEST_SIM_NUMBER = 1
 TEST_RUN_NUMBER = 1
 
@@ -54,8 +53,6 @@ class TestXFGeoMod(unittest.TestCase):
     def setUpClass(cls):
         # Load XFdtd Geometry info
         cls.xf_geom = xfgeomod.XFGeometry(TEST_RUN_PATH)
-        #cls.xf_geom.print_materials()
-        #cls.xf_geom.print_grid_data()
     
         # Load XFdtd Mesh data file
         cls.xf_mesh = xfgeomod.XFMesh(TEST_RUN_PATH)
