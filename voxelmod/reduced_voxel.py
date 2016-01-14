@@ -1,98 +1,72 @@
 #!/usr/bin/env python3
-
+"""
+Reduces the number of materials in a Virtual Population voxel model.
+"""
 from __future__ import(absolute_import, division, generators,
                        print_function, unicode_literals)
 
 import os, re
 from random import random
-from voxelinfo import VoxelInfo
+from virtual_population import *
 
-material_pattern = re.compile('^([a-zA-Z_]*)[\s]*([a-zA-Z_]*)$')
-#fh = open('full_materials.raw','rb');
-#rawBytes = bytearray(fh.read());
-#
-#fh.close()
+materialPattern = re.compile('^([a-zA-Z_]*)[\s]*([a-zA-Z_]*)$')
 
-class ReducedVoxelMap(object):
+class ReduceVoxel(object):
     """ Voxel map for reduced set of biological materials."""
-    def __init__(self, voxel_map_file):
-        self._voxel_map_file = voxel_map_file
-        self._voxel_map = {}
-        self._load_map_from_file()
+    def __init__(self, voxelMapFile, voxelObject):
+        self._voxelMapFile = voxelMapFile
+        self._voxelMap = {}
+        self._voxelMapByte = {0:0}
+        self._originalVoxelObject = voxelObject
+        self._reducedVoxelObject = VirtualPopulation()
+        self._loadMapFromFile()
+        self._remapMaterials()
 
-    def _load_map_from_file(self):
+    def _loadMapFromFile(self):
         """Loads the map file and create a python dictionary."""
-        if not os.path.isfile(self._voxel_map_file):
-            print("Could not find file: ", self._voxel_map_file)
+        if not os.path.isfile(self._voxelMapFile):
+            print("Could not find file: ", self._voxelMapFile)
         else:
-            print("Found: ", self._voxel_map_file)
-            with open(self._voxel_map_file,'r') as fh:
-                map_content = fh.readlines()
+            print("Found: ", self._voxelMapFile)
+            with open(self._voxelMapFile,'r') as fh:
+                mapContent = fh.readlines()
             fh.close()
-            for map_string in map_content:
-                material_match = material_pattern.match(map_string)
-                if material_match:
-                    self._voxel_map[material_match.group(1)] = material_match.group(2)
+            for mapString in mapContent:
+                materialMatch = materialPattern.match(mapString)
+                if materialMatch:
+                    self._voxelMap[materialMatch.group(1)] = materialMatch.group(2)
 
-    @property
-    def voxel_map(self):
-        return self._voxel_map
-
-class VoxelWriter(object):
-    """Writes a voxel material file for given material set and dimensions."""
-    def __init__(self):
-        self._voxel_info = None
-        self._voxel_data = None
-        self._voxel_name = ''
-        self._voxel_path = ''
-        self._material_color = []
-
-    def _add_material_colors(self):
-        """Fill material colors."""
-        for index in range(len(self._material_color),
-                           self._voxel_info.numMaterials):
-            self._material_color.append([random(), random(), random()])
+        # Add reduced set of materials to reduced voxel object
+        reducedMatMap = {}
+        mapIndex = 1
+        reducedMaterials = set(self._voxelMap.values())
+        for mat in reducedMaterials:
+            self._reducedVoxelObject.appendMaterial(mat, random(), random(), random())
+            reducedMatMap[mat]=mapIndex
+            mapIndex += 1
         
-    def write_voxel_files(self):
-        """Writes voxel data and description file."""
-        if len(self._material_colors) < self._voxel_info.numMaterials:
-            print("[INFO] VoxelWriter: appending random material colors.")
-            self._add_material_colors()
-            
-        fh_txt = open(self._voxel_name + '.txt', 'w')
-            for index in range(len(self._voxel_info.numMaterials)):
-                fh_text.write(index, '\t',
-                              "{0:.6f}".format(self._material_color[index][0]),
-                              '\t',
-                              "{0:.6f}".format(self._material_color[index][1]),
-                              '\t',
-                              "{0:.6f}".format(self._material_color[index][2]),
-                              '\t', self._voxel_info.material(index), '\n')
-
-            fh_text.write('\nGrid extent (number of cells)\n')
-            fh_text.write('nx\t',str(self._nx),'\n')
-            fh_text.write('ny\t',str(self._ny),'\n')
-            fh_text_write('nz\t',str(self._nz),'\n')
-            fh_text.write('\nSpatial stems [m]\n')
-            fh_text.write('dx\t',str(self._dx),'\n')
-            fh_text.write('dy\t',str(self._dy),'\n')
-            fh_text.write('dz\t',str(self._dz),'\n')
-            fh_txt.close()
-
-        @property
-        def voxel_name(self):
-            return self._voxel_name
-        @property
-        def voxel_path(self):
-            return self._voxel_path
-        @property
-        def material_color(self):
-            return self._material_color
-            
-#        if not self._voxel_data:
-#            print('[ERROR] VoxelWriter: Voxel data is empty.')
-#        else:
-#            fh_raw = open(self._voxel_name + '.raw', 'wb')
-#
-#            fh_raw.close()
+        # Create raw material dictionary for mapping raw voxel data
+        mapIndex = 1
+        for matItem in self._voxelMap:
+            self._voxelMapByte[mapIndex] = reducedMatMap[self._voxelMap[matItem]]
+            mapIndex += 1
     
+    def _remapMaterials(self):
+        """Remap the materials according to the map file and populate voxel object."""
+        self._reducedVoxelObject.name = self._originalVoxelObject.name + '_reduced'
+        self._reducedVoxelObject.nx = self._originalVoxelObject.nx
+        self._reducedVoxelObject.ny = self._originalVoxelObject.ny
+        self._reducedVoxelObject.nz = self._originalVoxelObject.nz
+        self._reducedVoxelObject.dx = self._originalVoxelObject.dx
+        self._reducedVoxelObject.dy = self._originalVoxelObject.dy
+        self._reducedVoxelObject.dz = self._originalVoxelObject.dz
+        reducedData = self._originalVoxelObject.data
+        for index in range(len(reducedData)):
+            reducedData[index] = self._voxelMapByte[reducedData[index]]
+        self._reducedVoxelObject.data = reducedData
+
+        
+    @property
+    def voxelModel(self):
+        """Return the reduced voxel model object."""
+        return self._reducedVoxelObject
