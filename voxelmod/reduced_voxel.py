@@ -44,13 +44,27 @@ class ReduceVoxel(object):
             self._reducedVoxelObject.appendMaterial(mat, random(), random(), random())
             reducedMatMap[mat]=mapIndex
             mapIndex += 1
-        
+        print("Reduced Material Map")
+        print(reducedMatMap)
+        for i in range(self._reducedVoxelObject.numMaterials):
+            print(i, " : ", self._reducedVoxelObject.material(i))
+        print("Original Materials")
+        for i in range(1,self._originalVoxelObject.numMaterials):
+            name = self._originalVoxelObject.material(i)[1].split('/')[-1]
+            print(name)
+            self._voxelMapByte[i] = reducedMatMap[self._voxelMap[name]]
         # Create raw material dictionary for mapping raw voxel data
-        mapIndex = 1
-        for matItem in self._voxelMap:
-            self._voxelMapByte[mapIndex] = reducedMatMap[self._voxelMap[matItem]]
-            mapIndex += 1
-    
+#        for matItem in self._voxelMap:
+#            for reducedMatIndex in range(self._reducedVoxelObject.numMaterials):
+#                if self._reducedVoxelobject.material(reducedMatIndex)[1] == matItem:
+#                    self._voxelMapByte[mapIndex] = reducedMatMap[self._voxelMap[matItem]]
+            
+        print("Voxel Map:")
+        print(self._voxelMap['Bone'])
+        print("Voxel Byte Map:")
+        print(self._voxelMapByte)
+        
+        
     def _remapMaterials(self):
         """Remap the materials according to the map file and populate voxel object."""
         self._reducedVoxelObject.name = self._originalVoxelObject.name + '_reduced'
@@ -62,7 +76,10 @@ class ReduceVoxel(object):
         self._reducedVoxelObject.dz = self._originalVoxelObject.dz
         reducedData = self._originalVoxelObject.data
         for index in range(len(reducedData)):
+            if index == 10099596:
+                print(index, reducedData[index], ":", self._voxelMapByte[reducedData[index]])
             reducedData[index] = self._voxelMapByte[reducedData[index]]
+            
         self._reducedVoxelObject.data = reducedData
 
         
