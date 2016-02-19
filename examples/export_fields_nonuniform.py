@@ -3,10 +3,10 @@
 Export steady-state XFdtd field results using xfmatgrid module.
 """
 
+# Ensure python 2 and 3 compatibility
 from __future__ import(absolute_import, division, generators,
                        print_function, unicode_literals)
 
-# Ensure python 2 and 3 compatibility
 import sys
 import numpy as np
 import scipy.io as spio
@@ -24,13 +24,13 @@ class XFFieldWriterNonUniform(object):
         export_dict['XDim'] = self.fieldNonUniformGrid.xdim
         export_dict['YDim'] = self.fieldNonUniformGrid.ydim
         export_dict['ZDim'] = self.fieldNonUniformGrid.zdim
-        export_dict[fieldType + 'x'] = self.fieldNonUniformGrid.ss_field_data(fieldName, 'x')
-        export_dict[fieldType + 'y'] = self.fieldNonUniformGrid.ss_field_data(fieldName, 'y')
-        export_dict[fieldType + 'z'] = self.fieldNonUniformGrid.ss_field_data(fieldName, 'z')
+        export_dict[fieldType + 'x'] = self.fieldNonUniformGrid.ss_field_data(fieldType, 'x')
+        export_dict[fieldType + 'y'] = self.fieldNonUniformGrid.ss_field_data(fieldType, 'y')
+        export_dict[fieldType + 'z'] = self.fieldNonUniformGrid.ss_field_data(fieldType, 'z')
         spio.savemat(fileName, export_dict, oned_as='column')
         
 
 if __name__ == "__main__":
     print("Exporting XFdtd field data on nonuniformgrid.")
-    
-    
+    xfFieldW = XFFieldWriterNonUniform('../Test_Data/Test_Coil.xf',1,1)
+    xfFieldW.exportMatFile('B','testB.mat')
