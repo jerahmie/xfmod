@@ -15,7 +15,7 @@ from xfmatgrid.xfmultipoint import (XFMultiPointInfo, XFMultiPointFrequencies,
 from xfmatgrid.xfutils import xf_sim_id_to_str, xf_run_id_to_str
 from xfgeomod import XFGeometry
 
-MP_SS_RE = r'([0-9A-Za-z/_.]*)(MultiPoint_Solid_Sensor[0-9]*_[0-9]*)'
+MP_SS_RE = r'([0-9A-Za-z/_.]*)(MultiPoint_[a-zA-Z0-9/_]*_[0-9]+)'
 
 class XFFieldNonUniformGrid(object):
     """Holds XF field data on non-uniform grid."""

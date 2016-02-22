@@ -89,7 +89,7 @@ class XFFieldWriterUniform(object):
         # Caculate Z indices
         ZIndices = []
         for i in range(len(self._zDim)):
-            ZIndices.append(np.argmin(np.absolute(ZDimReduced-ZDim[i])))
+            ZIndices.append(np.argmin(np.absolute(ZDimReduced-self._zDim[i])))
         
         # regridded field data
         self._fx = np.zeros((len(self._xDim), len(self._yDim), len(self._zDim)))
@@ -113,6 +113,7 @@ class XFFieldWriterUniform(object):
                                                   method='nearest')
         
     def exportMatFile(self, fieldType, fileName):
+        """Export field data in mat file."""
         self._regridField(fieldType)
         print("Exporting field data to mat file.")
         export_dict = dict()
@@ -126,15 +127,15 @@ class XFFieldWriterUniform(object):
 
 if __name__ == "__main__":
     X0 = [0.0, -0.0257, -0.102]
-    XLen = [0.050, 0.050, 0.050]
+    XLen = [0.256, 0.256, 0.256]
     dX = [0.002, 0.002, 0.002]
 
     print("Exporting XFdtd field data on UNIFORM grid.")
 
-    xfFieldW = XFFieldWriterUniform('../Test_Data/Test_Coil.xf',1,1)
+    xfFieldW = XFFieldWriterUniform('/mnt/DATA/XFdtd_Results/KU_64_7T_Duke_Head_2mm_000002.xf',2,1)
     xfFieldW.setOrigin(X0[0], X0[1], X0[2])
     xfFieldW.setLen(XLen[0], XLen[1], XLen[2])
     xfFieldW.setGridSize(dX[0], dX[1], dX[2])
-    xfFieldW.exportMatFile('B','test_B_uniform.mat')
+    xfFieldW.exportMatFile('B','test_B_KU_64_7T_Coil_0.mat')
     
     print("Done.")

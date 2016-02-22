@@ -32,5 +32,5 @@ class XFFieldWriterNonUniform(object):
 
 if __name__ == "__main__":
     print("Exporting XFdtd field data on nonuniformgrid.")
-    xfFieldW = XFFieldWriterNonUniform('../Test_Data/Test_Coil.xf',1,1)
+    xfFieldW = XFFieldWriterNonUniform('/mnt/DATA/XFdtd_Results/KU_64_7T_Duke_Head_2mm_000002.xf',2,1)
     xfFieldW.exportMatFile('B','testB.mat')
