@@ -66,14 +66,14 @@ class XFFieldWriterUniform(object):
                                         self._zLen/2.0 - self._z0))
         ZIndex2 = np.argmin(np.absolute(self.fieldNonUniformGrid.zdim -
                                         self._zLen/2.0 - self._z0))
-
+        
         XDimReduced = self.fieldNonUniformGrid.xdim[XIndex1:XIndex2]
         YDimReduced = self.fieldNonUniformGrid.ydim[YIndex1:YIndex2]
         ZDimReduced = self.fieldNonUniformGrid.zdim[ZIndex1:ZIndex2]
-
-        fxReduced = np.transpose(self.fieldNonUniformGrid.ss_field_data(fieldType, 'x'), (2,1,0))[XIndex1:XIndex2, YIndex1:YIndex2, ZIndex1:ZIndex2]
-        fyReduced = np.transpose(self.fieldNonUniformGrid.ss_field_data(fieldType, 'y'), (2,1,0))[XIndex1:XIndex2, YIndex1:YIndex2, ZIndex1:ZIndex2]
-        fzReduced = np.transpose(self.fieldNonUniformGrid.ss_field_data(fieldType, 'z'), (2,1,0))[XIndex1:XIndex2, YIndex1:YIndex2, ZIndex1:ZIndex2]
+        fxTemp = self.fieldNonUniformGrid.ss_field_data(fieldType, 'x')
+        fxReduced = self.fieldNonUniformGrid.ss_field_data(fieldType, 'x')[XIndex1:XIndex2, YIndex1:YIndex2, ZIndex1:ZIndex2]
+        fyReduced = self.fieldNonUniformGrid.ss_field_data(fieldType, 'y')[XIndex1:XIndex2, YIndex1:YIndex2, ZIndex1:ZIndex2]
+        fzReduced = self.fieldNonUniformGrid.ss_field_data(fieldType, 'z')[XIndex1:XIndex2, YIndex1:YIndex2, ZIndex1:ZIndex2]        
 
         print("Interpolating Data.")
         self._xDim = np.arange(-self._xLen/2.0 + self._x0,
@@ -109,6 +109,22 @@ class XFFieldWriterUniform(object):
         ZInterpIndex = 0
         X1, Y1 = np.meshgrid(XDimReduced, YDimReduced)
         X2, Y2 = np.meshgrid(self._xDim, self._yDim)
+        print("XIndex1, XIndex2: ", XIndex1, ", ", XIndex2)
+        print("YIndex1, YIndex2: ", YIndex1, ", ", YIndex2)
+        print("ZIndex1, ZIndex2: ", ZIndex1, ", ", ZIndex2)
+        print("X1, Y1: ", np.shape(X1), np.shape(Y1))
+        print("xdim, XDimReduced: ",
+              len(self.fieldNonUniformGrid.xdim), ", ",
+              len(XDimReduced))
+        print("ydim, YDimReduced: ",
+              len(self.fieldNonUniformGrid.ydim), ", ",
+              len(YDimReduced))
+        print("zdim, ZDimReduced: ",
+              len(self.fieldNonUniformGrid.zdim), ", ",
+              len(ZDimReduced))
+        print("fxReduced: ", np.shape(fxReduced))
+        print("X2, Y2: ", np.shape(X2), np.shape(Y2))
+        print("fx,fy,fz: ", np.shape(self._fx), np.shape(self._fy), np.shape(self._fz))
 
         for zRawIndex in ZIndices:
             print("zRawIndex: ", zRawIndex)
@@ -124,6 +140,7 @@ class XFFieldWriterUniform(object):
                                                   fzReduced[:,:,zRawIndex].ravel(),
                                                   (X2, Y2),
                                                   method='nearest')
+            ZInterpIndex += 1
 
     def exportMatFile(self, fieldType, fileName):
         """Export field data in mat file."""
@@ -139,18 +156,18 @@ class XFFieldWriterUniform(object):
         spio.savemat(fileName, export_dict, oned_as='column')
 
 if __name__ == "__main__":
-    X0 = [0.0, -0.0257, -0.0102]
-    XLen = [0.05, 0.05, 0.05]
+    X0 = [0.0, -0.0257, -0.102]
+    XLen = [0.256, 0.256, 0.256]
     dX = [0.002, 0.002, 0.002]
 
     print("Exporting XFdtd field data on UNIFORM grid.")
 
-    #xfFieldW = XFFieldWriterUniform('/mnt/DATA/XFdtd_Results/KU_64_7T_Duke_Head_2mm_000002.xf',2,1)
-    xfFieldW = XFFieldWriterUniform('../Test_Data/Test_Coil.xf',1,1)
+    xfFieldW = XFFieldWriterUniform('/mnt/DATA/XFdtd_Results/KU_64_7T_Duke_Head_2mm_000002.xf',2,1)
+    #xfFieldW = XFFieldWriterUniform('../Test_Data/Test_Coil.xf',1,1)
     xfFieldW.setOrigin(X0[0], X0[1], X0[2])
     xfFieldW.setLen(XLen[0], XLen[1], XLen[2])
     xfFieldW.setGridSize(dX[0], dX[1], dX[2])
-    #xfFieldW.exportMatFile('B','test_B_KU_64_7T_Coil_0.mat')
-    xfFieldW.exportMatFile('B','test_B.mat')
+    xfFieldW.exportMatFile('B','test_B_KU_64_7T_Coil_0.mat')
+    #xfFieldW.exportMatFile('B','test_B.mat')
 
     print("Done.")
