@@ -16,7 +16,7 @@ class XFFieldWriterUniform(object):
     """Writes XFdtd field data to mat file on uniform grid. """
     def __init__(self, xfProjectDir, simID, runID):
         self.fieldNonUniformGrid = xfmatgrid.XFFieldNonUniformGrid(xfProjectDir,
-                                                                   simID, 
+                                                                   simID,
                                                                    runID)
         self.fieldUniformGrid = None
         self._fx = None; self._fy = None; self._fz = None;
@@ -24,7 +24,7 @@ class XFFieldWriterUniform(object):
         self._x0 = 0.0; self._y0 = 0.0; self._z0 = 0.0;
         self._xLen = 0.0; self._yLen = 0.0; self._zLen = 0.0;
         self._dx = 0.0; self._dy = 0.0; self._dz = 0.0;
-        
+
     def setOrigin(self, x0, y0, z0):
         """Set origin of export region."""
         self._x0 = x0
@@ -71,47 +71,60 @@ class XFFieldWriterUniform(object):
         YDimReduced = self.fieldNonUniformGrid.ydim[YIndex1:YIndex2]
         ZDimReduced = self.fieldNonUniformGrid.zdim[ZIndex1:ZIndex2]
 
-        fxReduced = np.transpose(self.fieldNonUniformGrid.ss_field_data(fieldType, 'x'), (2,1,0))
-        fyReduced = np.transpose(self.fieldNonUniformGrid.ss_field_data(fieldType, 'y'), (2,1,0))
-        fzReduced = np.transpose(self.fieldNonUniformGrid.ss_field_data(fieldType, 'z'), (2,1,0))
-        
+        fxReduced = np.transpose(self.fieldNonUniformGrid.ss_field_data(fieldType, 'x'), (2,1,0))[XIndex1:XIndex2, YIndex1:YIndex2, ZIndex1:ZIndex2]
+        fyReduced = np.transpose(self.fieldNonUniformGrid.ss_field_data(fieldType, 'y'), (2,1,0))[XIndex1:XIndex2, YIndex1:YIndex2, ZIndex1:ZIndex2]
+        fzReduced = np.transpose(self.fieldNonUniformGrid.ss_field_data(fieldType, 'z'), (2,1,0))[XIndex1:XIndex2, YIndex1:YIndex2, ZIndex1:ZIndex2]
+
         print("Interpolating Data.")
-        self._xDim = np.linspace(-(self._xLen/2.0 + self._x0),
-                                 self._xLen/2.0 + self._x0,
-                                 num=len(XDimReduced))
-        self._yDim = np.linspace(-(self._yLen/2.0 + self._y0),
-                                 self._yLen/2.0 + self._y0,
-                                 num=len(YDimReduced))
-        self._zDim = np.linspace(-(self._zLen/2.0 + self._z0),
-                                 self._zLen/2.0 + self._z0,
-                                 num=len(ZDimReduced))
+        self._xDim = np.arange(-self._xLen/2.0 + self._x0,
+                               self._xLen/2.0 + self._x0,
+                               self._dx)
+        self._yDim = np.arange(-self._yLen/2.0 + self._y0,
+                               self._yLen/2.0 + self._y0,
+                               self._dy)
+        self._zDim = np.arange(-self._zLen/2.0 + self._z0,
+                               self._zLen/2.0 + self._z0,
+                               self._dz)
 
         # Caculate Z indices
         ZIndices = []
         for i in range(len(self._zDim)):
             ZIndices.append(np.argmin(np.absolute(ZDimReduced-self._zDim[i])))
-        
+
         # regridded field data
-        self._fx = np.zeros((len(self._xDim), len(self._yDim), len(self._zDim)))
-        self._fy = np.zeros((len(self._xDim), len(self._yDim), len(self._zDim)))
-        self._fz = np.zeros((len(self._xDim), len(self._yDim), len(self._zDim)))
-        
+        self._fx = np.zeros((len(self._xDim),
+                             len(self._yDim),
+                             len(self._zDim)),
+                            dtype=np.complex_)
+        self._fy = np.zeros((len(self._xDim),
+                             len(self._yDim),
+                             len(self._zDim)),
+                            dtype=np.complex_)
+
+        self._fz = np.zeros((len(self._xDim),
+                             len(self._yDim),
+                             len(self._zDim)),
+                            dtype=np.complex_)
+
         ZInterpIndex = 0
+        X1, Y1 = np.meshgrid(XDimReduced, YDimReduced)
+        X2, Y2 = np.meshgrid(self._xDim, self._yDim)
+
         for zRawIndex in ZIndices:
             print("zRawIndex: ", zRawIndex)
-            self._fx[:,:,ZInterpIndex] = griddata((self._xDim, self._yDim), 
-                                                  fxReduced[:,:,zRawIndex],
-                                                  (XDimReduced, YDimReduced),
+            self._fx[:,:,ZInterpIndex] = griddata((X1.ravel(), Y1.ravel()),
+                                                  fxReduced[:,:,zRawIndex].ravel(),
+                                                  (X2, Y2),
                                                   method='nearest')
-            self._fy[:,:,ZInterpIndex] = griddata((self._xDim, self._yDim), 
-                                                  fyReduced[:,:,zRawIndex],
-                                                  (XDimReduced, YDimReduced),
+            self._fy[:,:,ZInterpIndex] = griddata((X1.ravel(), Y1.ravel()),
+                                                  fyReduced[:,:,zRawIndex].ravel(),
+                                                  (X2, Y2),
                                                   method='nearest')
-            self._fz[:,:,ZInterpIndex] = griddata((self._xDim, self._yDim ), 
-                                                  fzReduced[:,:,zRawIndex],
-                                                  (XDimReduced, YDimReduced), 
+            self._fz[:,:,ZInterpIndex] = griddata((X1.ravel(), Y1.ravel()),
+                                                  fzReduced[:,:,zRawIndex].ravel(),
+                                                  (X2, Y2),
                                                   method='nearest')
-        
+
     def exportMatFile(self, fieldType, fileName):
         """Export field data in mat file."""
         self._regridField(fieldType)
@@ -126,16 +139,18 @@ class XFFieldWriterUniform(object):
         spio.savemat(fileName, export_dict, oned_as='column')
 
 if __name__ == "__main__":
-    X0 = [0.0, -0.0257, -0.102]
-    XLen = [0.256, 0.256, 0.256]
+    X0 = [0.0, -0.0257, -0.0102]
+    XLen = [0.05, 0.05, 0.05]
     dX = [0.002, 0.002, 0.002]
 
     print("Exporting XFdtd field data on UNIFORM grid.")
 
-    xfFieldW = XFFieldWriterUniform('/mnt/DATA/XFdtd_Results/KU_64_7T_Duke_Head_2mm_000002.xf',2,1)
+    #xfFieldW = XFFieldWriterUniform('/mnt/DATA/XFdtd_Results/KU_64_7T_Duke_Head_2mm_000002.xf',2,1)
+    xfFieldW = XFFieldWriterUniform('../Test_Data/Test_Coil.xf',1,1)
     xfFieldW.setOrigin(X0[0], X0[1], X0[2])
     xfFieldW.setLen(XLen[0], XLen[1], XLen[2])
     xfFieldW.setGridSize(dX[0], dX[1], dX[2])
-    xfFieldW.exportMatFile('B','test_B_KU_64_7T_Coil_0.mat')
-    
+    #xfFieldW.exportMatFile('B','test_B_KU_64_7T_Coil_0.mat')
+    xfFieldW.exportMatFile('B','test_B.mat')
+
     print("Done.")
