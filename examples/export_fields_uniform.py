@@ -142,26 +142,16 @@ class XFFieldWriterUniform(object):
         spio.savemat(fileName, export_dict, oned_as='column')
 
 if __name__ == "__main__":
-    #X0 = [0.0, -0.0257, -0.102]
-    #XLen = [0.256, 0.256, 0.256]
-    #dX = [0.002, 0.002, 0.002]
-    X0 = [0.0, 0.0, -0.002]
-    XLen = [0.3, 0.3, 0.3]
+    X0 = [0.0, -0.0257, -0.102]
+    XLen = [0.256, 0.256, 0.256]
     dX = [0.002, 0.002, 0.002]
-
+    
     print("Exporting XFdtd field data on UNIFORM grid.")
 
-    #xfFieldW = XFFieldWriterUniform('/mnt/DATA/XFdtd_Results/KU_64_7T_Duke_Head_2mm_000002.xf',2,1)
-    xfFieldW = XFFieldWriterUniform('../Test_Data/Test_Coil.xf',1,1)
+    xfFieldW = XFFieldWriterUniform('/mnt/DATA/XFdtd_Results/KU_64_7T_Duke_Head_2mm_000002.xf',2,1)
     xfFieldW.setOrigin(X0[0], X0[1], X0[2])
     xfFieldW.setLen(XLen[0], XLen[1], XLen[2])
     xfFieldW.setGridSize(dX[0], dX[1], dX[2])
-    #xfFieldW.setOrigin(xfFieldW.fieldNonUniformGrid.xdim[0],
-    #                   xfFieldW.fieldNonUniformGrid.ydim[0],
-    #                   xfFieldW.fieldNonUniformGrid.zdim[0])
-    #xfFieldW.setLen(XLen[0], XLen[1], XLen[2])
-    #xfFieldW.setGridSize(dX[0], dX[1], dX[2])
-    #xfFieldW.exportMatFile('B','test_B_KU_64_7T_Coil_0.mat')
-    xfFieldW.exportMatFile('B','test_B_uniform.mat')
+    xfFieldW.exportMatFile('B','test_B_KU_64_7T_Coil_0.mat')
 
     print("Done.")
