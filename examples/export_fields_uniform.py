@@ -7,7 +7,7 @@ Re-grid steady-state XFdtd field data and export in matfile format.
 from __future__ import(absolute_import, division, generators,
                        print_function, unicode_literals)
 
-import sys
+import os, sys, ast, getopt
 import numpy as np
 import scipy.io as spio
 from scipy.interpolate import griddata
@@ -141,17 +141,85 @@ class XFFieldWriterUniform(object):
         export_dict[fieldType + 'z'] = self._fz
         spio.savemat(fileName, export_dict, oned_as='column')
 
+def usage(exitStatus=None):
+    """Print the usage statement and exit with given status."""
+    print("")
+    print("Usage: export_fields_uniform.py project [--origin='[x0,y0,z0]'] \\")
+    print("                                [--lengths='[x,y,z]'] \\")
+    print("                                [--deltas='[dx, dy, dz]']")
+    print("  --origin: the origin coordinates, string representing a Python list.")
+    print("  --lengths: dimensions of the ROI, centered at the origin, string prepresenting a Python list.")
+    print("  --deltas: grid resolution, string representing a Python list.")
+    print("")
+    print("Example: ")
+    print("  $ export_fields_uniform.py / --origin='[0.0,0.0,0.0]' --lengths='[0.01,0.01,0.02]' --deltas='[0.02, 0.02, 0.02]'")
+    print("")
+    if(exitStatus):
+        sys.exit(exitStatus)
+    else:
+        sys.exit()
+
+def main(argv):
+    """Parse command line arguments and make call to exporter."""
+    argDict = {}
+    switches = { 'origin':list, 'lengths':list, 'deltas':list,
+                 'xf_project':str, 'run':str, 'sim':str,
+                 'export_file':str, 'field':str }
+    singles = ''
+    longForm = [x+'=' for x in switches]
+    d = {x[0]+':':'--'+x for x in switches}
+
+    # parse command line options
+    try:
+        opts, args = getopt.getopt(argv, singles, longForm)
+    except getopt.GetoptError as e:
+        print("Bad argument Getopt: ", e.msg)
+        usage(2)
+
+    for opt, arg in opts:
+        if opt[1]+':' in d: o=d[opt[1]+':'][2:]
+        elif opt in d.values(): o=opt[2:]
+        else: o=''
+        if o and arg:
+            if(switches[o].__name__ == 'list'):
+                argDict[o]=ast.literal_eval(arg)
+            else:
+                argDict[o]=arg
+
+        if not o or not isinstance(argDict[o], switches[o]):
+            print(opt, arg, " Error: bad arg")
+            sys.exit(2)
+
+    # Get project directory
+    if(not os.path.exists(argDict['xf_project'])):
+        print("XFdtd project path does not exist.")
+        usage(2)
+
+    if len(argDict['origin']) != 3:
+        print("Bad regrid region origin.")
+        usage(2)
+    if len(argDict['lengths']) != 3:
+        print("Bad regrid region dimensions.")
+        usage(2)
+    if len(argDict['deltas']) != 3:
+        print("Bad regrid resolution.")
+        usage(2)
+
+    xfFieldW = XFFieldWriterUniform(argDict['xf_project'],
+                                    int(argDict['sim']),
+                                    int(argDict['run']))
+    xfFieldW.setOrigin(argDict['origin'][0],
+                       argDict['origin'][1],
+                       argDict['origin'][2])
+    xfFieldW.setLen(argDict['lengths'][0],
+                    argDict['lengths'][1],
+                    argDict['lengths'][2])
+    xfFieldW.setGridSize(argDict['deltas'][0],
+                         argDict['deltas'][1],
+                         argDict['deltas'][2])
+
+    xfFieldW.exportMatFile(argDict['field'], argDict['export_file'])
+
 if __name__ == "__main__":
-    X0 = [0.0, -0.0257, -0.102]
-    XLen = [0.256, 0.256, 0.256]
-    dX = [0.002, 0.002, 0.002]
-    
-    print("Exporting XFdtd field data on UNIFORM grid.")
-
-    xfFieldW = XFFieldWriterUniform('/mnt/DATA/XFdtd_Results/KU_64_7T_Duke_Head_2mm_000002.xf',2,1)
-    xfFieldW.setOrigin(X0[0], X0[1], X0[2])
-    xfFieldW.setLen(XLen[0], XLen[1], XLen[2])
-    xfFieldW.setGridSize(dX[0], dX[1], dX[2])
-    xfFieldW.exportMatFile('B','test_B_KU_64_7T_Coil_0.mat')
-
+    main(sys.argv[1:])
     print("Done.")
