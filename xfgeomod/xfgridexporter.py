@@ -30,7 +30,7 @@ class XFGridExporter(object):
         self._hx_edge_runs = self._mesh.hx_edge_runs
         self._hy_edge_runs = self._mesh.hy_edge_runs
         self._hz_edge_runs = self._mesh.hz_edge_runs
-        self._mesh_ex_density = None
+        self._mesh_ex_density = None;
         self._mesh_ey_density = None
         self._mesh_ez_density = None
         self._mesh_ex_sigma = None
@@ -83,132 +83,6 @@ class XFGridExporter(object):
     def units_scale_factor(self):
         """Return the grid and meshing scale factor."""
         return self._units_scale_factor
-
-    @property
-    def grid_x(self):
-        """Return X grid values (m)."""
-        return self._grid_x
-
-    @property
-    def grid_y(self):
-        """Return Y grid values (m)."""
-        return self._grid_y
-
-    @property
-    def grid_z(self):
-        """Return Z grid values (m)."""
-        return self._grid_z
-
-    @property
-    def materials_list(self):
-        """Return the XF materials list."""
-        return self._materials_list
-
-    @materials_list.setter
-    def materials_list(self, value):
-        """Set the XF materials list."""
-        self._materials_list = value
-
-    @materials_list.deleter
-    def materials_list(self):
-        """Delete the XF materials list."""
-        self._materials_list = None
-
-    # Ex edge runs
-    @property
-    def ex_edge_runs(self):
-        """Return the Ex edge runs."""
-        return self._ex_edge_runs
-
-    @ex_edge_runs.setter
-    def ex_edge_runs(self, value):
-        """Set the Ex edge runs."""
-        self._ex_edge_runs = value
-
-    @ex_edge_runs.deleter
-    def ex_edge_runs(self):
-        """Delete the Ex edge runs."""
-        self._ex_edge_runs = None
-
-    # Ey edge runs
-    @property
-    def ey_edge_runs(self):
-        """Return the Ey edge runs."""
-        return self._ey_edge_runs
-
-    @ey_edge_runs.setter
-    def ey_edge_runs(self, value):
-        """Set the Ey edge runs."""
-        self._ey_edge_runs = value
-
-    @ey_edge_runs.deleter
-    def ey_edge_runs(self):
-        """Delete the Ey edge runs."""
-        self._ey_edge_runs = None
-
-    # Ez edge runs
-    @property
-    def ez_edge_runs(self):
-        """Return the Ez edge runs."""
-        return self._ez_edge_runs
-
-    @ez_edge_runs.setter
-    def ez_edge_runs(self, value):
-        """Set the Ez edge runs."""
-        self._ez_edge_runs = value
-
-    @ez_edge_runs.deleter
-    def ez_edge_runs(self):
-        """Delete the Ez edge runs."""
-        self._ez_edge_runs = None
-
-    # Hx edge runs
-    @property
-    def hx_edge_runs(self):
-        """Return the Hx edge runs."""
-        return self._hx_edge_runs
-
-    @hx_edge_runs.setter
-    def hx_edge_runs(self, value):
-        """Set the Hx edge runs."""
-        self._hx_edge_runs = value
-
-    @hx_edge_runs.deleter
-    def hx_edge_runs(self):
-        """Delete the Hx edge runs."""
-        self._hx_edge_runs = None
-
-    # Hy edge runs
-    @property
-    def hy_edge_runs(self):
-        """Return the Hy edge runs."""
-        return self._hy_edge_runs
-
-    @hy_edge_runs.setter
-    def hy_edge_runs(self, value):
-        """Set the Hy edge runs."""
-        self._hy_edge_runs = value
-
-    @hy_edge_runs.deleter
-    def hy_edge_runs(self):
-        """Delete the Hy edge runs."""
-        self._hy_edge_runs = None
-
-    # Hz edge runs
-    @property
-    def hz_edge_runs(self):
-        """Return the Hz edge runs."""
-        return self._hz_edge_runs
-
-    @hz_edge_runs.setter
-    def hz_edge_runs(self, value):
-        """Set the Hz edge runs."""
-        self._hz_edge_runs = value
-
-    @hz_edge_runs.deleter
-    def hz_edge_runs(self):
-        """Delete the Hz edge runs."""
-        self._hz_edge_runs = None
 
     def _set_mesh_data(self):
         """Set mesh data from edge run data."""
@@ -443,3 +317,9 @@ class XFGridExporter(object):
         # writing data to mat file (file_name)
         print("Saving mesh data to Mat file.")
         savemat(file_name, export_dict)
+
+class XFGridExporterRegrid(XFGridExporter):
+    """Resample data on uniform grid prior to exporting."""
+    def say_hello():
+        print("Hello from XFGridExporterRegrid.")
+    
