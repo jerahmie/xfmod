@@ -8,24 +8,28 @@ from __future__ import(absolute_import, division, generators,
                        print_function, unicode_literals)
 
 import os, sys, ast, getopt
+from math import sqrt
 import numpy as np
 import scipy.io as spio
 from scipy.interpolate import griddata
-import xfmatgrid
+import xfsystem, xfmatgrid
+
 
 class XFFieldWriterUniform(object):
     """Writes XFdtd field data to mat file on uniform grid. """
-    def __init__(self, xfProjectDir, simID, runID):
+    def __init__(self, xfProjectDir, simId, runId):
         self.fieldNonUniformGrid = xfmatgrid.XFFieldNonUniformGrid(xfProjectDir,
-                                                                   simID,
-                                                                   runID)
+                                                                   simId,
+                                                                   runId)
+        self._xfSystem = xfsystem.XFSystem(xfProjectDir, simId, runId)
         self.fieldUniformGrid = None
         self._fx = None; self._fy = None; self._fz = None;
         self._xDim = None; self._yDim = None; self._zDim = None;
         self._x0 = 0.0; self._y0 = 0.0; self._z0 = 0.0;
         self._xLen = 0.0; self._yLen = 0.0; self._zLen = 0.0;
         self._dx = 0.0; self._dy = 0.0; self._dz = 0.0;
-
+        self.netInputPower = 1
+        
     def setOrigin(self, x0, y0, z0):
         """Set origin of export region."""
         self._x0 = x0
@@ -44,7 +48,7 @@ class XFFieldWriterUniform(object):
         self._dy = dy
         self._dz = dz
 
-    def _regridField(self, fieldType):
+    def _regridFields(self, fieldType):
         """
         Resample field data on uniform grid.
 
@@ -127,10 +131,29 @@ class XFFieldWriterUniform(object):
                                                   (X2, Y2),
                                                   method='nearest')
             ZInterpIndex += 1
+        
+    @property
+    def netInputPower(self):
+        """Net input power for simulation."""
+        return self._netInputPower
+
+    @netInputPower.setter
+    def netInputPower(self, power):
+        """Sett the net input power for simulation."""
+        self._netInputPower = power
+    
+    def _scaleFields(self):
+        """Normalize the field value to be net input power."""
+        fieldNorm = self._netInputPower / sqrt(self._xfSystem.net_input_power)
+        self._fx = self._fx * fieldNorm
+        self._fy = self._fy * fieldNorm
+        self._fz = self._fz * fieldNorm
+
 
     def exportMatFile(self, fieldType, fileName):
         """Export field data in mat file."""
-        self._regridField(fieldType)
+        self._regridFields(fieldType)
+        self._scaleFields()
         print("Exporting field data to mat file.")
         export_dict = dict()
         export_dict['XDim'] = self._xDim
