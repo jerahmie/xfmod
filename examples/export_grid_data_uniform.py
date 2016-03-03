@@ -32,7 +32,8 @@ def main(xfProjectDir, simId, runId):
                                           xf_run_id_to_str(runId)))
     gridExporter = xfgeomod.XFGridExporter(xfGeometry, xfMesh)
     gridExporterRegrid = xfgeomod.XFGridExporterRegrid(xfGeometry, xfMesh)
-    
+    gridExporterRegrid.sayHello()
 
 if __name__ == '__main__':
-    main('/home/jerahmie/workspace/xfmod/Test_Data/Test_Coil.xf', 1, 1)
+#    main('/home/jerahmie/workspace/xfmod/Test_Data/Test_Coil.xf', 1, 1)
+    main('/Data/CMRR/xfmod/Test_Data/Test_Coil.xf', 1, 1)    

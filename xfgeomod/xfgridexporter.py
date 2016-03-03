@@ -320,6 +320,6 @@ class XFGridExporter(object):
 
 class XFGridExporterRegrid(XFGridExporter):
     """Resample data on uniform grid prior to exporting."""
-    def say_hello():
+    def sayHello(self):
         print("Hello from XFGridExporterRegrid.")
     
