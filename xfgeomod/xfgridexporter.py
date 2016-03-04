@@ -50,6 +50,19 @@ class XFGridExporter(object):
         self._mesh_hz_epsilon_r = None
         self._set_mesh_data()
 
+
+    @property
+    def grid_x(self):
+        return self._grid_x
+
+    @property
+    def grid_y(self):
+        return self._grid_y
+
+    @property
+    def grid_z(self):
+        return self._grid_z
+
     @property
     def units(self):
         """Return export grid/mesh units."""
@@ -107,21 +120,17 @@ class XFGridExporter(object):
             # relative permittivity is set to zero for PEC values (mat type 1)
             # free space (mat type 0) or material permittivity for all others.
             self._mesh_ex_epsilon_r[:] = self._materials_list[0].epsilon_r
+            print("Material list: ", self._materials_list[2].name)
             for edge_run in self._ex_edge_runs:
                 for index in range(edge_run.x_ind, edge_run.stop_ind):
                     if edge_run.mat == 1:
                         self._mesh_ex_epsilon_r[edge_run.z_ind, \
-                            edge_run.y_ind, index] = 0.0
+                                                    edge_run.y_ind, index] = 0.0
                     else:
-                        self._mesh_ex_density[edge_run.z_ind, edge_run.y_ind, \
-                            index] = \
-                            self._materials_list[edge_run.mat].density
-                        self._mesh_ex_sigma[edge_run.z_ind, edge_run.y_ind, \
-                            index] = \
-                            self._materials_list[edge_run.mat].conductivity
-                        self._mesh_ex_epsilon_r[edge_run.z_ind, \
-                            edge_run.y_ind, index] = \
-                            self._materials_list[edge_run.mat].epsilon_r
+                        self._mesh_ex_density[edge_run.z_ind, edge_run.y_ind,index] = self._materials_list[edge_run.mat].density
+                        self._mesh_ex_sigma[edge_run.z_ind, edge_run.y_ind,  index] = self._materials_list[edge_run.mat].conductivity
+                        self._mesh_ex_epsilon_r[edge_run.z_ind, edge_run.y_ind, index] = self._materials_list[edge_run.mat].epsilon_r
+
 
         # set Ey material properties
         if self._ey_edge_runs is not None:
@@ -318,8 +327,9 @@ class XFGridExporter(object):
         print("Saving mesh data to Mat file.")
         savemat(file_name, export_dict)
 
+        
 class XFGridExporterRegrid(XFGridExporter):
     """Resample data on uniform grid prior to exporting."""
-    def say_hello():
+    def say_hello(self):
         print("Hello from XFGridExporterRegrid.")
     

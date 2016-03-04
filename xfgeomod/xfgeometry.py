@@ -24,9 +24,9 @@ _MAT_PEC_PATTERN = r'^begin_<electricperfectconductor> ' + \
                    r'(ElectricPerfectConductor)\n' + \
                    r'material_number (\d+)\n' + \
                    r'end_<electricperfectconductor>'
-
+#r'(["\w\s\d\-\(\)]+)\s*\n' + \
 _MAT_NORMALELECTRIC_PATTERN = r'^begin_<normal_electric>\s*' + \
-                              r'(["\w\s\d\-\(\)]+)\s*\n' + \
+                              r'(.*)\n' + \
                               r'material_number (\d+)\n' + \
                               r'conductivity ([\d\-eE.]*)\n'+ \
                               r'uncorrected_conductivity ' + \
@@ -128,7 +128,6 @@ class XFGeometry(object):
             self._materials[0].epsilon_r = float(mat_fs.group(4))
             self._materials[0].density = float(mat_fs.group(5))
 
-
             # load PEC (always material 1)
             mat_pec = self._mat_pec.search(self._geom_info)
             self._materials.append(XFMaterial())
@@ -136,6 +135,7 @@ class XFGeometry(object):
 
             # load normal electric values
             mat1 = self._mat_norm_electric.findall(self._geom_info)
+
             for mat_index in range(len(mat1)):
                 self._materials.append(XFMaterial())
                 self._materials[-1].name = mat1[mat_index][self.NAME]
