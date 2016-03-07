@@ -91,7 +91,7 @@ class XFGridExporter(object):
             self._export_units_scale = 39.2701
         else:
             print('Invalid unit type: ', value)
-        
+
     @property
     def units_scale_factor(self):
         """Return the grid and meshing scale factor."""
@@ -165,7 +165,7 @@ class XFGridExporter(object):
                         self._mesh_ey_epsilon_r[edge_run.z_ind, \
                             index, edge_run.x_ind] = \
                             self._materials_list[edge_run.mat].epsilon_r
-                        
+
         # set Ez material properties
         if self._ez_edge_runs is not None:
             print('Calculating Ez mesh values.')
@@ -314,7 +314,7 @@ class XFGridExporter(object):
             export_dict['MeshHzSigma'] = self._mesh_hz_sigma
         if self._grid_x is not None:
             print('Adding grid_X to export mat file.')
-            export_dict['grid_X'] = [x*self._export_units_scale for x in self._grid_x] 
+            export_dict['grid_X'] = [x*self._export_units_scale for x in self._grid_x]
         if self._grid_y is not None:
             print('Adding grid_Y to export mat file.')
             export_dict['grid_Y'] = [x*self._export_units_scale for x in self._grid_y]
@@ -326,10 +326,3 @@ class XFGridExporter(object):
         # writing data to mat file (file_name)
         print("Saving mesh data to Mat file.")
         savemat(file_name, export_dict)
-
-        
-class XFGridExporterRegrid(XFGridExporter):
-    """Resample data on uniform grid prior to exporting."""
-    def say_hello(self):
-        print("Hello from XFGridExporterRegrid.")
-    

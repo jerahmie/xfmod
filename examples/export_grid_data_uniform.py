@@ -101,6 +101,7 @@ def main(xfProjectDir, simId, runId):
                                           xf_sim_id_to_str(simId),
                                           xf_run_id_to_str(runId)))
     gridExporter = xfgeomod.XFGridExporter(xfGeometry, xfMesh)
+<<<<<<< HEAD
     #gridExporterRegrid = xfgeomod.XFGridExporterRegrid(xfGeometry, xfMesh, )
     print(np.shape(gridExporter._grid_x))
     print(np.shape(gridExporter._grid_y))
@@ -110,6 +111,5 @@ def main(xfProjectDir, simId, runId):
     
 
 if __name__ == '__main__':
-    #main('/home/jerahmie/workspace/xfmod/Test_Data/Test_Coil.xf', 1, 1)
     main('/mnt/DATA/XFdtd_Results/Dipole_Coil_10p5T_Phantom.xf', 1, 1)
-    #main('/mnt/DATA/XFdtd_Results/Green_Coil_10p5T_Phantom.xf', 1, 1)
+
