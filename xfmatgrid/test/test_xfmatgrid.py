@@ -203,6 +203,7 @@ class TestXFMatGrid(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.field_nugrid = xfmatgrid.XFFieldNonUniformGrid(TEST_COIL_DIR, 1, 1)
+
     def setUp(self):
         self.fieldName = r'B'
 

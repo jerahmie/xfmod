@@ -3,7 +3,6 @@
 Re-grid steady-state XFdtd field data and export in matfile format.
 """
 
-# Ensure python 2 and 3 compatibility.
 from __future__ import(absolute_import, division, generators,
                        print_function, unicode_literals)
 
