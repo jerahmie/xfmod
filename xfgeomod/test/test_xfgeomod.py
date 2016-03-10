@@ -7,7 +7,7 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 import sys, os
 import unittest
-from xfmatgrid.xfutils import xf_run_id_to_str, xf_sim_id_to_str 
+from xfutils import xf_run_id_to_str, xf_sim_id_to_str 
 import xfgeomod
 
 # Location of Test_Coil.xf XFdtd project relative to this file.

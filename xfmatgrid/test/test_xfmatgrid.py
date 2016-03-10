@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 Test xfmatgrid module.
 """
 
-from __future__ import(absolute_import, division, generators,
-                       print_function, unicode_literals)
+from __future__ import (absolute_import, division, generators,
+                        print_function, unicode_literals)
 import sys, os
 import struct
 import unittest
@@ -206,26 +206,6 @@ class TestXFMatGrid(unittest.TestCase):
 
     def setUp(self):
         self.fieldName = r'B'
-
-    def test_xf_run_id_to_str(self):
-        """Verify XFdtd valid run string composition."""
-        self.assertTrue(xfmatgrid.xfutils.is_valid_run_id(1))
-        self.assertTrue(xfmatgrid.xfutils.is_valid_run_id(9999))
-        self.assertFalse(xfmatgrid.xfutils.is_valid_run_id(-1))
-        self.assertFalse(xfmatgrid.xfutils.is_valid_run_id(0))
-        self.assertFalse(xfmatgrid.xfutils.is_valid_run_id(10000.0))
-        self.assertEqual('Run0001', xfmatgrid.xfutils.xf_run_id_to_str(1))
-        self.assertEqual('Run9999', xfmatgrid.xfutils.xf_run_id_to_str(9999))
-
-    def test_xf_sim_id_to_str(self):
-        """Verify XFdtd valid simulation string composition."""
-        self.assertTrue(xfmatgrid.xfutils.is_valid_sim_id(1))
-        self.assertTrue(xfmatgrid.xfutils.is_valid_sim_id(999999))
-        self.assertFalse(xfmatgrid.xfutils.is_valid_sim_id(-1.1))
-        self.assertFalse(xfmatgrid.xfutils.is_valid_sim_id(0))
-        self.assertFalse(xfmatgrid.xfutils.is_valid_sim_id(1000000))
-        self.assertEqual('000001', xfmatgrid.xfutils.xf_sim_id_to_str(1))
-        self.assertEqual('999999', xfmatgrid.xfutils.xf_sim_id_to_str(999999))
 
     def test_project_file(self):
         self.assertEqual(TEST_COIL_DIR, self.field_nugrid.project_dir)
