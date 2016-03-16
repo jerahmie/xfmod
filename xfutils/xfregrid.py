@@ -16,7 +16,7 @@ class XFRegridError(Exception):
     def __str__(self):
         self.__str__ = self.message
 
-def xf_regrid_3d_nearest((x1,y1,z1), (x2,y2,z2), data3d):
+def xf_regrid_3d_nearest(X1, X2, data3d):
     """
     Regrid the 3d data to on new grid.
 
@@ -36,6 +36,9 @@ def xf_regrid_3d_nearest((x1,y1,z1), (x2,y2,z2), data3d):
     regrid3D -- 3d data regridded on (x2, y2, z2) grid.
     
     """
+
+    x1 = X1[0]; y1 = X1[1]; z1 = X1[2]
+    x2 = X2[0]; y2 = X2[1]; z2 = X2[2]
     
     # check the original data dimensions
     if (np.size(x1),np.size(y1),np.size(z1)) != np.shape(data3d):
@@ -43,7 +46,7 @@ def xf_regrid_3d_nearest((x1,y1,z1), (x2,y2,z2), data3d):
 
     data3d_regrid = np.zeros((np.size(x2),
                               np.size(y2),
-                              np.size(z2)))
+                              np.size(z2)), dtype=data3d.dtype)
 
     # generate a list of nearest-neighbor z-index values
     z_ind_nearest = []

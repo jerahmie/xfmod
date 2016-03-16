@@ -13,6 +13,12 @@ from scipy.interpolate import griddata
 from xfmatgrid.xfutils import xf_run_id_to_str, xf_sim_id_to_str
 import xfgeomod
 
+
+class XFGridDataWriterUniform(object):
+    """Write XFdtd field data to mat file on uniform grid."""
+    def __init__(self, xfProjectDir, simId, runId):
+        
+
 def quick_regrid(gridExporter):
     """quick exporter with regrid"""
     dx=0.002; dy=0.002; dz=0.002
@@ -101,8 +107,7 @@ def main(xfProjectDir, simId, runId):
                                           xf_sim_id_to_str(simId),
                                           xf_run_id_to_str(runId)))
     gridExporter = xfgeomod.XFGridExporter(xfGeometry, xfMesh)
-<<<<<<< HEAD
-    #gridExporterRegrid = xfgeomod.XFGridExporterRegrid(xfGeometry, xfMesh, )
+
     print(np.shape(gridExporter._grid_x))
     print(np.shape(gridExporter._grid_y))
     print(np.shape(gridExporter._grid_z))

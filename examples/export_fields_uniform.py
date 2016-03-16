@@ -11,8 +11,7 @@ from math import sqrt
 import numpy as np
 import scipy.io as spio
 from scipy.interpolate import griddata
-import xfsystem, xfmatgrid
-
+import xfsystem, xfmatgrid, xfutils
 
 class XFFieldWriterUniform(object):
     """Writes XFdtd field data to mat file on uniform grid. """
@@ -57,27 +56,6 @@ class XFFieldWriterUniform(object):
         dX (list): Grid spacing [dx, dy, dz] (mm).
 
         """
-        XIndex1 = np.argmin(np.absolute(self.fieldNonUniformGrid.xdim +
-                                        self._xLen/2.0 - self._x0))
-        XIndex2 = np.argmin(np.absolute(self.fieldNonUniformGrid.xdim -
-                                        self._xLen/2.0 - self._x0))
-        YIndex1 = np.argmin(np.absolute(self.fieldNonUniformGrid.ydim +
-                                        self._yLen/2.0 - self._y0))
-        YIndex2 = np.argmin(np.absolute(self.fieldNonUniformGrid.ydim -
-                                        self._yLen/2.0 - self._y0))
-        ZIndex1 = np.argmin(np.absolute(self.fieldNonUniformGrid.zdim +
-                                        self._zLen/2.0 - self._z0))
-        ZIndex2 = np.argmin(np.absolute(self.fieldNonUniformGrid.zdim -
-                                        self._zLen/2.0 - self._z0))
-
-        XDimReduced = self.fieldNonUniformGrid.xdim[XIndex1:XIndex2]
-        YDimReduced = self.fieldNonUniformGrid.ydim[YIndex1:YIndex2]
-        ZDimReduced = self.fieldNonUniformGrid.zdim[ZIndex1:ZIndex2]
-        fxTemp = self.fieldNonUniformGrid.ss_field_data(fieldType, 'x')
-        fxReduced = self.fieldNonUniformGrid.ss_field_data(fieldType, 'x')[XIndex1:XIndex2, YIndex1:YIndex2, ZIndex1:ZIndex2]
-        fyReduced = self.fieldNonUniformGrid.ss_field_data(fieldType, 'y')[XIndex1:XIndex2, YIndex1:YIndex2, ZIndex1:ZIndex2]
-        fzReduced = self.fieldNonUniformGrid.ss_field_data(fieldType, 'z')[XIndex1:XIndex2, YIndex1:YIndex2, ZIndex1:ZIndex2]
-
         print("Interpolating Data.")
         self._xDim = np.arange(-self._xLen/2.0 + self._x0,
                                self._xLen/2.0 + self._x0,
@@ -89,47 +67,27 @@ class XFFieldWriterUniform(object):
                                self._zLen/2.0 + self._z0,
                                self._dz)
 
-        # Caculate Z indices
-        ZIndices = []
-        for i in range(len(self._zDim)):
-            ZIndices.append(np.argmin(np.absolute(ZDimReduced-self._zDim[i])))
-
-        # regridded field data
-        self._fx = np.zeros((len(self._xDim),
-                             len(self._yDim),
-                             len(self._zDim)),
-                            dtype=np.complex_)
-        self._fy = np.zeros((len(self._xDim),
-                             len(self._yDim),
-                             len(self._zDim)),
-                            dtype=np.complex_)
-
-        self._fz = np.zeros((len(self._xDim),
-                             len(self._yDim),
-                             len(self._zDim)),
-                            dtype=np.complex_)
-
-        ZInterpIndex = 0
-        X1, Y1 = np.meshgrid(XDimReduced, YDimReduced, indexing='ij')
-        X2, Y2 = np.meshgrid(self._xDim, self._yDim, indexing='ij')
-
-        for zRawIndex in ZIndices:
-            sys.stdout.write("zRawIndex: %d \r" % zRawIndex)
-            sys.stdout.flush()
-
-            self._fx[:,:,ZInterpIndex] = griddata((X1.ravel(), Y1.ravel()),
-                                                  fxReduced[:,:,zRawIndex].ravel(),
-                                                  (X2, Y2),
-                                                  method='nearest')
-            self._fy[:,:,ZInterpIndex] = griddata((X1.ravel(), Y1.ravel()),
-                                                  fyReduced[:,:,zRawIndex].ravel(),
-                                                  (X2, Y2),
-                                                  method='nearest')
-            self._fz[:,:,ZInterpIndex] = griddata((X1.ravel(), Y1.ravel()),
-                                                  fzReduced[:,:,zRawIndex].ravel(),
-                                                  (X2, Y2),
-                                                  method='nearest')
-            ZInterpIndex += 1
+        self._fx = xfutils.xf_regrid_3d_nearest((self.fieldNonUniformGrid.xdim,
+                                                 self.fieldNonUniformGrid.ydim,
+                                                 self.fieldNonUniformGrid.zdim),
+                                                (self._xDim,
+                                                 self._yDim,
+                                                 self._zDim),
+                                                self.fieldNonUniformGrid.ss_field_data(fieldType,'x'))
+        self._fy = xfutils.xf_regrid_3d_nearest((self.fieldNonUniformGrid.xdim,
+                                                 self.fieldNonUniformGrid.ydim,
+                                                 self.fieldNonUniformGrid.zdim),
+                                                (self._xDim,
+                                                 self._yDim,
+                                                 self._zDim),
+                                                self.fieldNonUniformGrid.ss_field_data(fieldType,'y'))
+        self._fz = xfutils.xf_regrid_3d_nearest((self.fieldNonUniformGrid.xdim,
+                                                 self.fieldNonUniformGrid.ydim,
+                                                 self.fieldNonUniformGrid.zdim),
+                                                (self._xDim,
+                                                 self._yDim,
+                                                 self._zDim),
+                                                self.fieldNonUniformGrid.ss_field_data(fieldType,'z')) 
         
     @property
     def netInputPower(self):
