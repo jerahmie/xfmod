@@ -30,26 +30,17 @@ class XFGridExporter(object):
         self._hx_edge_runs = self._mesh.hx_edge_runs
         self._hy_edge_runs = self._mesh.hy_edge_runs
         self._hz_edge_runs = self._mesh.hz_edge_runs
-        self._mesh_ex_density = None;
-        self._mesh_ey_density = None
-        self._mesh_ez_density = None
-        self._mesh_ex_sigma = None
-        self._mesh_ey_sigma = None
-        self._mesh_ez_sigma = None
+        self._mesh_ex_density = None; self._mesh_ey_density = None; self._mesh_ez_density = None
+        self._mesh_ex_sigma = None; self._mesh_ey_sigma = None; self._mesh_ez_sigma = None
         self._mesh_ex_epsilon_r = None
         self._mesh_ey_epsilon_r = None
         self._mesh_ez_epsilon_r = None
-        self._mesh_hx_density = None
-        self._mesh_hy_density = None
-        self._mesh_hz_density = None
-        self._mesh_hx_sigma = None
-        self._mesh_hy_sigma = None
-        self._mesh_hz_sigma = None
+        self._mesh_hx_density = None; self._mesh_hy_density = None; self._mesh_hz_density = None
+        self._mesh_hx_sigma = None; self._mesh_hy_sigma = None; self._mesh_hz_sigma = None
         self._mesh_hx_epsilon_r = None
         self._mesh_hy_epsilon_r = None
         self._mesh_hz_epsilon_r = None
         self._set_mesh_data()
-
 
     @property
     def grid_x(self):
@@ -67,6 +58,51 @@ class XFGridExporter(object):
     def units(self):
         """Return export grid/mesh units."""
         return self._export_units
+
+    @property
+    def ex_sigma(self):
+        """Return conductivity on Ex grid locations."""
+        return self._mesh_ex_sigma
+
+    @property
+    def ey_sigma(self):
+        """Return conductivity on Ey grid locations."""
+        return self._mesh_ey_sigma
+
+    @property
+    def ez_sigma(self):
+        """Return conductivity on Ez grid locations."""
+        return self._mesh_ez_sigma
+
+    @property
+    def ex_epsilon_r(self):
+        """Return relative permittivity on Ex grid locations."""
+        return self._mesh_ex_epsilon_r
+
+    @property
+    def ey_epsilon_r(self):
+        """Return relative permittivity on Ey grid locations."""
+        return self._mesh_ey_epsilon_r
+    
+    @property
+    def ez_epsilon_r(self):
+        """Return relative permittivity on Ez grid locations."""
+        return self._mesh_ez_epsilon_r
+
+    @property
+    def ex_density(self):
+        """Return density on Ex grid locations."""
+        return self._mesh_ex_density
+
+    @property
+    def ey_density(self):
+        """Return density on Ey grid locations."""
+        return self._mesh_ey_density
+
+    @property
+    def ez_density(self):
+        """Return density on Ez grid locaitons."""
+        return self._mesh_ez_density
 
     @units.setter
     def units(self,value):

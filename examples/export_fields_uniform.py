@@ -15,38 +15,38 @@ import xfsystem, xfmatgrid, xfutils
 
 class XFFieldWriterUniform(object):
     """Writes XFdtd field data to mat file on uniform grid. """
-    def __init__(self, xfProjectDir, simId, runId):
-        self.fieldNonUniformGrid = xfmatgrid.XFFieldNonUniformGrid(xfProjectDir,
-                                                                   simId,
-                                                                   runId)
-        self._xfSystem = xfsystem.XFSystem(xfProjectDir, simId, runId)
-        self.fieldUniformGrid = None
-        self._fx = None; self._fy = None; self._fz = None;
-        self._xDim = None; self._yDim = None; self._zDim = None;
-        self._x0 = 0.0; self._y0 = 0.0; self._z0 = 0.0;
-        self._xLen = 0.0; self._yLen = 0.0; self._zLen = 0.0;
-        self._dx = 0.0; self._dy = 0.0; self._dz = 0.0;
-        self.netInputPower = 1
+    def __init__(self, xf_project_dir, sim_id, run_id):
+        self.field_nonuniform_grid = xfmatgrid.XFFieldNonUniformGrid(xf_project_dir,
+                                                                   sim_id,
+                                                                   run_id)
+        self._xf_system = xfsystem.XFSystem(xf_project_dir, sim_id, run_id)
+        self.field_uniform_grid = None
+        self._fx = None; self._fy = None; self._fz = None
+        self._xdim = None; self._ydim = None; self._zdim = None
+        self._x0 = 0.0; self._y0 = 0.0; self._z0 = 0.0
+        self._xlen = 0.0; self._ylen = 0.0; self._zlen = 0.0
+        self._dx = 0.0; self._dy = 0.0; self._dz = 0.0
+        self._net_input_power = 1.0
         
-    def setOrigin(self, x0, y0, z0):
+    def set_origin(self, x0, y0, z0):
         """Set origin of export region."""
         self._x0 = x0
         self._y0 = y0
         self._z0 = z0
 
-    def setLen(self, xLen, yLen, zLen):
+    def set_len(self, xlen, ylen, zlen):
         """Set the dimension of the export region."""
-        self._xLen = xLen
-        self._yLen = yLen
-        self._zLen = zLen
+        self._xlen = xlen
+        self._ylen = ylen
+        self._zlen = zlen
 
-    def setGridSize(self, dx, dy, dz):
+    def set_grid_resolution(self, dx, dy, dz):
         """Sets the grid step size of the uniformly interpolated grid size."""
         self._dx = dx
         self._dy = dy
         self._dz = dz
-
-    def _regridFields(self, fieldType):
+        
+    def _regrid_fields(self, field_type):
         """
         Resample field data on uniform grid.
 
@@ -54,74 +54,74 @@ class XFFieldWriterUniform(object):
         X0 (list): The lower corner [x0, y0, z0] (mm) of the region to regrid.
         XLen (list): Dimensions of regrid region [xLen, yLen, zLen] (mm).
         dX (list): Grid spacing [dx, dy, dz] (mm).
-
         """
-        print("Interpolating Data.")
-        self._xDim = np.arange(-self._xLen/2.0 + self._x0,
-                               self._xLen/2.0 + self._x0,
+
+        self._xdim = np.arange(self._x0 - self._xlen/2.0,
+                               self._x0 + self._xlen/2.0,
                                self._dx)
-        self._yDim = np.arange(-self._yLen/2.0 + self._y0,
-                               self._yLen/2.0 + self._y0,
+        self._ydim = np.arange(self._y0 - self._ylen/2.0,
+                               self._y0 + self._ylen/2.0,
                                self._dy)
-        self._zDim = np.arange(-self._zLen/2.0 + self._z0,
-                               self._zLen/2.0 + self._z0,
+        self._zdim = np.arange(self._z0 - self._zlen/2.0,
+                               self._z0 + self._zlen/2.0,
                                self._dz)
 
-        self._fx = xfutils.xf_regrid_3d_nearest((self.fieldNonUniformGrid.xdim,
-                                                 self.fieldNonUniformGrid.ydim,
-                                                 self.fieldNonUniformGrid.zdim),
-                                                (self._xDim,
-                                                 self._yDim,
-                                                 self._zDim),
-                                                self.fieldNonUniformGrid.ss_field_data(fieldType,'x'))
-        self._fy = xfutils.xf_regrid_3d_nearest((self.fieldNonUniformGrid.xdim,
-                                                 self.fieldNonUniformGrid.ydim,
-                                                 self.fieldNonUniformGrid.zdim),
-                                                (self._xDim,
-                                                 self._yDim,
-                                                 self._zDim),
-                                                self.fieldNonUniformGrid.ss_field_data(fieldType,'y'))
-        self._fz = xfutils.xf_regrid_3d_nearest((self.fieldNonUniformGrid.xdim,
-                                                 self.fieldNonUniformGrid.ydim,
-                                                 self.fieldNonUniformGrid.zdim),
-                                                (self._xDim,
-                                                 self._yDim,
-                                                 self._zDim),
-                                                self.fieldNonUniformGrid.ss_field_data(fieldType,'z')) 
+        print("Interpolating data.")
+        self._fx = xfutils.xf_regrid_3d_nearest((self.field_nonuniform_grid.xdim,
+                                                 self.field_nonuniform_grid.ydim,
+                                                 self.field_nonuniform_grid.zdim),
+                                                (self._xdim,
+                                                 self._ydim,
+                                                 self._zdim),
+                                                self.field_nonuniform_grid.ss_field_data(field_type,'x'))
+        self._fy = xfutils.xf_regrid_3d_nearest((self.field_nonuniform_grid.xdim,
+                                                 self.field_nonuniform_grid.ydim,
+                                                 self.field_nonuniform_grid.zdim),
+                                                (self._xdim,
+                                                 self._ydim,
+                                                 self._zdim),
+                                                self.field_nonuniform_grid.ss_field_data(field_type,'y'))
+        self._fz = xfutils.xf_regrid_3d_nearest((self.field_nonuniform_grid.xdim,
+                                                 self.field_nonuniform_grid.ydim,
+                                                 self.field_nonuniform_grid.zdim),
+                                                (self._xdim,
+                                                 self._ydim,
+                                                 self._zdim),
+                                                self.field_nonuniform_grid.ss_field_data(field_type,'z')) 
         
     @property
-    def netInputPower(self):
+    def net_input_power(self):
         """Net input power for simulation."""
-        return self._netInputPower
+        return self._net_input_power
 
-    @netInputPower.setter
-    def netInputPower(self, power):
+    @net_input_power.setter
+    def net_input_power(self, power):
         """Sett the net input power for simulation."""
-        self._netInputPower = power
+        self._net_input_power = power
     
-    def _scaleFields(self):
+    def _scale_fields(self):
         """Normalize the field value to be net input power."""
-        fieldNorm = self._netInputPower / sqrt(self._xfSystem.net_input_power)
-        self._fx = self._fx * fieldNorm
-        self._fy = self._fy * fieldNorm
-        self._fz = self._fz * fieldNorm
+        field_norm = self._net_input_power / sqrt(self._xf_system.net_input_power)
+        self._fx = self._fx * field_norm
+        self._fy = self._fy * field_norm
+        self._fz = self._fz * field_norm
 
 
-    def exportMatFile(self, fieldType, fileName):
+    def export_matfile(self, field_type, file_name):
         """Export field data in mat file."""
-        self._regridFields(fieldType)
-        self._scaleFields()
+        self._regrid_fields(field_type)
+        self._scale_fields()
         print("Exporting field data to mat file.")
         export_dict = dict()
-        export_dict['XDim'] = self._xDim
-        export_dict['YDim'] = self._yDim
-        export_dict['ZDim'] = self._zDim
-        export_dict[fieldType + 'x'] = self._fx
-        export_dict[fieldType + 'y'] = self._fy
-        export_dict[fieldType + 'z'] = self._fz
-        spio.savemat(fileName, export_dict, oned_as='column')
+        export_dict['XDim'] = self._xdim
+        export_dict['YDim'] = self._ydim
+        export_dict['ZDim'] = self._zdim
+        export_dict[field_type + 'x'] = self._fx
+        export_dict[field_type + 'y'] = self._fy
+        export_dict[field_type + 'z'] = self._fz
+        spio.savemat(file_name, export_dict, oned_as='column')
 
-def usage(exitStatus=None):
+def usage(exit_status=None):
     """Print the usage statement and exit with given status."""
     print("")
     print("Usage: export_fields_uniform.py project [--origin='[x0,y0,z0]'] \\")
@@ -134,24 +134,24 @@ def usage(exitStatus=None):
     print("Example: ")
     print("  $ export_fields_uniform.py / --origin='[0.0,0.0,0.0]' --lengths='[0.01,0.01,0.02]' --deltas='[0.02, 0.02, 0.02]'")
     print("")
-    if(exitStatus):
-        sys.exit(exitStatus)
+    if(exit_status):
+        sys.exit(exit_status)
     else:
         sys.exit()
 
 def main(argv):
     """Parse command line arguments and make call to exporter."""
-    argDict = {}
+    arg_dict = {}
     switches = { 'origin':list, 'lengths':list, 'deltas':list,
                  'xf_project':str, 'run':str, 'sim':str,
                  'export_file':str, 'field':str }
     singles = ''
-    longForm = [x+'=' for x in switches]
+    long_form = [x+'=' for x in switches]
     d = {x[0]+':':'--'+x for x in switches}
 
     # parse command line options
     try:
-        opts, args = getopt.getopt(argv, singles, longForm)
+        opts, args = getopt.getopt(argv, singles, long_form)
     except getopt.GetoptError as e:
         print("Bad argument Getopt: ", e.msg)
         usage(2)
@@ -162,43 +162,42 @@ def main(argv):
         else: o=''
         if o and arg:
             if(switches[o].__name__ == 'list'):
-                argDict[o]=ast.literal_eval(arg)
+                arg_dict[o]=ast.literal_eval(arg)
             else:
-                argDict[o]=arg
+                arg_dict[o]=arg
 
-        if not o or not isinstance(argDict[o], switches[o]):
+        if not o or not isinstance(arg_dict[o], switches[o]):
             print(opt, arg, " Error: bad arg")
             sys.exit(2)
 
     # Get project directory
-    if(not os.path.exists(argDict['xf_project'])):
-        print("XFdtd project path does not exist.")
+    if(not os.path.exists(arg_dict['xf_project'])):
+        print("XFdtd project (", arg_dict['xf_project'] , ") not found.")
         usage(2)
-
-    if len(argDict['origin']) != 3:
+    if len(arg_dict['origin']) != 3:
         print("Bad regrid region origin.")
         usage(2)
-    if len(argDict['lengths']) != 3:
+    if len(arg_dict['lengths']) != 3:
         print("Bad regrid region dimensions.")
         usage(2)
-    if len(argDict['deltas']) != 3:
+    if len(arg_dict['deltas']) != 3:
         print("Bad regrid resolution.")
         usage(2)
 
-    xfFieldW = XFFieldWriterUniform(argDict['xf_project'],
-                                    int(argDict['sim']),
-                                    int(argDict['run']))
-    xfFieldW.setOrigin(argDict['origin'][0],
-                       argDict['origin'][1],
-                       argDict['origin'][2])
-    xfFieldW.setLen(argDict['lengths'][0],
-                    argDict['lengths'][1],
-                    argDict['lengths'][2])
-    xfFieldW.setGridSize(argDict['deltas'][0],
-                         argDict['deltas'][1],
-                         argDict['deltas'][2])
+    xf_field_writer = XFFieldWriterUniform(arg_dict['xf_project'],
+                                           int(arg_dict['sim']),
+                                           int(arg_dict['run']))
+    xf_field_writer.set_origin(arg_dict['origin'][0],
+                               arg_dict['origin'][1],
+                               arg_dict['origin'][2])
+    xf_field_writer.set_len(arg_dict['lengths'][0],
+                           arg_dict['lengths'][1],
+                           arg_dict['lengths'][2])
+    xf_field_writer.set_grid_resolution(arg_dict['deltas'][0],
+                                        arg_dict['deltas'][1],
+                                        arg_dict['deltas'][2])
 
-    xfFieldW.exportMatFile(argDict['field'], argDict['export_file'])
+    xf_field_writer.export_matfile(arg_dict['field'], arg_dict['export_file'])
 
 if __name__ == "__main__":
     main(sys.argv[1:])
