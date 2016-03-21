@@ -22,13 +22,16 @@ class XFGridDataWriterUniform(object):
         self._x0 = 0.0; self._y0 = 0.0; self._z0 = 0.0
         self._dx = 0.0; self._dy = 0.0; self._dz = 0.0
         self._xlen = 0.0; self._ylen = 0.0; self._zlen = 0.0
-        self._ex_sigma = None; self.ey_sigma = None; self._ez_sigma = None
+        self._ex_sigma = None; self._ey_sigma = None; self._ez_sigma = None
+        self._hx_sigma = None; self._hy_sigma = None; self._hz_sigma = None
+        self._ex_density = None; self._ey_density = None; self._ez_density = None
+        self._hx_density = None; self._hy_density = None; self._hz_density = None
         self._ex_epsilon_r = None
         self._ey_epsilon_r = None
         self._ez_epsilon_r = None
-        self._ex_density = None
-        self._ey_density = None
-        self._ez_density = None
+        self._hx_epsilon_r = None
+        self._hy_epsilon_r = None
+        self._hz_epsilon_r = None
         self._geom = xfgeomod.XFGeometry(run_path)
         self._mesh = xfgeomod.XFMesh(run_path)
         self._grid_exporter = xfgeomod.XFGridExporter(self._geom, self._mesh)
@@ -39,11 +42,11 @@ class XFGridDataWriterUniform(object):
         self._y0 = y0
         self._z0 = z0
 
-    def set_len(self, x_len, y_len, z_len):
+    def set_len(self, xlen, ylen, zlen):
         """Set dimension of export region."""
-        self._x_len = x_len
-        self._y_len = y_len
-        self._z_len = z_len
+        self._xlen = xlen
+        self._ylen = ylen
+        self._zlen = zlen
 
     def set_grid_resolution(self, dx, dy, dz):
         """Set the resolution of the export region."""
@@ -53,8 +56,12 @@ class XFGridDataWriterUniform(object):
 
     def _regrid(self):
         """Regrid the mesh and grid data."""
+        print("_regrid orign: ", self._x0, ",", self._y0, ",", self._z0)
+        print("_regrid lengths: ", self._xlen, ",", self._ylen, ",", self._zlen)
+        print("_regrid deltas: ", self._dx, ",", self._dy, ",", self._dz)
+  
         self._xdim = np.arange(self._x0 - self._xlen/2.0,
-                               self._x0 + self._xlen/2.0, 
+                               self._x0 + self._xlen/2.0,
                                self._dx)
         self._ydim = np.arange(self._y0 - self._ylen/2.0,
                                self._y0 + self._ylen/2.0,
@@ -62,7 +69,9 @@ class XFGridDataWriterUniform(object):
         self._zdim = np.arange(self._z0 - self._zlen/2.0,
                                self._z0 + self._zlen/2.0,
                                self._dz)
-
+        print("_regrid: _xdim: ", np.shape(self._xdim))
+        print("_regrid: _ydim: ", np.shape(self._ydim))
+        print("_regrid: _zdim: ", np.shape(self._zdim))
         print("Interpolating data.")
         self._ex_sigma = xfutils.xf_regrid_3d_nearest((self._grid_exporter.grid_x,
                                                        self._grid_exporter.grid_y,
@@ -113,6 +122,80 @@ class XFGridDataWriterUniform(object):
     def export_matfile(self, file_name):
         """Export mesh/grid data to matlab file."""
         self._regrid()
+        export_dict = dict()
+        if self._ex_density is not None:
+            print('Adding MeshExDensity to export mat file.')
+            print(np.shape(self._ex_density))
+            export_dict['MeshExDensity'] = self._ex_density
+        if self._ex_sigma is not None:
+            print('Adding MeshExSigma to export mat file.')
+            print(np.shape(self._ex_sigma))
+            export_dict['MeshExSigma'] = self._ex_sigma
+        if self._ex_epsilon_r is not None:
+            print('Adding MeshExEpsilon_r to export mat file.')
+            print(np.shape(self._ex_epsilon_r))
+            export_dict['MeshExEpsilon_r'] = self._ex_epsilon_r
+        if self._ey_density is not None:
+            print('Adding MeshEyDensity to export mat file.')
+            print(np.shape(self._ey_density))
+            export_dict['MeshEyDensity'] = self._ey_density
+        if self._ey_sigma is not None:
+            print('Adding MeshEySigma to export mat file.')
+            print(np.shape(self._ey_sigma))
+            export_dict['MeshEySigma'] = self._ey_sigma
+        if self._ey_epsilon_r is not None:
+            print('Adding MeshEyEpsilon_r to export mat file.')
+            print(np.shape(self._ey_epsilon_r))
+            export_dict['MeshEyEpsilon_r'] = self._ey_epsilon_r
+        if self._ez_density is not None:
+            print('Adding MeshEzDensity to export mat file.')
+            print(np.shape(self._ez_density))
+            export_dict['MeshEzDensity'] = self._ez_density
+        if self._ez_sigma is not None:
+            print('Adding MeshEzSigma to export mat file.')
+            print(np.shape(self._ez_sigma))
+            export_dict['MeshEzSigma'] = self._ez_sigma
+        if self._ez_epsilon_r is not None:
+            print('Adding MeshEzEpsilon_r to export mat file.')
+            print(np.shape(self._ez_epsilon_r))
+            export_dict['MeshEzEpsilon_r'] = self._ez_epsilon_r
+        if self._hx_density is not None:
+            print('Adding MeshHxDensity to export mat file.')
+            print(np.shape(self._hx_density))
+            export_dict['MeshHxDensity'] = self._hx_density
+        if self._hx_sigma is not None:
+            print('Adding MeshHxSigma to export mat file.')
+            print(np.shape(self._hx_sigma))
+            export_dict['MeshHxSigma'] = self._hx_sigma
+        if self._hy_density is not None:
+            print('Adding MeshHyDensity to export mat file.')
+            print(np.shape(self._hy_density))
+            export_dict['MeshHyDensity'] = self._hy_density
+        if self._hy_sigma is not None:
+            print('Adding MeshHySigma to export mat file.')
+            print(np.shape(self._hy_sigma))
+            export_dict['MeshHySigma'] = self._hy_sigma
+        if self._hz_density is not None:
+            print('Adding MeshHzDensity to export mat file.')
+            print(np.shape(self._hz_density))
+            export_dict['MeshHzDensity'] = self._hz_density
+        if self._hz_sigma is not None:
+            print('Adding MeshHzSigma to export mat file.')
+            print(np.shape(self._hz_sigma))
+            export_dict['MeshHzSigma'] = self._hz_sigma
+        if self._xdim is not None:
+            print('Adding grid_X to export mat file.')
+            export_dict['grid_X'] = [x*self._grid_exporter.units_scale_factor for x in self._xdim]
+        if self._ydim is not None:
+            print('Adding grid_Y to export mat file.')
+            export_dict['grid_Y'] = [x*self._grid_exporter.units_scale_factor for x in self._ydim]
+        if self._zdim is not None:
+            print('Adding grid_Z to export mat file.')
+            export_dict['grid_Z'] = [x*self._grid_exporter.units_scale_factor for x in self._zdim]
+            export_dict['units'] = self._grid_exporter.units
+        # writing data to mat file (file_name)
+        print("Saving mesh data to Mat file.")
+        spio.savemat(file_name, export_dict)
     
 def usage(exit_status=None):
     """Print the usage statement and exit with given status."""
@@ -183,16 +266,18 @@ def main(argv):
        usage(2)
 
     print("Exporting grid for project: ", arg_dict['xf_project'])
-
     xf_grid_writer = XFGridDataWriterUniform(arg_dict['xf_project'],
                                              int(arg_dict['sim']),
                                              int(arg_dict['run']))
     xf_grid_writer.set_origin(arg_dict['origin'][0],
                               arg_dict['origin'][1],
                               arg_dict['origin'][2])
+    print(arg_dict)
+    print("[main] lengths: ", arg_dict['lengths'][0], ",", arg_dict['lengths'][1], ",", arg_dict['lengths'][2])
     xf_grid_writer.set_len(arg_dict['lengths'][0],
                            arg_dict['lengths'][1],
                            arg_dict['lengths'][2])
+    print("[main] _lengths: ", xf_grid_writer._xlen, ",", xf_grid_writer._ylen, ",", xf_grid_writer._zlen)
     xf_grid_writer.set_grid_resolution(arg_dict['deltas'][0],
                                        arg_dict['deltas'][1],
                                        arg_dict['deltas'][2])

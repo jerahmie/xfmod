@@ -131,7 +131,7 @@ class XFGridExporter(object):
     @property
     def units_scale_factor(self):
         """Return the grid and meshing scale factor."""
-        return self._units_scale_factor
+        return self._export_units_scale
 
     def _set_mesh_data(self):
         """Set mesh data from edge run data."""
