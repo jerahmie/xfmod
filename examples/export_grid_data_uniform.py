@@ -113,75 +113,6 @@ class XFGridDataWriterUniform(object):
     def export_matfile(self, file_name):
         """Export mesh/grid data to matlab file."""
         self._regrid()
-
-#def quick_regrid(gridExporter):
-#    """quick exporter with regrid"""
-#    dx=0.002; dy=0.002; dz=0.002
-#    x0=0.0; y0=0.0; z0=0.05;
-#    xLen=0.256; yLen=0.256; zLen=0.350
-#    
-#    print("regridding mesh data.")
-#    nu_grid_x = np.array(gridExporter.grid_x)
-#    nu_grid_y = np.array(gridExporter.grid_y)
-#    nu_grid_z = np.array(gridExporter.grid_z)
-#    XIndex1 = np.argmin(np.absolute(nu_grid_x + xLen/2.0 - x0))
-#    XIndex2 = np.argmin(np.absolute(nu_grid_x - xLen/2.0 - x0))
-#    YIndex1 = np.argmin(np.absolute(nu_grid_y + yLen/2.0 - y0))
-#    YIndex2 = np.argmin(np.absolute(nu_grid_y - yLen/2.0 - y0))
-#    ZIndex1 = np.argmin(np.absolute(nu_grid_z + zLen/2.0 - z0))
-#    ZIndex2 = np.argmin(np.absolute(nu_grid_z - zLen/2.0 - z0))
-#    XDimReduced = nu_grid_x[XIndex1:XIndex2]
-#    YDimReduced = nu_grid_y[YIndex1:YIndex2]
-#    ZDimReduced = nu_grid_z[ZIndex1:ZIndex2]
-#    
-#    ExSigma = np.transpose(gridExporter._mesh_ex_sigma,(2,1,0))    
-#    EySigma = np.transpose(gridExporter._mesh_ey_sigma,(2,1,0))
-#    EzSigma = np.transpose(gridExporter._mesh_ez_sigma,(2,1,0))
-#    print("After transpose: ", np.shape(EzSigma))
-#
-#    ExSigmaReduced = ExSigma[XIndex1:XIndex2, YIndex1:YIndex2, ZIndex1:ZIndex2]
-#    EySigmaReduced = EySigma[XIndex1:XIndex2, YIndex1:YIndex2, ZIndex1:ZIndex2]
-#    EzSigmaReduced = EzSigma[XIndex1:XIndex2, YIndex1:YIndex2, ZIndex1:ZIndex2]
-#
-#    print("Interpolating data.")
-#    xDimUniform = np.arange(-xLen/2.0 + x0, xLen/2.0 + x0, dx)
-#    yDimUniform = np.arange(-yLen/2.0 + y0, yLen/2.0 + y0, dy)
-#    zDimUniform = np.arange(-zLen/2.0 + z0, zLen/2.0 + z0, dz)
-#
-#    # calculate z indices
-#    ZIndices = []
-#    for i in range(len(zDimUniform)):
-#        ZIndices.append(np.argmin(np.absolute(ZDimReduced-zDimUniform[i])))
-#
-#    ExSigmaUniform = np.zeros((len(xDimUniform), len(yDimUniform), len(zDimUniform)))
-#    EySigmaUniform = np.zeros((len(xDimUniform), len(yDimUniform), len(zDimUniform)))
-#    EzSigmaUniform = np.zeros((len(xDimUniform), len(yDimUniform), len(zDimUniform)))
-#    ZInterpIndex = 0
-#    X1, Y1 = np.meshgrid(XDimReduced, YDimReduced, indexing='ij')
-#    X2, Y2 = np.meshgrid(xDimUniform, yDimUniform, indexing='ij')
-#
-#    for zRawIndex in ZIndices:
-#        sys.stdout.write("zRawIndex: %d \r" % zRawIndex)
-#        sys.stdout.flush()
-#        ExSigmaUniform[:,:,ZInterpIndex] = griddata((X1.ravel(), Y1.ravel()),
-#                                                    ExSigmaReduced[:,:,zRawIndex].ravel(),
-#                                                    (X2, Y2), method='nearest')
-#        EySigmaUniform[:,:,ZInterpIndex] = griddata((X1.ravel(), Y1.ravel()),
-#                                                    EySigmaReduced[:,:,zRawIndex].ravel(),
-#                                                    (X2, Y2), method='nearest')
-#        EzSigmaUniform[:,:,ZInterpIndex] = griddata((X1.ravel(), Y1.ravel()),
-#                                                    EzSigmaReduced[:,:,zRawIndex].ravel(),
-#                                                    (X2, Y2), method='nearest')
-#        ZInterpIndex += 1
-#
-#    exportDict={}
-#    exportDict['XDim'] = xDimUniform
-#    exportDict['YDim'] = yDimUniform
-#    exportDict['ZDim'] = zDimUniform
-#    exportDict['ExSigma'] = ExSigmaUniform
-#    exportDict['EySigma'] = EySigmaUniform
-#    exportDict['EzSigma'] = EzSigmaUniform
-#    spio.savemat('conductivity_mask.mat', exportDict, oned_as='column')
     
 def usage(exit_status=None):
     """Print the usage statement and exit with given status."""
@@ -189,12 +120,15 @@ def usage(exit_status=None):
     print("Usage: export_fields_uniform.py project [--origin='[x0,y0,z0]'] \\")
     print("                                [--lengths='[x,y,z]'] \\")
     print("                                [--deltas='[dx, dy, dz]']")
-    print("  --origin: the origin coordinates, string representing a Python list.")
-    print("  --lengths: dimensions of the ROI, centered at the origin, string prepresenting a Python list.")
+    print("  --origin: the origin coordinates, " + \
+          "string representing a Python list.")
+    print("  --lengths: dimensions of the ROI, centered at the origin, " + \
+          "string prepresenting a Python list.")
     print("  --deltas: grid resolution, string representing a Python list.")
     print("")
     print("Example: ")
-    print("  $ export_fields_uniform.py / --origin='[0.0,0.0,0.0]' --lengths='[0.01,0.01,0.02]' --deltas='[0.02, 0.02, 0.02]'")
+    print("  $ export_fields_uniform.py / --origin='[0.0,0.0,0.0]' \\" + \
+          "--lengths='[0.01,0.01,0.02]' --deltas='[0.02, 0.02, 0.02]'")
     print("")
     if(exit_status):
         sys.exit(exit_status)
@@ -249,8 +183,6 @@ def main(argv):
        usage(2)
 
     print("Exporting grid for project: ", arg_dict['xf_project'])
-    print("SimID string: ", arg_dict['sim'], " ", xfutils.xf_sim_id_to_str(arg_dict['sim']))
-    print("RunID string: ", arg_dict['run'], " ", xfutils.xf_run_id_to_str(arg_dict['run']))
 
     xf_grid_writer = XFGridDataWriterUniform(arg_dict['xf_project'],
                                              int(arg_dict['sim']),
