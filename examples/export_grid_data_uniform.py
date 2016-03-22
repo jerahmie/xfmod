@@ -10,7 +10,8 @@ import os, sys, ast, getopt
 import numpy as np
 import scipy.io as spio
 from scipy.interpolate import griddata
-import xfutils, xfgeomod
+import xfgeomod
+from xfutils import xf_regrid_3d_nearest
 
 class XFGridDataWriterUniform(object):
     """Write XFdtd field data to mat file on uniform grid."""
@@ -73,51 +74,69 @@ class XFGridDataWriterUniform(object):
         print("_regrid: _ydim: ", np.shape(self._ydim))
         print("_regrid: _zdim: ", np.shape(self._zdim))
         print("Interpolating data.")
-        self._ex_sigma = xfutils.xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                                       self._grid_exporter.grid_y,
-                                                       self._grid_exporter.grid_z),
-                                                      (self._xdim, self._ydim, self._zdim),
-                                                      np.transpose(self._grid_exporter.ex_sigma,(2,1,0)))
-        self._ey_sigma = xfutils.xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                                       self._grid_exporter.grid_y,
-                                                       self._grid_exporter.grid_z),
-                                                      (self._xdim, self._ydim, self._zdim),
-                                                      np.transpose(self._grid_exporter.ey_sigma,(2,1,0)))
-        self._ez_sigma = xfutils.xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                                       self._grid_exporter.grid_y,
-                                                       self._grid_exporter.grid_z),
-                                                      (self._xdim, self._ydim, self._zdim),
-                                                      np.transpose(self._grid_exporter.ez_sigma,(2,1,0)))
-        self._ex_epsilon_r = xfutils.xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                                           self._grid_exporter.grid_y,
-                                                           self._grid_exporter.grid_z),
-                                                          (self._xdim, self._ydim, self._zdim),
-                                                          np.transpose(self._grid_exporter.ex_epsilon_r,(2,1,0)))
-        self._ey_epsilon_r = xfutils.xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                                           self._grid_exporter.grid_y,
-                                                           self._grid_exporter.grid_z),
-                                                          (self._xdim, self._ydim, self._zdim),
-                                                          np.transpose(self._grid_exporter.ey_epsilon_r,(2,1,0)))
-        self._ez_epsilon_r = xfutils.xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                                           self._grid_exporter.grid_y,
-                                                           self._grid_exporter.grid_z),
-                                                          (self._xdim, self._ydim, self._zdim),
-                                                          np.transpose(self._grid_exporter.ez_epsilon_r,(2,1,0)))
-        self._ex_density = xfutils.xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                                         self._grid_exporter.grid_y,
-                                                         self._grid_exporter.grid_z),
-                                                        (self._xdim, self._ydim, self._zdim),
-                                                        np.transpose(self._grid_exporter.ex_density,(2,1,0)))
-        self._ey_density = xfutils.xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                                         self._grid_exporter.grid_y,
-                                                         self._grid_exporter.grid_z),
-                                                        (self._xdim, self._ydim, self._zdim),
-                                                        np.transpose(self._grid_exporter.ey_density,(2,1,0)))
-        self._ez_density = xfutils.xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                                         self._grid_exporter.grid_y,
-                                                         self._grid_exporter.grid_z),
-                                                        (self._xdim, self._ydim, self._zdim),
-                                                        np.transpose(self._grid_exporter.ez_density,(2,1,0)))
+        self._ex_sigma = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                               self._grid_exporter.grid_y,
+                                               self._grid_exporter.grid_z),
+                                              (self._xdim,
+                                               self._ydim,
+                                               self._zdim),
+                                              self._grid_exporter.ex_sigma)
+        self._ey_sigma = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                               self._grid_exporter.grid_y,
+                                               self._grid_exporter.grid_z),
+                                              (self._xdim,
+                                               self._ydim,
+                                               self._zdim),
+                                              self._grid_exporter.ey_sigma)
+        self._ez_sigma = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                               self._grid_exporter.grid_y,
+                                               self._grid_exporter.grid_z),
+                                              (self._xdim,
+                                               self._ydim,
+                                               self._zdim),
+                                              self._grid_exporter.ez_sigma)
+        self._ex_epsilon_r = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                                   self._grid_exporter.grid_y,
+                                                   self._grid_exporter.grid_z),
+                                                  (self._xdim,
+                                                   self._ydim,
+                                                   self._zdim),
+                                                  self._grid_exporter.ex_epsilon_r)
+        self._ey_epsilon_r = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                                   self._grid_exporter.grid_y,
+                                                   self._grid_exporter.grid_z),
+                                                  (self._xdim,
+                                                   self._ydim,
+                                                   self._zdim),
+                                                  self._grid_exporter.ey_epsilon_r)
+        self._ez_epsilon_r = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                                   self._grid_exporter.grid_y,
+                                                   self._grid_exporter.grid_z),
+                                                  (self._xdim,
+                                                   self._ydim,
+                                                   self._zdim),
+                                                  self._grid_exporter.ez_epsilon_r)
+        self._ex_density = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                                 self._grid_exporter.grid_y,
+                                                 self._grid_exporter.grid_z),
+                                                (self._xdim,
+                                                 self._ydim,
+                                                 self._zdim),
+                                                self._grid_exporter.ex_density)
+        self._ey_density = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                                 self._grid_exporter.grid_y,
+                                                 self._grid_exporter.grid_z),
+                                                (self._xdim,
+                                                 self._ydim,
+                                                 self._zdim),
+                                                self._grid_exporter.ey_density)
+        self._ez_density = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                                 self._grid_exporter.grid_y,
+                                                 self._grid_exporter.grid_z),
+                                                (self._xdim,
+                                                 self._ydim,
+                                                 self._zdim),
+                                                self._grid_exporter.ez_density)
         
     def export_matfile(self, file_name):
         """Export mesh/grid data to matlab file."""

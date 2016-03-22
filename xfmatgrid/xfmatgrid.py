@@ -20,8 +20,8 @@ MP_SS_RE = r'([0-9A-Za-z/_.]*)(MultiPoint_[a-zA-Z0-9/_]*_[0-9]+)'
 class XFFieldNonUniformGrid(object):
     """Holds XF field data on non-uniform grid."""
     def __init__(self, project_dir, sim_id, run_id):
-        self._valid_types = ['E', 'H', 'B', 'J']
-        self._valid_components = ['x', 'y', 'z']
+        self._valid_types = [r'E', r'H', r'B', r'J']
+        self._valid_components = [r'x', r'y', r'z']
         xf_geometry_dir = os.path.join(project_dir, r'Simulations',
                                        xf_sim_id_to_str(sim_id),
                                        xf_run_id_to_str(run_id))
@@ -66,7 +66,7 @@ class XFFieldNonUniformGrid(object):
             self._mp_ss_info = XFMultiPointInfo(self._mp_ss_info_file[0])
 
         else:
-            print(r"Could not find project: " + self._project_dir)
+            print("Could not find project: " + self._project_dir)
 
     def _set_data_dirs(self):
         """Set the project directory and set sensor file location."""

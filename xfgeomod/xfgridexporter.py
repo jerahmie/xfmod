@@ -41,6 +41,7 @@ class XFGridExporter(object):
         self._mesh_hy_epsilon_r = None
         self._mesh_hz_epsilon_r = None
         self._set_mesh_data()
+        self._reorder_mesh_data()
 
     @property
     def grid_x(self):
@@ -156,7 +157,6 @@ class XFGridExporter(object):
             # relative permittivity is set to zero for PEC values (mat type 1)
             # free space (mat type 0) or material permittivity for all others.
             self._mesh_ex_epsilon_r[:] = self._materials_list[0].epsilon_r
-            print("Material list: ", self._materials_list[2].name)
             for edge_run in self._ex_edge_runs:
                 for index in range(edge_run.x_ind, edge_run.stop_ind):
                     if edge_run.mat == 1:
@@ -166,7 +166,6 @@ class XFGridExporter(object):
                         self._mesh_ex_density[edge_run.z_ind, edge_run.y_ind,index] = self._materials_list[edge_run.mat].density
                         self._mesh_ex_sigma[edge_run.z_ind, edge_run.y_ind,  index] = self._materials_list[edge_run.mat].conductivity
                         self._mesh_ex_epsilon_r[edge_run.z_ind, edge_run.y_ind, index] = self._materials_list[edge_run.mat].epsilon_r
-
 
         # set Ey material properties
         if self._ey_edge_runs is not None:
@@ -299,6 +298,40 @@ class XFGridExporter(object):
                         self._mesh_hz_sigma[index, \
                             edge_run.y_ind, edge_run.x_ind] = \
                             self._materials_list[edge_run.mat].conducivity
+
+    def _reorder_mesh_data(self):
+        """Reorder the mesh data from (z,y,x) to (x,y,z) ordering."""
+
+        print("Reordering mesh density data.")
+        if self._mesh_ex_density is not None:
+            np.transpose(self._mesh_ex_density, (2,1,0))
+        if self._mesh_ey_density is not None:
+            np.transpose(self._mesh_ey_density, (2,1,0))
+        if self._mesh_ez_density is not None:
+            np.transpose(self._mesh_ez_density, (2,1,0))
+        if self._mesh_hx_density is not None:
+            np.transpose(self._mesh_hx_density, (2,1,0))
+        if self._mesh_hy_density is not None:
+            np.transpose(self._mesh_hy_density, (2,1,0))
+        if self._mesh_hz_density is not None:
+            np.transpose(self._mesh_hz_density, (2,1,0))
+            
+        print("Reordering mesh permittivity data.")
+        if self._mesh_ex_epsilon_r is not None:
+            np.transpose(self._mesh_ex_epsilon_r, (2,1,0))
+        if self._mesh_ey_epsilon_r is not None:
+            np.transpose(self._mesh_ey_epsilon_r, (2,1,0))
+        if self._mesh_ez_epsilon_r is not None:
+            np.transpose(self._mesh_ez_epsilon_r, (2,1,0))
+
+        print("Reordering mesh conductivity data.")
+        if self._mesh_ex_sigma is not None:
+            np.transpose(self._mesh_ex_sigma, (2,1,0))
+        if self._mesh_ey_sigma is not None:
+            np.transpose(self._mesh_ey_sigma, (2,1,0))
+        if self._mesh_ez_sigma is not None:
+            np.transpose(self._mesh_ez_sigma, (2,1,0))
+        
 
     def export_mesh_data(self, file_name):
         """Export mesh data to matlab file."""
