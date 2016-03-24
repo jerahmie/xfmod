@@ -13,7 +13,7 @@ import scipy.io as spio
 import numpy.testing as npt
 import xfsar
 
-# Relative xf project path is assumed to be ../../../Test_Data/Test_Coil.xf
+# Relative xf project path is assumed to be three levels up in Test_Data/Test_Coil.xf
 TEST_COIL_DIR = os.path.normpath(os.path.join(os.path.realpath(__file__),
                                               '..','..','..',
                                               'Test_Data','Test_Coil.xf'))
@@ -38,6 +38,7 @@ class TestXFSar(unittest.TestCase):
     def test_grid_mesh(self):
         """This should not throw exceptions"""
         self.test_sar._test_grid()
+        
         
     def testDown(self):
         pass

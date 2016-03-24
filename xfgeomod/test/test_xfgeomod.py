@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 """
-Test xfgeomod using unittest 
+Test xfgeomod using unittest
 """
 
-from __future__ import (absolute_import, division, 
+from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 import sys, os
 import unittest
-from xfutils import xf_run_id_to_str, xf_sim_id_to_str 
+from xfutils import xf_run_id_to_str, xf_sim_id_to_str
+import numpy as np
 import xfgeomod
 
 # Location of Test_Coil.xf XFdtd project relative to this file.
@@ -48,12 +49,12 @@ MESH_UNITS = 'mm'
 
 class TestXFGeoMod(unittest.TestCase):
     """Tests for xfgeomod."""
-    
+
     @classmethod
     def setUpClass(cls):
         # Load XFdtd Geometry info
         cls.xf_geom = xfgeomod.XFGeometry(TEST_RUN_PATH)
-    
+
         # Load XFdtd Mesh data file
         cls.xf_mesh = xfgeomod.XFMesh(TEST_RUN_PATH)
 
@@ -70,7 +71,7 @@ class TestXFGeoMod(unittest.TestCase):
         Test grid data has proper dimensions.
         """
         self.assertAlmostEqual(GRID_ORIGIN,
-                               self.xf_geom.grid_data.origin, 
+                               self.xf_geom.grid_data.origin,
                                delta=0.0000001)
         self.assertEqual(GRID_NUM_X_CELLS,
                          self.xf_geom.grid_data.num_x_cells)
@@ -80,7 +81,7 @@ class TestXFGeoMod(unittest.TestCase):
                          self.xf_geom.grid_data.num_z_cells)
 
     def test_mesh_header(self):
-        """ 
+        """
         Test data from mesh info.
         """
         self.assertEqual(MESH_VERSION, self.xf_mesh._mesh_version)
@@ -92,7 +93,7 @@ class TestXFGeoMod(unittest.TestCase):
         self.assertEqual(MESH_NUM_HX_EDGE_RUNS, self.xf_mesh._num_hx_edge_runs)
         self.assertEqual(MESH_NUM_HY_EDGE_RUNS, self.xf_mesh._num_hy_edge_runs)
         self.assertEqual(MESH_NUM_HZ_EDGE_RUNS, self.xf_mesh._num_hz_edge_runs)
-        self.assertEqual(MESH_NUM_ELECTRIC_AVERAGED_MATERIALS, 
+        self.assertEqual(MESH_NUM_ELECTRIC_AVERAGED_MATERIALS,
                          self.xf_mesh._num_e_avg_mats)
         self.assertEqual(MESH_NUM_MAGNETIC_AVERAGED_MATERIALS,
                          self.xf_mesh._num_h_avg_mats)
@@ -100,10 +101,44 @@ class TestXFGeoMod(unittest.TestCase):
                          self.xf_mesh._num_e_mesh_edges_e_avg)
         self.assertEqual(MESH_NUM_MAGNETIC_MESH_EDGES_EAM,
                          self.xf_mesh._num_h_mesh_edges_h_avg)
-        
+        self.assertEqual((GRID_NUM_X_CELLS,
+                          GRID_NUM_Y_CELLS,
+                          GRID_NUM_Z_CELLS),
+                         np.shape(self.xf_export.ex_sigma))
+        self.assertEqual((GRID_NUM_X_CELLS,
+                          GRID_NUM_Y_CELLS,
+                          GRID_NUM_Z_CELLS),
+                         np.shape(self.xf_export.ey_sigma))
+        self.assertEqual((GRID_NUM_X_CELLS,
+                          GRID_NUM_Y_CELLS,
+                          GRID_NUM_Z_CELLS),
+                         np.shape(self.xf_export.ez_sigma))
+        self.assertEqual((GRID_NUM_X_CELLS,
+                          GRID_NUM_Y_CELLS,
+                          GRID_NUM_Z_CELLS),
+                         np.shape(self.xf_export.ex_epsilon_r))
+        self.assertEqual((GRID_NUM_X_CELLS,
+                          GRID_NUM_Y_CELLS,
+                          GRID_NUM_Z_CELLS),
+                         np.shape(self.xf_export.ey_epsilon_r))
+        self.assertEqual((GRID_NUM_X_CELLS,
+                          GRID_NUM_Y_CELLS,
+                          GRID_NUM_Z_CELLS),
+                         np.shape(self.xf_export.ez_epsilon_r))
+        self.assertEqual((GRID_NUM_X_CELLS,
+                          GRID_NUM_Y_CELLS,
+                          GRID_NUM_Z_CELLS),
+                         np.shape(self.xf_export.ex_density))
+        self.assertEqual((GRID_NUM_X_CELLS,
+                          GRID_NUM_Y_CELLS,
+                          GRID_NUM_Z_CELLS),
+                         np.shape(self.xf_export.ey_density))
+        self.assertEqual((GRID_NUM_X_CELLS,
+                          GRID_NUM_Y_CELLS,
+                         GRID_NUM_Z_CELLS),
+                           np.shape(self.xf_export.ez_density))
     def tearDown(self):
         pass
 
 if __name__ == "__main__":
     unittest.main()
-

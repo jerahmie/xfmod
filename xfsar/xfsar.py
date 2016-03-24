@@ -24,14 +24,17 @@ class XFSar(object):
         self._mesh = xfgeomod.XFMesh(run_path)
         self._grid_exporter = xfgeomod.XFGridExporter(self._geom, self._mesh)
 
-    def _test_grid(self):
+    def _test_mesh(self):
         """test grid indexing"""
         print(self._geom)
         print(self._mesh)
         print("Grid dims: (", np.size(self._grid_exporter.grid_x), ",",
               np.size(self._grid_exporter.grid_y), ",",
               np.size(self._grid_exporter.grid_z), ")")
-        print("Conductivity: ", np.shape(self._grid_exporter.ex_sigma))
-        print("Permittivity: ", np.shape(self._grid_exporter.ex_epsilon_r))
-        print("Density: ", np.shape(self._grid_exporter.ex_density))
+        self.assertEqual((np.size(self._grid_exporter.grid_x), 
+                          np.size(self._grid_exporter.grid_y), 
+                          np.size(self._grid_exporter.grid_z)), 
+                         np.shape(self._grid_exporter.ex_sigma))
+        self.assertEqual((), np.shape(self._grid_exporter.ex_epsilon_r))
+        self.assertEqual((), np.shape(self._grid_exporter.ex_density))
         
