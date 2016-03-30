@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """
 Calculate SAR on non-uniform grid from XFdtd simulation.
+ -- SAR calculated on a 1g or 10g cubic averaging volume centered on cell.
+ -- Non-uniform grid.
+ -- Caputa, K., M. Okoniewski, and M. A. Stuchly, "An Algorithm for
+      Computations of the Power Deposition in Human Tissue.", IEEE Antennas
+      Propag. Mag., vol. 41, iss. 4, Aug 1999, pp.102-107.
 """
 
 from __future__ import (absolute_import, division, generators,
@@ -14,27 +19,14 @@ from xfutils import xf_sim_id_to_str, xf_run_id_to_str
 
 class XFSar(object):
     """XFdtd SAR calculation class."""
-    def __init__(self, project_dir, sim_id, run_id):
-        run_path = os.path.join(project_dir, r'Simulations',
-                                       xf_sim_id_to_str(sim_id),
-                                       xf_run_id_to_str(run_id))
-        
-        
-        self._geom = xfgeomod.XFGeometry(run_path)
-        self._mesh = xfgeomod.XFMesh(run_path)
-        self._grid_exporter = xfgeomod.XFGridExporter(self._geom, self._mesh)
+    def __init__(self):
+        pass
 
-    def _test_mesh(self):
-        """test grid indexing"""
-        print(self._geom)
-        print(self._mesh)
-        print("Grid dims: (", np.size(self._grid_exporter.grid_x), ",",
-              np.size(self._grid_exporter.grid_y), ",",
-              np.size(self._grid_exporter.grid_z), ")")
-        self.assertEqual((np.size(self._grid_exporter.grid_x), 
-                          np.size(self._grid_exporter.grid_y), 
-                          np.size(self._grid_exporter.grid_z)), 
-                         np.shape(self._grid_exporter.ex_sigma))
-        self.assertEqual((), np.shape(self._grid_exporter.ex_epsilon_r))
-        self.assertEqual((), np.shape(self._grid_exporter.ex_density))
-        
+    def _find_tissue(self):
+        """Return a list of indices with grid locations that are tissues."""
+        pass
+
+    def _avg_field_in_cube(self):
+        """Calculate the average field inside the grid element."""
+        pass
+

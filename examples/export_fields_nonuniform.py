@@ -13,20 +13,20 @@ import xfmatgrid
 
 class XFFieldWriterNonUniform(object):
     """Writes raw XFdtd to mat file with nonuniform grid."""
-    def __init__(self, xfProjectDir, simID, runID ):
+    def __init__(self, xfProjectDir, sim_id, run_id ):
         self.fieldNonUniformGrid = xfmatgrid.XFFieldNonUniformGrid(xfProjectDir,
-                                                            simID,
-                                                            runID)
-    def exportMatFile(self, fieldType, fileName):
+                                                                   sim_id,
+                                                                   run_id)
+    def exportMatFile(self, field_type, file_name):
         """Export the field data to matlab file."""
         export_dict = dict()
         export_dict['XDim'] = self.fieldNonUniformGrid.xdim
         export_dict['YDim'] = self.fieldNonUniformGrid.ydim
         export_dict['ZDim'] = self.fieldNonUniformGrid.zdim
-        export_dict[fieldType + 'x'] = self.fieldNonUniformGrid.ss_field_data(fieldType, 'x')
-        export_dict[fieldType + 'y'] = self.fieldNonUniformGrid.ss_field_data(fieldType, 'y')
-        export_dict[fieldType + 'z'] = self.fieldNonUniformGrid.ss_field_data(fieldType, 'z')
-        spio.savemat(fileName, export_dict, oned_as='column')
+        export_dict[field_type + 'x'] = self.fieldNonUniformGrid.ss_field_data(fieldType, 'x')
+        export_dict[field_type + 'y'] = self.fieldNonUniformGrid.ss_field_data(fieldType, 'y')
+        export_dict[field_type + 'z'] = self.fieldNonUniformGrid.ss_field_data(fieldType, 'z')
+        spio.savemat(file_name, export_dict, oned_as='column')
         
 
 if __name__ == "__main__":

@@ -11,7 +11,8 @@ import unittest
 import numpy as np
 import scipy.io as spio
 import numpy.testing as npt
-import xfsar
+import xfgeomod, xfmatgrid, xfsar
+from xfutils import xf_sim_id_to_str, xf_run_id_to_str
 
 # Relative xf project path is assumed to be three levels up in Test_Data/Test_Coil.xf
 TEST_COIL_DIR = os.path.normpath(os.path.join(os.path.realpath(__file__),
@@ -22,7 +23,12 @@ class TestXFSar(unittest.TestCase):
     """Tests for xfsar module."""
     @classmethod
     def setUpClass(cls):
-        cls.test_sar = xfsar.XFSar(TEST_COIL_DIR,1,1)
+        _run_path = os.path.join(TEST_COIL_DIR, r'Simulations',
+                                 xf_sim_id_to_str(1),
+                                 xf_run_id_to_str(1))
+        _geom = xfgeomod.XFGeometry(_run_path)
+        _mesh = xfgeomod.XFMesh(_run_path)
+        cls._grid_exporter = xfgeomod.XFGridExporter(_geom, _mesh)
 
     def setUp(self):
         pass
@@ -31,15 +37,11 @@ class TestXFSar(unittest.TestCase):
         """This should pass"""
         self.assertEqual(1,1)
 
-    def test_xf_sar_class(self):
+    def disabled_test_xf_sar_class(self):
         """Create a XFSar class."""
+        cls.test_sar = xfsar.XFSar()
         self.assertIsInstance(self.test_sar,xfsar.XFSar)
 
-    def test_grid_mesh(self):
-        """This should not throw exceptions"""
-        self.test_sar._test_grid()
-        
-        
     def testDown(self):
         pass
 

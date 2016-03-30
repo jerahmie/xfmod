@@ -11,7 +11,8 @@ from math import sqrt
 import numpy as np
 import scipy.io as spio
 from scipy.interpolate import griddata
-import xfsystem, xfmatgrid, xfutils
+import xfsystem, xfmatgrid
+from xfutils import xf_regrid_3d_nearest
 
 class XFFieldWriterUniform(object):
     """Writes XFdtd field data to mat file on uniform grid. """
@@ -67,36 +68,36 @@ class XFFieldWriterUniform(object):
                                self._dz)
 
         print("Interpolating data.")
-        self._fx = xfutils.xf_regrid_3d_nearest((self.field_nonuniform_grid.xdim,
-                                                 self.field_nonuniform_grid.ydim,
-                                                 self.field_nonuniform_grid.zdim),
-                                                (self._xdim,
-                                                 self._ydim,
-                                                 self._zdim),
-                                                self.field_nonuniform_grid.ss_field_data(field_type,'x'))
-        self._fy = xfutils.xf_regrid_3d_nearest((self.field_nonuniform_grid.xdim,
-                                                 self.field_nonuniform_grid.ydim,
-                                                 self.field_nonuniform_grid.zdim),
-                                                (self._xdim,
-                                                 self._ydim,
-                                                 self._zdim),
-                                                self.field_nonuniform_grid.ss_field_data(field_type,'y'))
-        self._fz = xfutils.xf_regrid_3d_nearest((self.field_nonuniform_grid.xdim,
-                                                 self.field_nonuniform_grid.ydim,
-                                                 self.field_nonuniform_grid.zdim),
-                                                (self._xdim,
-                                                 self._ydim,
-                                                 self._zdim),
-                                                self.field_nonuniform_grid.ss_field_data(field_type,'z')) 
+        self._fx = xf_regrid_3d_nearest((self.field_nonuniform_grid.xdim,
+                                         self.field_nonuniform_grid.ydim,
+                                         self.field_nonuniform_grid.zdim),
+                                        (self._xdim,
+                                         self._ydim,
+                                         self._zdim),
+                                        self.field_nonuniform_grid.ss_field_data(field_type,'x'))
+        self._fy = xf_regrid_3d_nearest((self.field_nonuniform_grid.xdim,
+                                         self.field_nonuniform_grid.ydim,
+                                         self.field_nonuniform_grid.zdim),
+                                        (self._xdim,
+                                         self._ydim,
+                                         self._zdim),
+                                        self.field_nonuniform_grid.ss_field_data(field_type,'y'))
+        self._fz = xf_regrid_3d_nearest((self.field_nonuniform_grid.xdim,
+                                         self.field_nonuniform_grid.ydim,
+                                         self.field_nonuniform_grid.zdim),
+                                        (self._xdim,
+                                         self._ydim,
+                                         self._zdim),
+                                        self.field_nonuniform_grid.ss_field_data(field_type,'z')) 
         
     @property
     def net_input_power(self):
-        """Net input power for simulation."""
+        """Desired net input power."""
         return self._net_input_power
 
     @net_input_power.setter
     def net_input_power(self, power):
-        """Sett the net input power for simulation."""
+        """Set the desired net input power for simulation."""
         self._net_input_power = power
     
     def _scale_fields(self):
