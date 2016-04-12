@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sum B1 transmit/receive fields.  B1+ = B1x +/- j*conj(B1y)
+Sum B1 transmit/receive fields.  B1+ = B1x + j*B1y.
 """
 
 from __future__ import(absolute_import, division, generators,
@@ -31,19 +31,19 @@ class B1WriterNonUniform(object):
             nu_field = xfmatgrid.XFFieldNonUniformGrid(self._xf_project_dir,
                                                        sim_id,
                                                        self._run_id)
-            field_norm = 1./np.sqrt(xfsystem.XFSystem(self._xf_project_dir, sim_id, self._run_id).net_input_power)
+            field_norm = 1./np.sqrt(xfsystem.XFSystem(self._xf_project_dir,
+                                                      sim_id,
+                                                      self._run_id).net_input_power)
+            b1_tx = 0.5 * field_norm * \
+                    (nu_field.ss_field_data('B','x') + \
+                     1j*(nu_field.ss_field_data('B','y')))
             if self._b1_tx is None:
-                self._b1_tx = field_norm * \
-                              (nu_field.ss_field_data('B','x') + \
-                              1j*np.conj(nu_field.ss_field_data('B','y')))
+                self._b1_tx = b1_tx
                 self._xdim = nu_field.xdim
                 self._ydim = nu_field.ydim
                 self._zdim = nu_field.zdim
             else:
-                self._b1_tx += field_norm * \
-                               (nu_field.ss_field_data('B','x') + \
-                                1j*np.conj(nu_field.ss_field_data('B','y')))
-
+                self._b1_tx += by_tx
 
     def export_b1_tx_mat(self, file_name):
         """

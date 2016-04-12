@@ -1,5 +1,5 @@
 """
-Post-process XFdtd-generated MAT-Files, regrid, and save results to disk.
+Represent XFdtd field data on non-uniform grid.
 """
 
 # Ensure python 2 and 3 compatibility
