@@ -23,13 +23,13 @@ class XFFieldWriterNonUniform(object):
         export_dict['XDim'] = self.fieldNonUniformGrid.xdim
         export_dict['YDim'] = self.fieldNonUniformGrid.ydim
         export_dict['ZDim'] = self.fieldNonUniformGrid.zdim
-        export_dict[field_type + 'x'] = self.fieldNonUniformGrid.ss_field_data(fieldType, 'x')
-        export_dict[field_type + 'y'] = self.fieldNonUniformGrid.ss_field_data(fieldType, 'y')
-        export_dict[field_type + 'z'] = self.fieldNonUniformGrid.ss_field_data(fieldType, 'z')
+        export_dict[field_type + 'x'] = self.fieldNonUniformGrid.ss_field_data(field_type, 'x')
+        export_dict[field_type + 'y'] = self.fieldNonUniformGrid.ss_field_data(field_type, 'y')
+        export_dict[field_type + 'z'] = self.fieldNonUniformGrid.ss_field_data(field_type, 'z')
         spio.savemat(file_name, export_dict, oned_as='column')
         
 
 if __name__ == "__main__":
     print("Exporting XFdtd field data on nonuniformgrid.")
-    xfFieldW = XFFieldWriterNonUniform('/mnt/DATA/XFdtd_Results/KU_64_7T_Duke_Head_2mm_000002.xf',2,1)
-    xfFieldW.exportMatFile('B','testB.mat')
+    xfFieldW = XFFieldWriterNonUniform('/mnt/DATA/XFdtd_Test_Projects/Simple_Loop.xf',84,1)
+    xfFieldW.exportMatFile('E','testE.mat')

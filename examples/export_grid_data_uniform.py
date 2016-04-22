@@ -11,15 +11,16 @@ import numpy as np
 import scipy.io as spio
 from scipy.interpolate import griddata
 import xfgeomod
-from xfutils import xf_regrid_3d_nearest
+from xfutils import xf_sim_id_to_str, xf_run_id_to_str, xf_regrid_3d_nearest
+
 
 class XFGridDataWriterUniform(object):
     """Write XFdtd field data to mat file on uniform grid."""
     def __init__(self, xf_project_dir, sim_id, run_id):
         run_path = os.path.join(xf_project_dir,
                                 'Simulations',
-                                xfutils.xf_sim_id_to_str(sim_id),
-                                xfutils.xf_run_id_to_str(run_id))
+                                xf_sim_id_to_str(sim_id),
+                                xf_run_id_to_str(run_id))
         self._x0 = 0.0; self._y0 = 0.0; self._z0 = 0.0
         self._dx = 0.0; self._dy = 0.0; self._dz = 0.0
         self._xlen = 0.0; self._ylen = 0.0; self._zlen = 0.0
