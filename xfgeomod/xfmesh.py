@@ -5,7 +5,8 @@ Class XFMesh processes XFDtd mesh.input file.
 # Ensure python 2 and 3 compatibility
 from __future__ import absolute_import, division, generators, print_function
 
-import os, struct
+import os
+import struct
 
 class XFMeshEdgeRun(object):
     """

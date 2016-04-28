@@ -7,7 +7,8 @@ and properties.
 from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 
-import re, os
+import re
+import os
 from xfgeomod import XFGridData, XFMaterial
 
 # Regex expressions

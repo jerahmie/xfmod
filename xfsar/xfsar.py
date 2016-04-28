@@ -11,12 +11,6 @@ Calculate SAR on non-uniform grid from XFdtd simulation.
 from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 
-import sys, os
-import numpy as np
-import scipy.io as spio
-import xfgeomod, xfmatgrid
-from xfutils import xf_sim_id_to_str, xf_run_id_to_str
-
 class XFSar(object):
     """XFdtd SAR calculation class."""
     def __init__(self):
