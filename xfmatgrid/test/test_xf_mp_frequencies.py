@@ -26,7 +26,7 @@ class TestXFMultiPointFrequencies(unittest.TestCase):
 
     def test_single_frequency(self):
         """Read frequencies.bin from test data."""
-        self.assertEqual(TEST_FREQUENCY,self.mp_frequencies.frequencies[0])
+        self.assertEqual(TEST_FREQUENCY, self.mp_frequencies.frequencies[0])
 
     def tearDown(self):
         pass

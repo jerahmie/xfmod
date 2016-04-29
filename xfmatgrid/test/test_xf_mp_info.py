@@ -6,7 +6,7 @@ Test XFMultiPointInfo class.
 from __future__ import(absolute_import, division, generators,
                        print_function, unicode_literals)
 
-import sys, os
+import os
 import struct
 import unittest
 import xfmatgrid
@@ -30,11 +30,12 @@ class TestXFMultiPointInfo(unittest.TestCase):
         self.mp_info = xfmatgrid.XFMultiPointInfo(TEST_MP_FILE)
 
     def test_header_info(self):
+        """Test the multipoint header info."""
         self.assertEqual(MP_HEADER, self.mp_info.header)
         self.assertEqual(MP_VERSION, self.mp_info.version)
         self.assertEqual(MP_FIELDS_MASK, self.mp_info.fields_mask)
         self.assertEqual(MP_NUM_POINTS, self.mp_info.num_points)
-        
+
     def tearDown(self):
         pass
 
