@@ -126,8 +126,8 @@ class XFMultiPointSSField(object):
     def _load_field_data(self, file_name):
         """Load field data from given binary file."""
         with open(file_name, 'rb') as file_handle:
-            chunk = file_handle.read(MP_FLOAT_LEN*self._num_points)
-            temp_field_data = struct.unpack('f'*self._num_points,
+            chunk = file_handle.read(MP_FLOAT_LEN * self._num_points)
+            temp_field_data = struct.unpack('f' * self._num_points,
                                             chunk)
         file_handle.close()
         self._ss_field = np.empty([len(self._mp_geom.x_domain),

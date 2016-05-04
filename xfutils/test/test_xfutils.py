@@ -39,6 +39,20 @@ class TestXFUtils(unittest.TestCase):
         self.assertEqual('Run0001', xfutils.xf_run_id_to_str(1))
         self.assertEqual('Run9999', xfutils.xf_run_id_to_str(9999))
 
+    def test_is_valid_run_id_str(self):
+        """Check if run id string is valid."""
+        self.assertFalse(xfutils.is_valid_run_id_str('Run0'))
+        self.assertFalse(xfutils.is_valid_run_id_str('Xxx0001'))
+        self.assertTrue(xfutils.is_valid_run_id_str('Run0001'))
+        self.assertFalse(xfutils.is_valid_run_id_str('Run999999'))
+        self.assertTrue(xfutils.is_valid_run_id_str('Run9999'))
+        
+    def test_xf_run_str_to_int(self):
+        """Verify XFdtd run int from 'RunXXXX' string."""
+        self.assertEqual(1, xfutils.xf_run_str_to_int('Run0001'))
+        self.assertEqual(9999, xfutils.xf_run_str_to_int('Run9999'))
+
+
     def tearDown(self):
         pass
 
