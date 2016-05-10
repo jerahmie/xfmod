@@ -19,13 +19,10 @@ MP_SS_RE = r'([0-9A-Za-z/_.]*)(MultiPoint_[a-zA-Z0-9/_]*_[0-9]+)'
 
 class XFFieldNonUniformGrid(object):
     """Holds XF field data on non-uniform grid."""
-    def __init__(self, project_dir, sim_id, run_id):
+    def __init__(self, xf_project_dir, sim_id, run_id):
         self._valid_types = [r'E', r'H', r'B', r'J']
         self._valid_components = [r'x', r'y', r'z']
-        xf_geometry_dir = os.path.join(project_dir, r'Simulations',
-                                       xf_sim_id_to_str(sim_id),
-                                       xf_run_id_to_str(run_id))
-        self._project_dir = project_dir
+        self._project_dir = xf_project_dir
         self._sim_id = int(sim_id)
         self._run_id = int(run_id)
         self._set_mp_info()
@@ -37,7 +34,7 @@ class XFFieldNonUniformGrid(object):
         self._ss_field_data = np.zeros(1)
         self._get_mp_field_types()
         self._load_geom()
-        self._xf_grid = XFGeometry(xf_geometry_dir)
+        self._xf_grid = XFGeometry(xf_project_dir, sim_id, run_id)
         self._load_mp_ss_grid()
 
     def _load_mp_ss_grid(self):

@@ -13,7 +13,6 @@ from xfutils.xfutils import (is_valid_run_id,
                              xf_sim_id_to_str,
                              xf_run_str_to_int)
 
-
 from xfutils.xfregrid import (xf_regrid_3d_nearest,
                               XFRegridError)
 

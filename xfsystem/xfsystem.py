@@ -65,7 +65,6 @@ class XFSystem(object):
 
         try:
             computed_power = re.findall(COMPUTED_POWER_RE, system_ssout)[0]
-            print(computed_power[0][0])
             self._available_power = float(computed_power[0])
             self._net_input_power = float(computed_power[1])
         except TypeError:

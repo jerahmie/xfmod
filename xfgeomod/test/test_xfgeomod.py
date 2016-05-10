@@ -18,9 +18,6 @@ TEST_PROJECT_DIR = os.path.normpath(os.path.join(os.path.realpath(__file__),
 TEST_SIM_NUMBER = 1
 TEST_RUN_NUMBER = 1
 
-TEST_RUN_PATH = os.path.join(TEST_PROJECT_DIR, 'Simulations',
-                             xf_sim_id_to_str(TEST_SIM_NUMBER),
-                             xf_run_id_to_str(TEST_RUN_NUMBER))
 
 # Test_Data values
 # Grid Data
@@ -53,10 +50,10 @@ class TestXFGeoMod(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Load XFdtd Geometry info
-        cls.xf_geom = xfgeomod.XFGeometry(TEST_RUN_PATH)
+        cls.xf_geom = xfgeomod.XFGeometry(TEST_PROJECT_DIR, TEST_SIM_NUMBER, TEST_RUN_NUMBER)
 
         # Load XFdtd Mesh data file
-        cls.xf_mesh = xfgeomod.XFMesh(TEST_RUN_PATH)
+        cls.xf_mesh = xfgeomod.XFMesh(TEST_PROJECT_DIR, TEST_SIM_NUMBER, TEST_RUN_NUMBER)
 
         # Create XFdtd data exporter
         cls.xf_export = xfgeomod.XFGridExporter(cls.xf_geom, cls.xf_mesh)

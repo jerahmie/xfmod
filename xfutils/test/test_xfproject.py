@@ -6,8 +6,7 @@ Test xfproject routines.
 from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 
-import os
-from os.path import normpath, realpath, join
+from os import path, makedirs
 from shutil import rmtree
 import unittest
 from xfutils import xf_sim_id_to_str, xf_run_id_to_str
@@ -22,16 +21,15 @@ class TestXFProject(unittest.TestCase):
         # Create a mock project directory structure.
         simulations = [1, 2, 3] + list(range(8,10))
         cls._sim_run_list = [[]] * simulations[-1]
-        print('simulations: ', simulations)
         for sim_id in simulations:
             run_list = []
             for run_id in range(sim_id % 3 + 1):
-                sim_run_dir = join(MOCK_XF_PROJECT,
-                                   r'Simulations',
-                                   xf_sim_id_to_str(sim_id),
-                                   xf_run_id_to_str(run_id + 1))
+                sim_run_dir = path.join(MOCK_XF_PROJECT,
+                                        r'Simulations',
+                                        xf_sim_id_to_str(sim_id),
+                                        xf_run_id_to_str(run_id + 1))
                 run_list.append(run_id + 1)
-                os.makedirs(sim_run_dir)
+                makedirs(sim_run_dir)
             cls._sim_run_list[sim_id - 1] = run_list
 
     def setUp(self):
@@ -44,11 +42,10 @@ class TestXFProject(unittest.TestCase):
         
     def test_coil_xf(self):
         """Test XFProject info run list against Test_Coil.xf"""
-        xf_test_coil_path = normpath(join(realpath(__file__),
-                                          '..', '..', '..',
-                                          'Test_Data',
-                                          'Test_Coil.xf'))
-        print(xf_test_coil_path)
+        xf_test_coil_path = path.normpath(path.join(path.realpath(__file__),
+                                                    '..', '..', '..',
+                                                    'Test_Data',
+                                                    'Test_Coil.xf'))
         xf_test_coil_info = XFProjectInfo(xf_test_coil_path)
         self.assertEqual([[1],[1],[1]], xf_test_coil_info.xf_sim_run_list)
 

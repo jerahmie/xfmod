@@ -17,10 +17,10 @@ from xfutils import xf_sim_id_to_str, xf_run_id_to_str, xf_regrid_3d_nearest
 class XFGridDataWriterUniform(object):
     """Write XFdtd field data to mat file on uniform grid."""
     def __init__(self, xf_project_dir, sim_id, run_id):
-        run_path = os.path.join(xf_project_dir,
-                                'Simulations',
-                                xf_sim_id_to_str(sim_id),
-                                xf_run_id_to_str(run_id))
+        #run_path = os.path.join(xf_project_dir,
+        #                        'Simulations',
+        #                        xf_sim_id_to_str(sim_id),
+        #                        xf_run_id_to_str(run_id))
         self._x0 = 0.0; self._y0 = 0.0; self._z0 = 0.0
         self._dx = 0.0; self._dy = 0.0; self._dz = 0.0
         self._xlen = 0.0; self._ylen = 0.0; self._zlen = 0.0
@@ -34,8 +34,14 @@ class XFGridDataWriterUniform(object):
         self._hx_epsilon_r = None
         self._hy_epsilon_r = None
         self._hz_epsilon_r = None
-        self._geom = xfgeomod.XFGeometry(run_path)
-        self._mesh = xfgeomod.XFMesh(run_path)
+        self._geom = xfgeomod.XFGeometry(os.path.join(xf_project_dir,
+                                                      'Simulations',
+                                                      xf_sim_id_to_str(sim_id),
+                                                      xf_run_id_to_str(run_id)))
+        self._mesh = xfgeomod.XFMesh(os.path.join(xf_project_dir,
+                                                  'Simulations',
+                                                  xf_sim_id_to_str(sim_id),
+                                                  xf_run_id_to_str(run_id)))
         self._grid_exporter = xfgeomod.XFGridExporter(self._geom, self._mesh)
 
     def set_origin(self, x0, y0, z0):
