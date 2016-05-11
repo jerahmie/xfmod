@@ -13,35 +13,32 @@ from scipy.interpolate import griddata
 import xfgeomod
 from xfutils import xf_sim_id_to_str, xf_run_id_to_str, xf_regrid_3d_nearest
 
-
 class XFGridDataWriterUniform(object):
     """Write XFdtd field data to mat file on uniform grid."""
     def __init__(self, xf_project_dir, sim_id, run_id):
-        #run_path = os.path.join(xf_project_dir,
-        #                        'Simulations',
-        #                        xf_sim_id_to_str(sim_id),
-        #                        xf_run_id_to_str(run_id))
         self._x0 = 0.0; self._y0 = 0.0; self._z0 = 0.0
         self._dx = 0.0; self._dy = 0.0; self._dz = 0.0
         self._xlen = 0.0; self._ylen = 0.0; self._zlen = 0.0
-        self._ex_sigma = None; self._ey_sigma = None; self._ez_sigma = None
-        self._hx_sigma = None; self._hy_sigma = None; self._hz_sigma = None
-        self._ex_density = None; self._ey_density = None; self._ez_density = None
-        self._hx_density = None; self._hy_density = None; self._hz_density = None
+        self._ex_sigma = None
+        self._ey_sigma = None
+        self._ez_sigma = None
+        self._hx_sigma = None
+        self._hy_sigma = None
+        self._hz_sigma = None
+        self._ex_density = None
+        self._ey_density = None
+        self._ez_density = None
+        self._hx_density = None
+        self._hy_density = None
+        self._hz_density = None
         self._ex_epsilon_r = None
         self._ey_epsilon_r = None
         self._ez_epsilon_r = None
         self._hx_epsilon_r = None
         self._hy_epsilon_r = None
         self._hz_epsilon_r = None
-        self._geom = xfgeomod.XFGeometry(os.path.join(xf_project_dir,
-                                                      'Simulations',
-                                                      xf_sim_id_to_str(sim_id),
-                                                      xf_run_id_to_str(run_id)))
-        self._mesh = xfgeomod.XFMesh(os.path.join(xf_project_dir,
-                                                  'Simulations',
-                                                  xf_sim_id_to_str(sim_id),
-                                                  xf_run_id_to_str(run_id)))
+        self._geom = xfgeomod.XFGeometry(xf_project_dir, sim_id, run_id)
+        self._mesh = xfgeomod.XFMesh(xf_project_dir, sim_id, run_id)
         self._grid_exporter = xfgeomod.XFGridExporter(self._geom, self._mesh)
 
     def set_origin(self, x0, y0, z0):
@@ -145,7 +142,7 @@ class XFGridDataWriterUniform(object):
                                                  self._zdim),
                                                 self._grid_exporter.ez_density)
         
-    def export_matfile(self, file_name):
+    def savemat(self, file_name):
         """Export mesh/grid data to matlab file."""
         self._regrid()
         export_dict = dict()
@@ -291,7 +288,9 @@ def main(argv):
        print("Bad regrid resolution.")
        usage(2)
 
-    print("Exporting grid for project: ", arg_dict['xf_project'])
+    print("Exporting grid for project: ", arg_dict['xf_project'], 
+          "\n\tSimID: ", int(arg_dict['sim']), 
+          "\n\tRunID: ", int(arg_dict['run']))
     xf_grid_writer = XFGridDataWriterUniform(arg_dict['xf_project'],
                                              int(arg_dict['sim']),
                                              int(arg_dict['run']))
@@ -307,7 +306,7 @@ def main(argv):
     xf_grid_writer.set_grid_resolution(arg_dict['deltas'][0],
                                        arg_dict['deltas'][1],
                                        arg_dict['deltas'][2])
-    xf_grid_writer.export_matfile(arg_dict['export_file'])
+    xf_grid_writer.savemat(arg_dict['export_file'])
 
 if __name__ == '__main__':
     main(sys.argv[1:])
