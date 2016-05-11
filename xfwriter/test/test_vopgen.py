@@ -6,27 +6,30 @@ Test for vopgen exporter.
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
-from os import path, getcwd, remove
+from os import getcwd, remove
+from os.path import normpath, dirname, realpath, join, isfile
 import unittest
 import numpy as np
 import scipy.io as spio
 from xfutils.xfproject import XFProjectInfo
 import xfwriter.vopgen
 
-COIL_XF_PATH = path.normpath(path.join(path.realpath(__file__),
-                                       '..', '..', '..',
-                                       'Test_Data', 
-                                       'Test_Coil.xf'))
+COIL_XF_PATH = normpath(join(realpath(__file__),
+                             '..', '..', '..',
+                             'Test_Data', 
+                             'Test_Coil.xf'))
 
 XF_TEST_COIL_POWERS = [5.78071000e-05, 1.27783000e-04, 1.57568000e-04]
-EF_MAP_ARRAY_FILE = 'efMapArrayN.mat'
-PROPERTY_MAP_FILE = 'promap.mat'
+EF_MAP_ARRAY_FILE = normpath(join(dirname(realpath(__file__)),
+                                  'efMapArrayN.mat'))
+PROPERTY_MAP_FILE = normpath(join(dirname(realpath(__file__)),
+                                  'promap.mat'))
 
 class TestVopgenWriter(unittest.TestCase):
     """Tests for vopgen matfile writers."""
     @classmethod
     def setUpClass(cls):
-        if path.isfile(EF_MAP_ARRAY_FILE):
+        if isfile(EF_MAP_ARRAY_FILE):
             remove(EF_MAP_ARRAY_FILE)
         cls.sim_ids = []
         cls._xf_project_info = XFProjectInfo(COIL_XF_PATH)
@@ -79,7 +82,7 @@ class TestVopgenWriter(unittest.TestCase):
                                               tvopgen._z0 + tvopgen._zlen/2.0,
                                               tvopgen._dz), tvopgen._zdim_uniform))
         tvopgen.savemat(EF_MAP_ARRAY_FILE)
-        self.assertTrue(path.isfile(EF_MAP_ARRAY_FILE))
+        self.assertTrue(isfile(EF_MAP_ARRAY_FILE))
         ef_map = spio.loadmat(EF_MAP_ARRAY_FILE)
         self.assertTrue((128, 128, 128, 3, 3), ef_map['efMapArrayN'])
 
@@ -111,7 +114,7 @@ class TestVopgenWriter(unittest.TestCase):
                                               tpropmap._z0 + tpropmap._zlen/2.0,
                                               tpropmap._dz), tpropmap._zdim_uniform))
         tpropmap.savemat(PROPERTY_MAP_FILE)
-        self.assertTrue(path.isfile(PROPERTY_MAP_FILE))
+        self.assertTrue(isfile(PROPERTY_MAP_FILE))
         prop_map = spio.loadmat(PROPERTY_MAP_FILE)
         self.assertEqual(128, len(prop_map['XDim']))
         self.assertEqual(128, len(prop_map['YDim']))
