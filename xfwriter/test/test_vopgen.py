@@ -9,7 +9,7 @@ from __future__ import (absolute_import, division,
 from os import getcwd, remove
 from os.path import normpath, dirname, realpath, join, isfile
 import unittest
-import numpy as np
+from numpy import allclose, arange, shape
 import scipy.io as spio
 from xfutils.xfproject import XFProjectInfo
 import xfwriter.vopgen
@@ -49,10 +49,11 @@ class TestVopgenWriter(unittest.TestCase):
         """Test VopgenEFMatArrayN net input power array."""
         tvopgen = xfwriter.vopgen.VopgenEFMapArrayN(COIL_XF_PATH, self.sim_ids)
         self.assertEqual(3, len(tvopgen._net_input_power_per_coil))
-        self.assertTrue(np.allclose(XF_TEST_COIL_POWERS, 
-                                    tvopgen._net_input_power_per_coil))
+        self.assertTrue(allclose(XF_TEST_COIL_POWERS, 
+                                 tvopgen._net_input_power_per_coil))
     
-#    @unittest.skip("This test is too long for development.  Re-enable for general testing.")
+    @unittest.skip("This test is too long for development.  " +\
+                   "Re-enable for general testing.")
     def test_ef_map_array_n_mat(self):
         """
         Test the shape of data structures within the saved mat file and generate png images of 
@@ -72,15 +73,15 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertEqual(0.002, tvopgen._dy)
         self.assertEqual(0.002, tvopgen._dz)
         tvopgen._update_export_grid()
-        self.assertTrue(np.allclose(np.arange(tvopgen._x0 - tvopgen._xlen/2.0, 
-                                              tvopgen._x0 + tvopgen._xlen/2.0, 
-                                              tvopgen._dx), tvopgen._xdim_uniform))
-        self.assertTrue(np.allclose(np.arange(tvopgen._y0 - tvopgen._ylen/2.0,
-                                              tvopgen._y0 + tvopgen._ylen/2.0,
-                                              tvopgen._dy), tvopgen._ydim_uniform))
-        self.assertTrue(np.allclose(np.arange(tvopgen._z0 - tvopgen._zlen/2.0,
-                                              tvopgen._z0 + tvopgen._zlen/2.0,
-                                              tvopgen._dz), tvopgen._zdim_uniform))
+        self.assertTrue(allclose(arange(tvopgen._x0 - tvopgen._xlen/2.0, 
+                                        tvopgen._x0 + tvopgen._xlen/2.0, 
+                                        tvopgen._dx), tvopgen._xdim_uniform))
+        self.assertTrue(allclose(arange(tvopgen._y0 - tvopgen._ylen/2.0,
+                                        tvopgen._y0 + tvopgen._ylen/2.0,
+                                        tvopgen._dy), tvopgen._ydim_uniform))
+        self.assertTrue(allclose(arange(tvopgen._z0 - tvopgen._zlen/2.0,
+                                        tvopgen._z0 + tvopgen._zlen/2.0,
+                                        tvopgen._dz), tvopgen._zdim_uniform))
         tvopgen.savemat(EF_MAP_ARRAY_FILE)
         self.assertTrue(isfile(EF_MAP_ARRAY_FILE))
         ef_map = spio.loadmat(EF_MAP_ARRAY_FILE)
@@ -104,23 +105,23 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertEqual(0.002, tpropmap._dy)
         self.assertEqual(0.002, tpropmap._dz)
         tpropmap._update_export_grid()
-        self.assertTrue(np.allclose(np.arange(tpropmap._x0 - tpropmap._xlen/2.0,
-                                              tpropmap._x0 + tpropmap._xlen/2.0,
-                                              tpropmap._dx), tpropmap._xdim_uniform))
-        self.assertTrue(np.allclose(np.arange(tpropmap._y0 - tpropmap._ylen/2.0,
-                                              tpropmap._y0 + tpropmap._ylen/2.0,
-                                              tpropmap._dy), tpropmap._ydim_uniform))
-        self.assertTrue(np.allclose(np.arange(tpropmap._z0 - tpropmap._zlen/2.0,
-                                              tpropmap._z0 + tpropmap._zlen/2.0,
-                                              tpropmap._dz), tpropmap._zdim_uniform))
+        self.assertTrue(allclose(arange(tpropmap._x0 - tpropmap._xlen/2.0,
+                                        tpropmap._x0 + tpropmap._xlen/2.0,
+                                        tpropmap._dx), tpropmap._xdim_uniform))
+        self.assertTrue(allclose(arange(tpropmap._y0 - tpropmap._ylen/2.0,
+                                        tpropmap._y0 + tpropmap._ylen/2.0,
+                                        tpropmap._dy), tpropmap._ydim_uniform))
+        self.assertTrue(allclose(arange(tpropmap._z0 - tpropmap._zlen/2.0,
+                                        tpropmap._z0 + tpropmap._zlen/2.0,
+                                        tpropmap._dz), tpropmap._zdim_uniform))
         tpropmap.savemat(PROPERTY_MAP_FILE)
         self.assertTrue(isfile(PROPERTY_MAP_FILE))
         prop_map = spio.loadmat(PROPERTY_MAP_FILE)
         self.assertEqual(128, len(prop_map['XDim']))
         self.assertEqual(128, len(prop_map['YDim']))
         self.assertEqual(128, len(prop_map['ZDim']))        
-        self.assertEqual((128, 128, 128, 3), np.shape(prop_map['condMap']))
-        self.assertEqual((128, 128, 128, 3), np.shape(prop_map['mdenMap']))
+        self.assertEqual((128, 128, 128, 3), shape(prop_map['condMap']))
+        self.assertEqual((128, 128, 128, 3), shape(prop_map['mdenMap']))
 
 
     @unittest.skip("module not implemented.")

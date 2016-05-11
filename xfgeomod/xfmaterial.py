@@ -14,6 +14,7 @@ class XFMaterial(object):
         self._conductivity = ''
         self._density = ''
         self._epsilon_r = ''
+        self._tissue = 0
 
     @property
     def name(self):
@@ -25,12 +26,6 @@ class XFMaterial(object):
         """Set material name."""
         self._name = value
 
-    @name.deleter
-    def name(self):
-        """Delete material name."""
-        del self._name
-        self._name = ''
-
     @property
     def conductivity(self):
         """Return material conductivity."""
@@ -40,12 +35,6 @@ class XFMaterial(object):
     def conductivity(self, value):
         """Set material conductivity."""
         self._conductivity = value
-
-    @conductivity.deleter
-    def conductivity(self):
-        """Delete material conductivity."""
-        del self._conductivity
-        self._conductivity = ''
 
     @property
     def density(self):
@@ -57,12 +46,6 @@ class XFMaterial(object):
         """Set material density."""
         self._density = value
 
-    @density.deleter
-    def density(self):
-        """Delete material density."""
-        del self._density
-        self._density = ''
-
     @property
     def epsilon_r(self):
         """Return the material relative permittivity."""
@@ -73,8 +56,13 @@ class XFMaterial(object):
         """Set the material relative permittivity."""
         self._epsilon_r = value
 
-    @epsilon_r.deleter
-    def epsilon_r(self):
-        """Delete material relative permittivity."""
-        del self._epsilon_r
-        self._epsilon_r = ''
+    @property
+    def tissue(self):
+        """Return the tissue parameter.  0 = not tissue; !0 = tissue"""
+        return self._tissue
+    
+    @tissue.setter
+    def tissue(self, value):
+        """Set the tissue value."""
+        self._tissue = value
+

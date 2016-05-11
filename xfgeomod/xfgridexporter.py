@@ -39,6 +39,9 @@ class XFGridExporter(object):
         self._mesh_ex_epsilon_r = None
         self._mesh_ey_epsilon_r = None
         self._mesh_ez_epsilon_r = None
+        self._mesh_ex_tissue = None
+        self._mesh_ey_tissue = None
+        self._mesh_ez_tissue = None
         self._mesh_hx_density = None
         self._mesh_hy_density = None
         self._mesh_hz_density = None
@@ -49,7 +52,6 @@ class XFGridExporter(object):
         self._mesh_hy_epsilon_r = None
         self._mesh_hz_epsilon_r = None
         self._set_mesh_data()
-#        self._reorder_mesh_data()
 
     @property
     def grid_x(self):
@@ -115,6 +117,21 @@ class XFGridExporter(object):
     def ez_density(self):
         """Return density on Ez grid locaitons."""
         return self._mesh_ez_density
+
+    @property
+    def ex_tissue(self):
+        """Return tissue mask on Ex grid locations."""
+        return self._mesh_ex_tissue
+
+    @property
+    def ey_tissue(self):
+        """Return tissue mask on Ey grid locations."""
+        return self._mesh_ey_tissue
+
+    @property
+    def ez_tissue(self):
+        """Return tissue mask on Ez grid locations."""
+        return self._mesh_ez_tissue
 
     @units.setter
     def units(self, value):

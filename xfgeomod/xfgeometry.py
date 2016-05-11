@@ -76,6 +76,11 @@ class XFGeometry(object):
     PERMITTIVITY = 4
     DENSITY = 8
     WATER_RATIO = 9
+    HEAT_CAPACITY = 11
+    THERMAL_CONDUCTIVITY = 12
+    PERFUSION_RATE = 13
+    METABOLIC_HEAT = 14
+    TISSUE = 15
 
     def __init__(self, xf_project_dir, sim_id, run_id):
         # compile patterns
@@ -136,6 +141,7 @@ class XFGeometry(object):
                 self._materials[-1].conductivity = float(mat1[mat_index][self.CONDUCTIVITY])
                 self._materials[-1].density = float(mat1[mat_index][self.DENSITY])
                 self._materials[-1].epsilon_r = float(mat1[mat_index][self.PERMITTIVITY])
+                self._materials[-1].tissue = int(mat1[mat_index][self.TISSUE])
         else:
             print("Could not find file: ", self._geometry_input_file_path)
 
