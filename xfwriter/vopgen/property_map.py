@@ -61,7 +61,7 @@ class VopgenPropertyMap(XFMatWriter):
         self._zdim_uniform = np.arange(self._z0 - self._zlen/2.0,
                                        self._z0 + self._zlen/2.0,
                                        self._dz)
-    def _mass_density_map(self):
+    def _make_mass_density_map(self):
         """Construct the mass density map: [xdim, ydim, zdim, 3]"""
         self._rho_map = np.empty([len(self._xdim_uniform), 
                                   len(self._ydim_uniform),
@@ -96,7 +96,7 @@ class VopgenPropertyMap(XFMatWriter):
                                                       self._grid_exporter.ez_density)
         
 
-    def _conductivity_map(self):
+    def _make_conductivity_map(self):
         """Construct the conductivity map."""
         self._sigma_map = np.empty([len(self._xdim_uniform),
                                     len(self._ydim_uniform),
@@ -133,12 +133,12 @@ class VopgenPropertyMap(XFMatWriter):
     def savemat(self, file_name):
         """Save the property map data to matlab file."""
         self._update_export_grid()
-        self._mass_density_map()
-        self._conductivity_map()
+        self._make_mass_density_map()
+        self._make_conductivity_map()
         export_dict = dict()
         export_dict['XDim'] = self._xdim_uniform
         export_dict['YDim'] = self._ydim_uniform
         export_dict['ZDim'] = self._zdim_uniform
         export_dict['condMap'] = self._sigma_map
         export_dict['mdenMap'] = self._rho_map
-        spio.savemat(file_name, export_dict, oned_as='column')
+        spio.savemat(file_name, export_dict, oned_as = 'column')

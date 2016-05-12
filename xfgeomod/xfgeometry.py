@@ -76,11 +76,11 @@ class XFGeometry(object):
     PERMITTIVITY = 4
     DENSITY = 8
     WATER_RATIO = 9
-    HEAT_CAPACITY = 11
-    THERMAL_CONDUCTIVITY = 12
-    PERFUSION_RATE = 13
-    METABOLIC_HEAT = 14
-    TISSUE = 15
+    HEAT_CAPACITY = 10
+    THERMAL_CONDUCTIVITY = 11
+    PERFUSION_RATE = 12
+    METABOLIC_HEAT = 13
+    TISSUE = 14
 
     def __init__(self, xf_project_dir, sim_id, run_id):
         # compile patterns
@@ -177,31 +177,31 @@ class XFGeometry(object):
         else:
             print("Could not find file: ", self._geometry_input_file_path)
 
-    def print_grid_data(self):
-        """Print XFdtd project grid data."""
-        print("\nGrid Data:")
-        print("Origin: ", self.grid_data.origin)
-        print("Num X Cells: ", self.grid_data.num_x_cells)
-        print("Num Y Cells: ", self.grid_data.num_y_cells)
-        print("Num Z Cells: ", self.grid_data.num_z_cells)
-        if self.grid_data.num_x_cells > 0:
-            print("X Grid Data: ", len(self.grid_data.x_coods()))
-        if self.grid_data.num_y_cells > 0:
-            print("Y Grid Data: ", len(self.grid_data.y_coods()))
-        if self.grid_data.num_z_cells > 0:
-            print("Z Grid Data: ", len(self.grid_data.z_coods()))
-
-    def print_materials(self):
-        """Print materials in data structure"""
-        print("\nMaterials: ")
-        for mat_index in range(len(self._materials)):
-            print("                   Name: " + \
-                  self._materials[mat_index].name)
-            print("                Density: ", \
-                  self._materials[mat_index].density, \
-                  " (kg/m^3)")
-            print("           Conductivity: ",  \
-                  self._materials[mat_index].conductivity,  \
-                  " (S/m) ")
-            print(" Relaltive Permittivity: ", \
-                  self._materials[mat_index].epsilon_r)
+#    def print_grid_data(self):
+#        """Print XFdtd project grid data."""
+#        print("\nGrid Data:")
+#        print("Origin: ", self.grid_data.origin)
+#        print("Num X Cells: ", self.grid_data.num_x_cells)
+#        print("Num Y Cells: ", self.grid_data.num_y_cells)
+#        print("Num Z Cells: ", self.grid_data.num_z_cells)
+#        if self.grid_data.num_x_cells > 0:
+#            print("X Grid Data: ", len(self.grid_data.x_coods()))
+#        if self.grid_data.num_y_cells > 0:
+#            print("Y Grid Data: ", len(self.grid_data.y_coods()))
+#        if self.grid_data.num_z_cells > 0:
+#            print("Z Grid Data: ", len(self.grid_data.z_coods()))
+#
+#    def print_materials(self):
+#        """Print materials in data structure"""
+#        print("\nMaterials: ")
+#        for mat_index in range(len(self._materials)):
+#            print("                   Name: " + \
+#                  self._materials[mat_index].name)
+#            print("                Density: ", \
+#                  self._materials[mat_index].density, \
+#                  " (kg/m^3)")
+#            print("           Conductivity: ",  \
+#                  self._materials[mat_index].conductivity,  \
+#                  " (S/m) ")
+#            print(" Relaltive Permittivity: ", \
+#                  self._materials[mat_index].epsilon_r)

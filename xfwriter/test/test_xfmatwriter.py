@@ -34,8 +34,6 @@ class TestXFMatWriter(unittest.TestCase):
             cls.xfmw_nu = xfwriter.XFFieldWriterNonUniform(TEST_PROJECT_DIR,
                                                             TEST_SIM_NUMBER,
                                                             TEST_RUN_NUMBER)
-            #cls.xfmw_nu.net_input_power = 1.0
-
         except NameError as err:
             print("Unable to create instance of XFMatWriter.")
             raise err
@@ -44,8 +42,13 @@ class TestXFMatWriter(unittest.TestCase):
         pass
 
     def test_class_xfmatwriter(self):
-        """Test abstract clas XFMatWriter."""
+        """Test abstract base class XFMatWriter."""
         self.assertIsInstance(self.xfmw, xfwriter.XFMatWriter)
+
+    def test_class_xfmatwriter_uniform(self):
+        """Test abstract class for uniformly interpolated data."""
+        xfmu_uniform = xfwriter.XFMatWriterUniform()
+        self.assertIsInstance(xfmu_uniform, xfwriter.XFMatWriter)
 
     def test_xf_field_writer_nonuniform_hierarchy(self):
         """Test the fieldwriter on nonuniform grid."""
