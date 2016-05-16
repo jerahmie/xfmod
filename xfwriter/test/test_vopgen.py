@@ -23,9 +23,9 @@ xf_test_coil_powers = [5.78071000e-05, 1.27783000e-04, 1.57568000e-04]
 ef_map_array_file = normpath(join(dirname(realpath(__file__)),
                                   'efMapArrayN.mat'))
 property_map_file = normpath(join(dirname(realpath(__file__)),
-                                  'promap.mat'))
+                                  'propmap.mat'))
 sar_mask_file = normpath(join(dirname(realpath(__file__)),
-                              'sarmask_new.mat'))
+                              'sarmask_aligned.mat'))
 mass_density_map_3d_file = normpath(join(dirname(realpath(__file__)),
                                          'massdensityMap3D.mat'))
 sim_id = 1
