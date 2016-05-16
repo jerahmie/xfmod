@@ -78,8 +78,6 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertTrue(allclose(xf_test_coil_powers,
                                  tvopgen._net_input_power_per_coil))
 
-    @unittest.skip("This test is too long for development.  " +\
-                   "Re-enable for general testing.")
     def test_ef_map_array_n_mat(self):
         """
         Test the shape of data structures within the saved mat file and generate
