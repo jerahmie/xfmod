@@ -20,9 +20,9 @@ from xfutils import xf_regrid_3d_nearest
 class XFFieldWriterUniform(object):
     """Writes XFdtd field data to mat file on uniform grid. """
     def __init__(self, xf_project_dir, sim_id, run_id):
-        self.field_nonuniform_grid = XFFieldNonUniformGrid(xf_project_dir,
-                                                           sim_id,
-                                                           run_id)
+        self.field_nu_grid = XFFieldNonUniformGrid(xf_project_dir,
+                                                   sim_id,
+                                                   run_id)
         self._xf_system = xfsystem.XFSystem(xf_project_dir, sim_id, run_id)
         self.field_uniform_grid = None
         self._fx = None
@@ -80,27 +80,27 @@ class XFFieldWriterUniform(object):
                                self._dz)
 
         print("Interpolating data.")
-        self._fx = xf_regrid_3d_nearest((self.field_nonuniform_grid.xdim,
-                                         self.field_nonuniform_grid.ydim,
-                                         self.field_nonuniform_grid.zdim),
+        self._fx = xf_regrid_3d_nearest((self.field_nu_grid.xdim,
+                                         self.field_nu_grid.ydim,
+                                         self.field_nu_grid.zdim),
                                         (self._xdim,
                                          self._ydim,
                                          self._zdim),
-                                        self.field_nonuniform_grid.ss_field_data(field_type, 'x'))
-        self._fy = xf_regrid_3d_nearest((self.field_nonuniform_grid.xdim,
-                                         self.field_nonuniform_grid.ydim,
-                                         self.field_nonuniform_grid.zdim),
+                                        self.field_nu_grid.ss_field_data(field_type, 'x'))
+        self._fy = xf_regrid_3d_nearest((self.field_nu_grid.xdim,
+                                         self.field_nu_grid.ydim,
+                                         self.field_nu_grid.zdim),
                                         (self._xdim,
                                          self._ydim,
                                          self._zdim),
-                                        self.field_nonuniform_grid.ss_field_data(field_type, 'y'))
-        self._fz = xf_regrid_3d_nearest((self.field_nonuniform_grid.xdim,
-                                         self.field_nonuniform_grid.ydim,
-                                         self.field_nonuniform_grid.zdim),
+                                        self.field_nu_grid.ss_field_data(field_type, 'y'))
+        self._fz = xf_regrid_3d_nearest((self.field_nu_grid.xdim,
+                                         self.field_nu_grid.ydim,
+                                         self.field_nu_grid.zdim),
                                         (self._xdim,
                                          self._ydim,
                                          self._zdim),
-                                        self.field_nonuniform_grid.ss_field_data(field_type, 'z'))
+                                        self.field_nu_grid.ss_field_data(field_type, 'z'))
         return self._fx, self._fy, self._fz
 
     @property
