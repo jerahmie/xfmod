@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Vopgen data exporter class for 5-D E-Field data.
 """
@@ -9,7 +8,6 @@ from __future__ import (absolute_import, division,
 import numpy as np
 import scipy.io as spio
 from xfsystem import XFSystem
-from xfutils.xfproject import XFProjectInfo
 from xfwriter import XFMatWriter, XFFieldWriterUniform
 
 class VopgenEFMapArrayN(XFMatWriter):
@@ -18,7 +16,7 @@ class VopgenEFMapArrayN(XFMatWriter):
         self._xf_project_dir = xf_project_dir
         self._sim_ids = sim_ids
         self._num_coils = len(sim_ids)
-        self._ef_map_array_N = None
+        self._ef_map_array_n = None
         self._ex = None
         self._ey = None
         self._ez = None
@@ -26,7 +24,6 @@ class VopgenEFMapArrayN(XFMatWriter):
         self._ydim_uniform = None
         self._zdim_uniform = None
         self._net_input_power_per_coil = None
-        self._ef_map_array_N = None
         self._dx = 0.0
         self._dy = 0.0
         self._dz = 0.0
@@ -61,11 +58,11 @@ class VopgenEFMapArrayN(XFMatWriter):
     def _efield_map_array_n(self):
         """Populate E field map array for N coils."""
         self._update_export_grid()
-        self._ef_map_array_N = np.empty([len(self._xdim_uniform),
-                                        len(self._ydim_uniform),
-                                        len(self._zdim_uniform),
-                                        3, self._num_coils],
-                                        dtype = np.dtype(np.complex_))
+        self._ef_map_array_n = np.empty([len(self._xdim_uniform),
+                                         len(self._ydim_uniform),
+                                         len(self._zdim_uniform),
+                                         3, self._num_coils],
+                                        dtype=np.dtype(np.complex_))
         for coil_index, sim_id in enumerate(self._sim_ids):
             print("SimID: ", sim_id, "/", self._sim_ids)
             efield_uniform_wr = XFFieldWriterUniform(self._xf_project_dir,
@@ -74,10 +71,10 @@ class VopgenEFMapArrayN(XFMatWriter):
             efield_uniform_wr.set_len(self._xlen, self._ylen, self._zlen)
             efield_uniform_wr.set_grid_resolution(self._dx, self._dy, self._dz)
             [Ex, Ey, Ez] = efield_uniform_wr.regrid_fields('E')
-            self._ef_map_array_N[:, :, :, 0, coil_index] = Ex
-            self._ef_map_array_N[:, :, :, 1, coil_index] = Ey
-            self._ef_map_array_N[:, :, :, 2, coil_index] = Ez
-        
+            self._ef_map_array_n[:, :, :, 0, coil_index] = Ex
+            self._ef_map_array_n[:, :, :, 1, coil_index] = Ey
+            self._ef_map_array_n[:, :, :, 2, coil_index] = Ez
+
     def set_grid_origin(self, x0, y0, z0):
         """Set the origin of the export region."""
         self._x0 = x0
@@ -103,5 +100,5 @@ class VopgenEFMapArrayN(XFMatWriter):
         export_dict['XDim'] = self._xdim_uniform
         export_dict['YDim'] = self._ydim_uniform
         export_dict['ZDim'] = self._zdim_uniform
-        export_dict['efMapArrayN'] = self._ef_map_array_N
+        export_dict['efMapArrayN'] = self._ef_map_array_n
         spio.savemat(file_name, export_dict, oned_as='column')
