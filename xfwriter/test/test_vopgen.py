@@ -74,7 +74,7 @@ class TestVopgenWriter(unittest.TestCase):
         """Test VopgenEFMatArrayN net input power array."""
         tvopgen = xfwriter.vopgen.VopgenEFMapArrayN(COIL_XF_PATH, self.sim_ids)
         self.assertEqual(3, len(tvopgen._net_input_power_per_coil))
-        self.assertTrue(allclose(xf_test_coil_powers,
+        self.assertTrue(allclose(XF_TEST_COIL_POWERS,
                                  tvopgen._net_input_power_per_coil))
 
     def test_ef_map_array_n_mat(self):
