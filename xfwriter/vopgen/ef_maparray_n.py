@@ -36,12 +36,12 @@ class VopgenEFMapArrayN(XFMatWriter):
         self._xlen = 0.0
         self._ylen = 0.0
         self._zlen = 0.0
-        self._net_input_power()
+        self._get_net_input_power_per_coil()
 
-    def _net_input_power(self):
+    def _get_net_input_power_per_coil(self):
         """Return array of net input powers, one per coil in simulation."""
         self._net_input_power_per_coil = np.empty(self._num_coils,
-                                                  dtype = np.dtype('d'))
+                                                  dtype=np.dtype(np.float64))
         for idx, coil_index in enumerate(self._sim_ids):
             sim_system = XFSystem(self._xf_project_dir, coil_index, 1)
             self._net_input_power_per_coil[idx] = sim_system.net_input_power

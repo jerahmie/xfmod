@@ -13,8 +13,6 @@ class XFRegridError(Exception):
     """Exception xf data regridding."""
     def __init__(self, message):
         self.message = message
-    def __str__(self):
-        self.__str__ = self.message
 
 def xf_regrid_3d_nearest(X1, X2, data3d):
     """
