@@ -170,15 +170,23 @@ class XFGridExporter(object):
         # set Ex material properties
         if self._ex_edge_runs is not None:
             print('Calculating Ex mesh values.')
-            self._mesh_ex_density = np.empty((self._x_dim, self._y_dim, self._z_dim),
-                                             dtype = np.dtype(np.double))
+            self._mesh_ex_density = np.empty((self._x_dim,
+                                              self._y_dim,
+                                              self._z_dim),
+                                             dtype=np.dtype(np.float64))
 
-            self._mesh_ex_sigma = np.empty((self._x_dim, self._y_dim, self._z_dim),
-                                           dtype = np.dtype(np.double))
-            self._mesh_ex_epsilon_r = np.empty((self._x_dim, self._y_dim, self._z_dim),
-                                               dtype = np.dtype(np.double))
-            self._mesh_ex_tissue = np.empty((self._x_dim, self._y_dim, self._z_dim),
-                                            dtype = np.dtype(np.int))
+            self._mesh_ex_sigma = np.empty((self._x_dim,
+                                            self._y_dim,
+                                            self._z_dim),
+                                           dtype=np.dtype(np.float64))
+            self._mesh_ex_epsilon_r = np.empty((self._x_dim,
+                                                self._y_dim,
+                                                self._z_dim),
+                                               dtype=np.dtype(np.float64))
+            self._mesh_ex_tissue = np.empty((self._x_dim,
+                                             self._y_dim,
+                                             self._z_dim),
+                                            dtype=np.dtype(np.int))
             # initialize to freespace
             self._mesh_ex_density[:] = np.NAN
             self._mesh_ex_sigma[:] = self._materials_list[0].conductivity
@@ -200,14 +208,22 @@ class XFGridExporter(object):
         # set Ey material properties
         if self._ey_edge_runs is not None:
             print('Calculating Ey mesh values.')
-            self._mesh_ey_density = np.empty((self._x_dim, self._y_dim, self._z_dim),
-                                             dtype = np.dtype(np.double))
-            self._mesh_ey_sigma = np.empty((self._x_dim, self._y_dim, self._z_dim),
-                                           dtype = np.dtype(np.double))
-            self._mesh_ey_epsilon_r = np.empty((self._x_dim, self._y_dim, self._z_dim),
-                                               dtype = np.dtype(np.double))
-            self._mesh_ey_tissue = np.empty((self._x_dim, self._y_dim, self._z_dim),
-                                            dtype = np.dtype(np.int))
+            self._mesh_ey_density = np.empty((self._x_dim,
+                                              self._y_dim,
+                                              self._z_dim),
+                                             dtype=np.dtype(np.float64))
+            self._mesh_ey_sigma = np.empty((self._x_dim,
+                                            self._y_dim,
+                                            self._z_dim),
+                                           dtype=np.dtype(np.float64))
+            self._mesh_ey_epsilon_r = np.empty((self._x_dim,
+                                                self._y_dim,
+                                                self._z_dim),
+                                               dtype=np.dtype(np.float64))
+            self._mesh_ey_tissue = np.empty((self._x_dim,
+                                             self._y_dim,
+                                             self._z_dim),
+                                            dtype=np.dtype(np.int))
             # initialize to freespace
             self._mesh_ey_density[:] = np.NAN
             self._mesh_ey_sigma[:] = self._materials_list[0].conductivity
@@ -227,14 +243,22 @@ class XFGridExporter(object):
         # set Ez material properties
         if self._ez_edge_runs is not None:
             print('Calculating Ez mesh values.')
-            self._mesh_ez_density = np.empty((self._x_dim, self._y_dim, self._z_dim),
-                                             dtype = np.dtype(np.double))
-            self._mesh_ez_sigma = np.empty((self._x_dim, self._y_dim, self._z_dim),
-                                           dtype = np.dtype(np.double))
-            self._mesh_ez_epsilon_r = np.empty((self._x_dim, self._y_dim, self._z_dim),
-                                               dtype = np.dtype(np.double))
-            self._mesh_ez_tissue = np.empty((self._x_dim, self._y_dim, self._z_dim),
-                                            dtype = np.dtype(np.double))
+            self._mesh_ez_density = np.empty((self._x_dim,
+                                              self._y_dim,
+                                              self._z_dim),
+                                             dtype=np.dtype(np.float64))
+            self._mesh_ez_sigma = np.empty((self._x_dim,
+                                            self._y_dim,
+                                            self._z_dim),
+                                           dtype=np.dtype(np.float64))
+            self._mesh_ez_epsilon_r = np.empty((self._x_dim,
+                                                self._y_dim,
+                                                self._z_dim),
+                                               dtype=np.dtype(np.float64))
+            self._mesh_ez_tissue = np.empty((self._x_dim,
+                                             self._y_dim,
+                                             self._z_dim),
+                                            dtype=np.dtype(np.float64))
 
             # initialize to freespace
             self._mesh_ez_density[:] = np.NAN
@@ -255,8 +279,12 @@ class XFGridExporter(object):
         # set Hx material properties
         if self._hx_edge_runs is not None:
             print('Calculating Hx mesh values.')
-            self._mesh_hx_density = np.empty((self._x_dim, self._y_dim, self._z_dim))
-            self._mesh_hx_sigma = np.empty((self._x_dim, self._y_dim, self._z_dim))
+            self._mesh_hx_density = np.empty((self._x_dim,
+                                              self._y_dim,
+                                              self._z_dim))
+            self._mesh_hx_sigma = np.empty((self._x_dim,
+                                            self._y_dim,
+                                            self._z_dim))
             self._mesh_hx_density[:] = np.NAN
             self._mesh_hx_sigma[:] = np.NAN
             for edge_run in self._hx_edge_runs:
@@ -268,8 +296,12 @@ class XFGridExporter(object):
         # set Hy material properties
         if self._hy_edge_runs is not None:
             print('Calculating Hy mesh values.')
-            self._mesh_hy_density = np.empty((self._x_dim, self._y_dim, self._z_dim))
-            self._mesh_hy_sigma = np.empty((self._x_dim, self._y_dim, self._z_dim))
+            self._mesh_hy_density = np.empty((self._x_dim,
+                                              self._y_dim,
+                                              self._z_dim))
+            self._mesh_hy_sigma = np.empty((self._x_dim,
+                                            self._y_dim,
+                                            self._z_dim))
             self._mesh_hy_density[:] = np.NAN
             self._mesh_hy_sigma[:] = np.NAN
 
@@ -282,8 +314,12 @@ class XFGridExporter(object):
         # set Hz material properties
         if self._hz_edge_runs is not None:
             print('Calculating Hz mesh values.')
-            self._mesh_hz_density = np.empty((self._x_dim, self._y_dim, self._z_dim))
-            self._mesh_hz_sigma = np.empty((self._x_dim, self._y_dim, self._z_dim))
+            self._mesh_hz_density = np.empty((self._x_dim,
+                                              self._y_dim,
+                                              self._z_dim))
+            self._mesh_hz_sigma = np.empty((self._x_dim,
+                                            self._y_dim,
+                                            self._z_dim))
             self._mesh_hz_density[:] = np.NAN
             self._mesh_hz_sigma[:] = np.NAN
             for edge_run in self._hz_edge_runs:
