@@ -41,7 +41,7 @@ class VopgenMassDensityMap3D(XFMatWriterUniform):
         self._sar_mask.set_grid_origin(self._x0, self._y0, self._z0)
         self._sar_mask.set_grid_len(self._xlen, self._ylen, self._zlen)
         self._sar_mask.set_grid_resolution(self._dx, self._dy, self._dz)
-        sar_mask_3d = self._sar_mask._make_sar_mask()
+        sar_mask_3d = self._sar_mask.make_sar_mask()
         mass_density_map = self._prop_map.make_conductivity_map()
         self._mass_density_3d = (mass_density_map[:, :, :, 0] + \
                                  mass_density_map[:, :, :, 1] + \
