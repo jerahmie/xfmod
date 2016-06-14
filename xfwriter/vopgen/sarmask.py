@@ -11,6 +11,10 @@ from xfutils import xf_regrid_3d_nearest
 from xfgeomod import XFMesh, XFGeometry, XFGridExporter
 from xfwriter import XFMatWriterUniform
 
+# threshold for scaling/rounding to ensure tissue only if ex, ey, and ez grid
+# values are tissue.
+TISSUE_THRESHOLD = 0.2  
+
 class VopgenSarMask(XFMatWriterUniform):
     """Matlab writer for 3-D SAR bitmap mask."""
     def __init__(self, xf_project_dir, sim_id, run_id):
@@ -31,7 +35,7 @@ class VopgenSarMask(XFMatWriterUniform):
         mesh = XFMesh(xf_project_dir, sim_id, run_id)
         self._grid_exporter = XFGridExporter(geom, mesh)
         
-    def _make_sar_mask(self):
+    def make_sar_mask(self):
         """Construct the sar mask on uniformly spaced grid."""
         self._update_export_grid()
         self._sar_mask = np.empty((len(self._xdim_uniform),
@@ -59,12 +63,15 @@ class VopgenSarMask(XFMatWriterUniform):
                                             self._ydim_uniform,
                                             self._zdim_uniform),
                                            self._grid_exporter.ez_tissue)
-        self._sar_mask = np.floor((sar_mask_ex + sar_mask_ey + sar_mask_ez)/3).astype(int)
+
+        self._sar_mask = np.round((sar_mask_ex + sar_mask_ey + sar_mask_ez) * \
+                                  TISSUE_THRESHOLD).astype(int)
+
         return self._sar_mask
     
     def savemat(self, file_name):
         """Save the SAR mask to a matlab file."""
-        self._make_sar_mask()
+        self.make_sar_mask()
         export_dict = dict()
         export_dict['XDim'] = self._xdim_uniform
         export_dict['YDim'] = self._ydim_uniform
