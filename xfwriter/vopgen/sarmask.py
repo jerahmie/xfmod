@@ -13,7 +13,7 @@ from xfwriter import XFMatWriterUniform
 
 # threshold for scaling/rounding to ensure tissue only if ex, ey, and ez grid
 # values are tissue.
-TISSUE_THRESHOLD = 0.2  
+#TISSUE_THRESHOLD = 0.2  
 
 class VopgenSarMask(XFMatWriterUniform):
     """Matlab writer for 3-D SAR bitmap mask."""
@@ -64,8 +64,7 @@ class VopgenSarMask(XFMatWriterUniform):
                                             self._zdim_uniform),
                                            self._grid_exporter.ez_tissue)
 
-        self._sar_mask = np.round((sar_mask_ex + sar_mask_ey + sar_mask_ez) * \
-                                  TISSUE_THRESHOLD).astype(int)
+        self._sar_mask = np.where((sar_mask_ex + sar_mask_ey + sar_mask_ez) > 0.0) 
 
         return self._sar_mask
     
