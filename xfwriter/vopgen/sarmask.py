@@ -63,8 +63,11 @@ class VopgenSarMask(XFMatWriterUniform):
                                             self._ydim_uniform,
                                             self._zdim_uniform),
                                            self._grid_exporter.ez_tissue)
-
-        self._sar_mask = np.where((sar_mask_ex + sar_mask_ey + sar_mask_ez) > 0.0) 
+        self._sar_mask = np.zeros((len(self._xdim_uniform),
+                                   len(self._ydim_uniform),
+                                   len(self._zdim_uniform)),
+                                  dtype = np.int )
+        self._sar_mask[np.where((sar_mask_ex + sar_mask_ey + sar_mask_ez) > 0.0)] = 1
 
         return self._sar_mask
     
