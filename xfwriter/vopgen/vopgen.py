@@ -30,7 +30,7 @@ def vopgen_all(arg_dict):
             sim_ids.append(idx+1)
 
     ef_map = xfwriter.vopgen.VopgenEFMapArrayN(arg_dict['xf_project'], sim_ids)
-    ef_map.set_grid_origin(arg_dict['origin'][0], 
+    ef_map.set_grid_origin(arg_dict['origin'][0],
                            arg_dict['origin'][1],
                            arg_dict['origin'][2])
     ef_map.set_grid_len(arg_dict['lengths'][0],
@@ -40,11 +40,12 @@ def vopgen_all(arg_dict):
                                arg_dict['deltas'][1],
                                arg_dict['deltas'][2])
     ef_map.savemat(os.path.join(arg_dict['export_dir'], 'efmapArrayN.mat'))
+    del ef_map
 
     # property map
     print("-> Generating property maps.")
     prop_map = xfwriter.vopgen.VopgenPropertyMap(arg_dict['xf_project'], 1, 1)
-    prop_map.set_grid_origin(arg_dict['origin'][0], 
+    prop_map.set_grid_origin(arg_dict['origin'][0],
                              arg_dict['origin'][1],
                              arg_dict['origin'][2])
     prop_map.set_grid_len(arg_dict['lengths'][0],
@@ -54,11 +55,12 @@ def vopgen_all(arg_dict):
                                  arg_dict['deltas'][1],
                                  arg_dict['deltas'][2])
     prop_map.savemat(os.path.join(arg_dict['export_dir'], 'propmap.mat'))
+    del prop_map
 
     # sar mask
     print("-> Generating SAR mask.")
     sar_mask = xfwriter.vopgen.VopgenSarMask(arg_dict['xf_project'], 1, 1)
-    sar_mask.set_grid_origin(arg_dict['origin'][0], 
+    sar_mask.set_grid_origin(arg_dict['origin'][0],
                              arg_dict['origin'][1],
                              arg_dict['origin'][2])
     sar_mask.set_grid_len(arg_dict['lengths'][0],
@@ -68,11 +70,12 @@ def vopgen_all(arg_dict):
                                  arg_dict['deltas'][1],
                                  arg_dict['deltas'][2])
     sar_mask.savemat(os.path.join(arg_dict['export_dir'], 'sarmask_aligned.mat'))
-    
+    del sar_mask
+
     # mass density map
     print("-> Generating mass density map.")
     mden_map_3d = xfwriter.vopgen.VopgenMassDensityMap3D(arg_dict['xf_project'], 1, 1)
-    mden_map_3d.set_grid_origin(arg_dict['origin'][0], 
+    mden_map_3d.set_grid_origin(arg_dict['origin'][0],
                              arg_dict['origin'][1],
                              arg_dict['origin'][2])
     mden_map_3d.set_grid_len(arg_dict['lengths'][0],
@@ -81,7 +84,8 @@ def vopgen_all(arg_dict):
     mden_map_3d.set_grid_resolution(arg_dict['deltas'][0],
                                  arg_dict['deltas'][1],
                                  arg_dict['deltas'][2])
-    mden_map_3d.savemat(os.path.join(arg_dict['export_dir'], 'massdensityMap3D.mat'))    
+    mden_map_3d.savemat(os.path.join(arg_dict['export_dir'], 'massdensityMap3D.mat'))
+    del mden_map_3d
 
 def usage(exit_status = None):
     """Print the usage statement and exit with given status."""
@@ -150,7 +154,7 @@ def main(argv):
         usage(2)
     if len(arg_dict['deltas']) != 3:
         print("Bad regrid resolution.")
-        usage(2)    
+        usage(2)
 
     # generate vopgen all files
     vopgen_all(arg_dict)
