@@ -31,44 +31,101 @@ class VopgenSarMask(XFMatWriterUniform):
         self._y0 = 0.0
         self._z0 = 0.0
         self._sar_mask = None
+        self._tissue_mask = None
         geom = XFGeometry(xf_project_dir, sim_id, run_id)
         mesh = XFMesh(xf_project_dir, sim_id, run_id)
         self._grid_exporter = XFGridExporter(geom, mesh)
         
+    def make_tissue_mask(self):
+        """Construct a mask from tissue properties on uniformly spaced grid."""
+        self._update_export_grid()
+        self._tissue_mask = np.empty((len(self._xdim_uniform),
+                                      len(self._ydim_uniform),
+                                      len(self._zdim_uniform)),
+                                     dtype = np.dtype(int))
+        tissue_mask_ex = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                               self._grid_exporter.grid_y,
+                                               self._grid_exporter.grid_z),
+                                              (self._xdim_uniform,
+                                               self._ydim_uniform,
+                                               self._zdim_uniform),
+                                              self._grid_exporter.ex_tissue)
+        tissue_mask_ey = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                               self._grid_exporter.grid_y,
+                                               self._grid_exporter.grid_z),
+                                              (self._xdim_uniform,
+                                               self._ydim_uniform,
+                                               self._zdim_uniform),
+                                              self._grid_exporter.ey_tissue)
+        tissue_mask_ez = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                               self._grid_exporter.grid_y,
+                                               self._grid_exporter.grid_z),
+                                              (self._xdim_uniform,
+                                               self._ydim_uniform,
+                                               self._zdim_uniform),
+                                           self._grid_exporter.ez_tissue)
+        self._tissue_mask = np.zeros((len(self._xdim_uniform),
+                                      len(self._ydim_uniform),
+                                      len(self._zdim_uniform)),
+                                     dtype = np.int )
+        self._tissue_mask[np.where((tissue_mask_ex + tissue_mask_ey + tissue_mask_ez) > 0.0)] = 1
+        
+        return self._tissue_mask
+
     def make_sar_mask(self):
-        """Construct the sar mask on uniformly spaced grid."""
+        """Construct a SAR mask using the vopgen method."""
         self._update_export_grid()
         self._sar_mask = np.empty((len(self._xdim_uniform),
                                    len(self._ydim_uniform),
                                    len(self._zdim_uniform)),
                                   dtype = np.dtype(int))
-        sar_mask_ex = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                            self._grid_exporter.grid_y,
-                                            self._grid_exporter.grid_z),
-                                           (self._xdim_uniform,
-                                            self._ydim_uniform,
-                                            self._zdim_uniform),
-                                           self._grid_exporter.ex_tissue)
-        sar_mask_ey = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                            self._grid_exporter.grid_y,
-                                            self._grid_exporter.grid_z),
-                                           (self._xdim_uniform,
-                                            self._ydim_uniform,
-                                            self._zdim_uniform),
-                                           self._grid_exporter.ey_tissue)
-        sar_mask_ez = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                            self._grid_exporter.grid_y,
-                                            self._grid_exporter.grid_z),
-                                           (self._xdim_uniform,
-                                            self._ydim_uniform,
-                                            self._zdim_uniform),
-                                           self._grid_exporter.ez_tissue)
-        self._sar_mask = np.zeros((len(self._xdim_uniform),
-                                   len(self._ydim_uniform),
-                                   len(self._zdim_uniform)),
-                                  dtype = np.int )
-        self._sar_mask[np.where((sar_mask_ex + sar_mask_ey + sar_mask_ez) > 0.0)] = 1
 
+        # Material Conducivity on resampled Ex, Ey, Ez grid
+        sigma_ex_uniform = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                                 self._grid_exporter.grid_y,
+                                                 self._grid_exporter.grid_z),
+                                                (self._xdim_uniform,
+                                                 self._ydim_uniform,
+                                                 self._zdim_uniform),
+                                                self._grid_exporter.ex_sigma)
+        sigma_ey_uniform = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                                 self._grid_exporter.grid_y,
+                                                 self._grid_exporter.grid_z),
+                                                (self._xdim_uniform,
+                                                 self._ydim_uniform,
+                                                 self._zdim_uniform),
+                                                self._grid_exporter.ey_sigma)
+        sigma_ez_uniform = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                                 self._grid_exporter.grid_y,
+                                                 self._grid_exporter.grid_z),
+                                                (self._xdim_uniform,
+                                                 self._ydim_uniform,
+                                                 self._zdim_uniform),
+                                                self._grid_exporter.ez_sigma)
+
+        # Material Density on resampled Ex, Ey, Ez grid
+        density_ex_uniform = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                                   self._grid_exporter.grid_y,
+                                                   self._grid_exporter.grid_z),
+                                                  (self._xdim_uniform,
+                                                   self._ydim_uniform,
+                                                   self._zdim_uniform),
+                                                  self._grid_exporter.ex_density)
+        density_ey_uniform = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                                   self._grid_exporter.grid_y,
+                                                   self._grid_exporter.grid_z),
+                                                  (self._xdim_uniform,
+                                                   self._ydim_uniform,
+                                                   self._zdim_uniform),
+                                                  self._grid_exporter.ey_density)
+        density_ez_uniform = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
+                                                   self._grid_exporter.grid_y,
+                                                   self._grid_exporter.grid_z),
+                                                  (self._xdim_uniform,
+                                                   self._ydim_uniform,
+                                                   self._zdim_uniform),
+                                                  self._grid_exporter.ez_density)
+        
         return self._sar_mask
     
     def savemat(self, file_name):

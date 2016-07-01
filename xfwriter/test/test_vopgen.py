@@ -66,17 +66,15 @@ class TestVopgenWriter(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_vopgen_class_structure(self):
-        """Make sure the vopgen class behaves as expected."""
-        self.assertTrue(True)
-
+    @unittest.skip("skipping test_efn_net_input_power...")
     def test_efn_net_input_power(self):
         """Test VopgenEFMatArrayN net input power array."""
         tvopgen = xfwriter.vopgen.VopgenEFMapArrayN(COIL_XF_PATH, self.sim_ids)
         self.assertEqual(3, len(tvopgen._net_input_power_per_coil))
         self.assertTrue(allclose(XF_TEST_COIL_POWERS,
                                  tvopgen._net_input_power_per_coil))
-
+    
+    @unittest.skip("skipping test_ef_map_array_n_mat...")
     def test_ef_map_array_n_mat(self):
         """
         Test the shape of data structures within the saved mat file and generate
@@ -111,6 +109,7 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertTrue((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM, 3, 3),
                         ef_map['efMapArrayN'])
 
+    @unittest.skip("skipping test_propmap_mat...")
     def test_propmap_mat(self):
         """
         Tests to create/read propmat.mat
@@ -150,16 +149,39 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertEqual((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM, 3),
                          shape(prop_map['mdenMap']))
 
+    @unittest.skip("skipping test_tissue_mask...")
+    def test_tissue_mask(self):
+        """
+        Test the tissue mask dimensions.
+        """
+        ttissue_mask = xfwriter.vopgen.VopgenSarMask(COIL_XF_PATH,
+                                                     SIM_ID, RUN_ID)
+        ttissue_mask.set_grid_origin(X0, Y0, Z0)
+        ttissue_mask.set_grid_len(X_ROI_LEN, Y_ROI_LEN, Z_ROI_LEN)
+        ttissue_mask.set_grid_resolution(DX, DY, DZ)
+        test_mask = ttissue_mask.make_tissue_mask()
+        self.assertEqual(DX, ttissue_mask._dx)
+        self.assertEqual(DY, ttissue_mask._dy)
+        self.assertEqual(DZ, ttissue_mask._dz)
+        self.assertEqual(X_ROI_LEN, ttissue_mask._xlen)
+        self.assertEqual(Y_ROI_LEN, ttissue_mask._ylen)
+        self.assertEqual(Z_ROI_LEN, ttissue_mask._zlen)
+        self.assertEqual(X0, ttissue_mask._x0)
+        self.assertEqual(Y0, ttissue_mask._y0)
+        self.assertEqual(Z0, ttissue_mask._z0)
+        self.assertEqual((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM), shape(test_mask))
+        
     def test_sarmask_aligned_mat(self):
         """
         Tests to create/read sarmask_aligned.mat.
         """
         print("sar_mask_file: ", SAR_MASK_FILE)
-        tsarmask = xfwriter.vopgen.VopgenSarMask(COIL_XF_PATH, SIM_ID, RUN_ID)
-        tsarmask.set_grid_origin(X0, Y0, Z0)
-        tsarmask.set_grid_len(X_ROI_LEN, Y_ROI_LEN, Z_ROI_LEN)
-        tsarmask.set_grid_resolution(DX, DY, DZ)
-        tsarmask.savemat(SAR_MASK_FILE)
+        tsar_mask = xfwriter.vopgen.VopgenSarMask(COIL_XF_PATH,
+                                                  SIM_ID, RUN_ID)
+        tsar_mask.set_grid_origin(X0, Y0, Z0)
+        tsar_mask.set_grid_len(X_ROI_LEN, Y_ROI_LEN, Z_ROI_LEN)
+        tsar_mask.set_grid_resolution(DX, DY, DZ)
+        tsar_mask.savemat(SAR_MASK_FILE)
         self.assertTrue(isfile(SAR_MASK_FILE))
         sar_mask_mat = spio.loadmat(SAR_MASK_FILE)
         self.assertEqual(X_ROI_DIM, len(sar_mask_mat['XDim']))
@@ -168,6 +190,7 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertEqual((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM),
                          shape(sar_mask_mat['sarmask_new']))
 
+    @unittest.skip("skipping test_massdensity_map_3d_mat...")
     def test_massdensity_map_3d_mat(self):
         """
         Tests to create/read massdensityMat3D.mat.
@@ -193,7 +216,8 @@ class TestVopgenWriter(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        pass
+        del cls.sim_ids
+        del cls._xf_project_info
 
 if __name__ == "__main__":
     unittest.main()
