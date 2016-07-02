@@ -82,7 +82,7 @@ class VopgenPropertyMap(XFMatWriterUniform):
                                                                 self._zdim_uniform),
                                                                self._grid_exporter.ez_density)
 
-        # apply tissue mask
+        # apply mask
         if self._mask == None:
             self._make_mask()        
         self._mass_density_map[:,:,:,0] = np.multiply(self._mass_density_map[:,:,:,0], self._mask)

@@ -66,7 +66,6 @@ class TestVopgenWriter(unittest.TestCase):
     def setUp(self):
         pass
 
-    @unittest.skip("skipping test_efn_net_input_power...")
     def test_efn_net_input_power(self):
         """Test VopgenEFMatArrayN net input power array."""
         tvopgen = xfwriter.vopgen.VopgenEFMapArrayN(COIL_XF_PATH, self.sim_ids)
@@ -74,7 +73,6 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertTrue(allclose(XF_TEST_COIL_POWERS,
                                  tvopgen._net_input_power_per_coil))
     
-    @unittest.skip("skipping test_ef_map_array_n_mat...")
     def test_ef_map_array_n_mat(self):
         """
         Test the shape of data structures within the saved mat file and generate
@@ -109,47 +107,6 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertTrue((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM, 3, 3),
                         ef_map['efMapArrayN'])
 
-    @unittest.skip("skipping test_propmap_mat...")
-    def test_propmap_mat(self):
-        """
-        Tests to create/read propmat.mat
-        """
-        tpropmap = xfwriter.vopgen.VopgenPropertyMap(COIL_XF_PATH,
-                                                     SIM_ID, RUN_ID)
-        tpropmap.set_grid_origin(X0, Y0, Z0)
-        self.assertEqual(X0, tpropmap._x0)
-        self.assertEqual(Y0, tpropmap._y0)
-        self.assertEqual(Z0, tpropmap._z0)
-        tpropmap.set_grid_len(X_ROI_LEN, Y_ROI_LEN, Z_ROI_LEN)
-        self.assertEqual(X_ROI_LEN, tpropmap._xlen)
-        self.assertEqual(Y_ROI_LEN, tpropmap._ylen)
-        self.assertEqual(Z_ROI_LEN, tpropmap._zlen)
-        tpropmap.set_grid_resolution(DX, DY, DZ)
-        self.assertEqual(DX, tpropmap._dx)
-        self.assertEqual(DY, tpropmap._dy)
-        self.assertEqual(DZ, tpropmap._dz)
-        tpropmap._update_export_grid()
-        self.assertTrue(allclose(arange(tpropmap._x0 - tpropmap._xlen/2.0,
-                                        tpropmap._x0 + tpropmap._xlen/2.0,
-                                        tpropmap._dx), tpropmap._xdim_uniform))
-        self.assertTrue(allclose(arange(tpropmap._y0 - tpropmap._ylen/2.0,
-                                        tpropmap._y0 + tpropmap._ylen/2.0,
-                                        tpropmap._dy), tpropmap._ydim_uniform))
-        self.assertTrue(allclose(arange(tpropmap._z0 - tpropmap._zlen/2.0,
-                                        tpropmap._z0 + tpropmap._zlen/2.0,
-                                        tpropmap._dz), tpropmap._zdim_uniform))
-        tpropmap.savemat(PROPERTY_MAP_FILE)
-        self.assertTrue(isfile(PROPERTY_MAP_FILE))
-        prop_map = spio.loadmat(PROPERTY_MAP_FILE)
-        self.assertEqual(X_ROI_DIM, len(prop_map['XDim']))
-        self.assertEqual(Y_ROI_DIM, len(prop_map['YDim']))
-        self.assertEqual(Z_ROI_DIM, len(prop_map['ZDim']))
-        self.assertEqual((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM, 3),
-                         shape(prop_map['condMap']))
-        self.assertEqual((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM, 3),
-                         shape(prop_map['mdenMap']))
-
-    @unittest.skip("skipping test_tissue_mask...")
     def test_tissue_mask(self):
         """
         Test the tissue mask dimensions.
@@ -170,7 +127,7 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertEqual(Y0, ttissue_mask._y0)
         self.assertEqual(Z0, ttissue_mask._z0)
         self.assertEqual((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM), shape(test_mask))
-        
+
     def test_sarmask_aligned_mat(self):
         """
         Tests to create/read sarmask_aligned.mat.
@@ -189,8 +146,7 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertEqual(Z_ROI_DIM, len(sar_mask_mat['ZDim']))
         self.assertEqual((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM),
                          shape(sar_mask_mat['sarmask_new']))
-
-    @unittest.skip("skipping test_massdensity_map_3d_mat...")
+        
     def test_massdensity_map_3d_mat(self):
         """
         Tests to create/read massdensityMat3D.mat.
