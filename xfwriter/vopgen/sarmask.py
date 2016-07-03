@@ -76,10 +76,6 @@ class VopgenSarMask(XFMatWriterUniform):
     def make_sar_mask(self):
         """Construct a SAR mask using the vopgen method."""
         self._update_export_grid()
-        #self._sar_mask = np.empty((len(self._xdim_uniform),
-        #                           len(self._ydim_uniform),
-        #                           len(self._zdim_uniform)),
-        #                          dtype = np.dtype(int))
 
         # Material Conducivity on resampled Ex, Ey, Ez grid
         sigma_ex_uniform = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
@@ -126,10 +122,12 @@ class VopgenSarMask(XFMatWriterUniform):
                                                    self._ydim_uniform,
                                                    self._zdim_uniform),
                                                   self._grid_exporter.ez_density)
-        cod_x = np.greater(removeNaNs(0.5 * np.divide(sigma_ex_uniform, density_ex_uniform)), 1.0)
-        cod_y = np.greater(removeNaNs(0.5 * np.divide(sigma_ey_uniform, density_ey_uniform)), 1.0)
-        cod_z = np.greater(removeNaNs(0.5 * np.divide(sigma_ez_uniform, density_ez_uniform)), 1.0)
-        self._sar_mask = 1 * np.logical_or(cod_x, cod_y, cod_z)  # cast to int array
+        cod_x = np.greater(removeNaNs(0.5 * np.divide(sigma_ex_uniform, density_ex_uniform)), 0.0)
+        
+        cod_y = np.greater(removeNaNs(0.5 * np.divide(sigma_ey_uniform, density_ey_uniform)), 0.0)
+        cod_z = np.greater(removeNaNs(0.5 * np.divide(sigma_ez_uniform, density_ez_uniform)), 0.0)
+        self._sar_mask = np.logical_or(cod_x, cod_y, cod_z)
+        self._sar_mask = 1 * np.logical_or(self._sar_mask, cod_z)  # cast to int array
 
         return self._sar_mask
     

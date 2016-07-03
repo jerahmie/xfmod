@@ -8,7 +8,7 @@ from __future__ import (absolute_import, division,
 import os
 from os.path import normpath, dirname, realpath, join, isfile
 import unittest
-from numpy import allclose, arange, shape
+import numpy as np
 import scipy.io as spio
 from xfutils.xfproject import XFProjectInfo
 import xfwriter.vopgen
@@ -56,6 +56,12 @@ class TestVopgenWriter(unittest.TestCase):
     def setUpClass(cls):
         if isfile(EF_MAP_ARRAY_FILE):
             os.remove(EF_MAP_ARRAY_FILE)
+        if isfile(PROPERTY_MAP_FILE):
+            os.remove(PROPERTY_MAP_FILE)
+        if isfile(SAR_MASK_FILE):
+            os.remove(SAR_MASK_FILE)
+        if isfile(MASS_DENSITY_MAP_3D_FILE):
+            os.remove(MASS_DENSITY_MAP_3D_FILE)
         cls.sim_ids = []
         cls._xf_project_info = XFProjectInfo(COIL_XF_PATH)
         simulations = cls._xf_project_info.xf_sim_run_list
@@ -70,8 +76,8 @@ class TestVopgenWriter(unittest.TestCase):
         """Test VopgenEFMatArrayN net input power array."""
         tvopgen = xfwriter.vopgen.VopgenEFMapArrayN(COIL_XF_PATH, self.sim_ids)
         self.assertEqual(3, len(tvopgen._net_input_power_per_coil))
-        self.assertTrue(allclose(XF_TEST_COIL_POWERS,
-                                 tvopgen._net_input_power_per_coil))
+        self.assertTrue(np.allclose(XF_TEST_COIL_POWERS,
+                                    tvopgen._net_input_power_per_coil))
     
     def test_ef_map_array_n_mat(self):
         """
@@ -92,15 +98,15 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertEqual(DY, tvopgen._dy)
         self.assertEqual(DZ, tvopgen._dz)
         tvopgen._update_export_grid()
-        self.assertTrue(allclose(arange(tvopgen._x0 - tvopgen._xlen/2.0,
-                                        tvopgen._x0 + tvopgen._xlen/2.0,
-                                        tvopgen._dx), tvopgen._xdim_uniform))
-        self.assertTrue(allclose(arange(tvopgen._y0 - tvopgen._ylen/2.0,
-                                        tvopgen._y0 + tvopgen._ylen/2.0,
-                                        tvopgen._dy), tvopgen._ydim_uniform))
-        self.assertTrue(allclose(arange(tvopgen._z0 - tvopgen._zlen/2.0,
-                                        tvopgen._z0 + tvopgen._zlen/2.0,
-                                        tvopgen._dz), tvopgen._zdim_uniform))
+        self.assertTrue(np.allclose(np.arange(tvopgen._x0 - tvopgen._xlen/2.0,
+                                              tvopgen._x0 + tvopgen._xlen/2.0,
+                                              tvopgen._dx), tvopgen._xdim_uniform))
+        self.assertTrue(np.allclose(np.arange(tvopgen._y0 - tvopgen._ylen/2.0,
+                                              tvopgen._y0 + tvopgen._ylen/2.0,
+                                              tvopgen._dy), tvopgen._ydim_uniform))
+        self.assertTrue(np.allclose(np.arange(tvopgen._z0 - tvopgen._zlen/2.0,
+                                              tvopgen._z0 + tvopgen._zlen/2.0,
+                                              tvopgen._dz), tvopgen._zdim_uniform))
         tvopgen.savemat(EF_MAP_ARRAY_FILE)
         self.assertTrue(isfile(EF_MAP_ARRAY_FILE))
         ef_map = spio.loadmat(EF_MAP_ARRAY_FILE)
@@ -126,7 +132,7 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertEqual(X0, ttissue_mask._x0)
         self.assertEqual(Y0, ttissue_mask._y0)
         self.assertEqual(Z0, ttissue_mask._z0)
-        self.assertEqual((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM), shape(test_mask))
+        self.assertEqual((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM), np.shape(test_mask))
 
     def test_sarmask_aligned_mat(self):
         """
@@ -145,8 +151,8 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertEqual(Y_ROI_DIM, len(sar_mask_mat['YDim']))
         self.assertEqual(Z_ROI_DIM, len(sar_mask_mat['ZDim']))
         self.assertEqual((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM),
-                         shape(sar_mask_mat['sarmask_new']))
-        
+                         np.shape(sar_mask_mat['sarmask_new']))
+        self.assertGreater(np.sum(sar_mask_mat['sarmask_new']), 0)
     def test_massdensity_map_3d_mat(self):
         """
         Tests to create/read massdensityMat3D.mat.
@@ -163,9 +169,9 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertEqual(Y_ROI_DIM, len(mdenmap3d_mat['YDim']))
         self.assertEqual(Z_ROI_DIM, len(mdenmap3d_mat['ZDim']))
         self.assertEqual((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM),
-                         shape(mdenmap3d_mat['mden3D']))
+                         np.shape(mdenmap3d_mat['mden3D']))
         self.assertEqual((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM),
-                         shape(mdenmap3d_mat['mden3Dm']))
+                         np.shape(mdenmap3d_mat['mden3Dm']))
 
     def tearDown(self):
         pass
