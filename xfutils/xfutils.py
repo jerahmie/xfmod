@@ -5,6 +5,8 @@ Helper functions for reading XFdtd data output files.
 from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 
+import re
+
 MIN_RUN_ID = 1       # Minimum valid RunID
 MAX_RUN_ID = 9999    # Maximum valid RunID
 MIN_SIM_ID = 1       # Minimum valid Simulation ID
@@ -23,6 +25,13 @@ def is_valid_sim_id(sim_id):
         if (sim_id >= MIN_SIM_ID) and (sim_id <= MAX_SIM_ID):
             return True
     return False
+
+def is_valid_run_id_str(run_id_str):
+    """Check whether run id string has proper form."""
+    if re.match(r"^Run[0-9]{4}$", run_id_str):
+        return True
+    else:
+        return False
 
 def xf_run_id_to_str(run_id):
     """Converts a integer to XFdtd RunID string."""
@@ -55,3 +64,9 @@ def xf_sim_id_to_str(sim_id):
     else:
         print("Invalid Simulation ID: ", sim_id)
         return None
+
+def xf_run_str_to_int(run_id_str):
+    """"Converts run string to integer."""
+    if is_valid_run_id_str(run_id_str):
+        return int(run_id_str.split(r'Run')[1])
+    

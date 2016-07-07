@@ -7,7 +7,9 @@ and properties.
 from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 
-import re, os
+import re
+import os
+from xfutils import xf_run_id_to_str, xf_sim_id_to_str
 from xfgeomod import XFGridData, XFMaterial
 
 # Regex expressions
@@ -74,8 +76,13 @@ class XFGeometry(object):
     PERMITTIVITY = 4
     DENSITY = 8
     WATER_RATIO = 9
+    HEAT_CAPACITY = 10
+    THERMAL_CONDUCTIVITY = 11
+    PERFUSION_RATE = 12
+    METABOLIC_HEAT = 13
+    TISSUE = 14
 
-    def __init__(self, project_path):
+    def __init__(self, xf_project_dir, sim_id, run_id):
         # compile patterns
         self._mat_free_space = re.compile(_MAT_FREESPACE_PATTERN, \
                                               re.MULTILINE)
@@ -93,31 +100,23 @@ class XFGeometry(object):
         self._grid_delta = re.compile(_GRID_DELTA, re.MULTILINE)
 
         # file info
-        self._file_path = project_path
-        self._file_name = os.path.join(self._file_path, 'geometry.input')
+        self._geometry_input_file_path = os.path.join(xf_project_dir,
+                                                      r'Simulations',
+                                                      xf_sim_id_to_str(sim_id),
+                                                      xf_run_id_to_str(run_id),
+                                                      r'geometry.input')
 
         # geometry info
         self._geom_info = ''
         self._materials = []
         self.grid_data = XFGridData()
-#        self.load_materials()
         self._load_grid_data()
-
-    @property
-    def file_name(self):
-        """Return full file name of geometry file."""
-        return self._file_name
-
-    @property
-    def file_path(self):
-        """Return the current path containing geometry.input."""
-        return self._file_path
 
     def load_materials(self):
         """Load materials from material.input."""
-        if os.path.exists(self._file_name):
+        if os.path.exists(self._geometry_input_file_path):
             self._materials = []
-            file_handle = open(self._file_name, 'r')
+            file_handle = open(self._geometry_input_file_path, 'r')
             self._geom_info = file_handle.read()
             file_handle.close()
             # load free space (always material 0)
@@ -142,15 +141,16 @@ class XFGeometry(object):
                 self._materials[-1].conductivity = float(mat1[mat_index][self.CONDUCTIVITY])
                 self._materials[-1].density = float(mat1[mat_index][self.DENSITY])
                 self._materials[-1].epsilon_r = float(mat1[mat_index][self.PERMITTIVITY])
+                self._materials[-1].tissue = int(mat1[mat_index][self.TISSUE])
         else:
-            print("Could not find file: ", self._file_name)
+            print("Could not find file: ", self._geometry_input_file_path)
 
         return self._materials
 
     def _load_grid_data(self):
         """Load grid data from material.input"""
-        if os.path.exists(self._file_name):
-            file_handle = open(self._file_name, 'r')
+        if os.path.exists(self._geometry_input_file_path):
+            file_handle = open(self._geometry_input_file_path, 'r')
             self._geom_info = file_handle.read()
             file_handle.close()
             # load grid information
@@ -175,33 +175,33 @@ class XFGeometry(object):
             self.grid_data.z_deltas = self._grid_delta.findall( \
                                   self._geom_info[ind_begin_delz:ind_end_delz])
         else:
-            print("Could not find file: ", self._file_name)
+            print("Could not find file: ", self._geometry_input_file_path)
 
-    def print_grid_data(self):
-        """Print XFdtd project grid data."""
-        print("\nGrid Data:")
-        print("Origin: ", self.grid_data.origin)
-        print("Num X Cells: ", self.grid_data.num_x_cells)
-        print("Num Y Cells: ", self.grid_data.num_y_cells)
-        print("Num Z Cells: ", self.grid_data.num_z_cells)
-        if self.grid_data.num_x_cells > 0:
-            print("X Grid Data: ", len(self.grid_data.x_coods()))
-        if self.grid_data.num_y_cells > 0:
-            print("Y Grid Data: ", len(self.grid_data.y_coods()))
-        if self.grid_data.num_z_cells > 0:
-            print("Z Grid Data: ", len(self.grid_data.z_coods()))
-
-    def print_materials(self):
-        """Print materials in data structure"""
-        print("\nMaterials: ")
-        for mat_index in range(len(self._materials)):
-            print("                   Name: " + \
-                  self._materials[mat_index].name)
-            print("                Density: ", \
-                  self._materials[mat_index].density, \
-                  " (kg/m^3)")
-            print("           Conductivity: ",  \
-                  self._materials[mat_index].conductivity,  \
-                  " (S/m) ")
-            print(" Relaltive Permittivity: ", \
-                  self._materials[mat_index].epsilon_r)
+#    def print_grid_data(self):
+#        """Print XFdtd project grid data."""
+#        print("\nGrid Data:")
+#        print("Origin: ", self.grid_data.origin)
+#        print("Num X Cells: ", self.grid_data.num_x_cells)
+#        print("Num Y Cells: ", self.grid_data.num_y_cells)
+#        print("Num Z Cells: ", self.grid_data.num_z_cells)
+#        if self.grid_data.num_x_cells > 0:
+#            print("X Grid Data: ", len(self.grid_data.x_coods()))
+#        if self.grid_data.num_y_cells > 0:
+#            print("Y Grid Data: ", len(self.grid_data.y_coods()))
+#        if self.grid_data.num_z_cells > 0:
+#            print("Z Grid Data: ", len(self.grid_data.z_coods()))
+#
+#    def print_materials(self):
+#        """Print materials in data structure"""
+#        print("\nMaterials: ")
+#        for mat_index in range(len(self._materials)):
+#            print("                   Name: " + \
+#                  self._materials[mat_index].name)
+#            print("                Density: ", \
+#                  self._materials[mat_index].density, \
+#                  " (kg/m^3)")
+#            print("           Conductivity: ",  \
+#                  self._materials[mat_index].conductivity,  \
+#                  " (S/m) ")
+#            print(" Relaltive Permittivity: ", \
+#                  self._materials[mat_index].epsilon_r)

@@ -8,13 +8,16 @@ from __future__ import (absolute_import, division,
 import sys
 import numpy as np
 from scipy.interpolate import griddata
+try:
+    from tqdm import tqdm
+except ImportError:
+    def tqdm(iterator):
+        return iterator
 
 class XFRegridError(Exception):
     """Exception xf data regridding."""
-    def __init__(self,message):
+    def __init__(self, message):
         self.message = message
-    def __str__(self):
-        self.__str__ = self.message
 
 def xf_regrid_3d_nearest(X1, X2, data3d):
     """
@@ -34,14 +37,18 @@ def xf_regrid_3d_nearest(X1, X2, data3d):
 
     Returns:
     regrid3D -- 3d data regridded on (x2, y2, z2) grid.
-    
+
     """
 
-    x1 = X1[0]; y1 = X1[1]; z1 = X1[2]
-    x2 = X2[0]; y2 = X2[1]; z2 = X2[2]
-    
+    x1 = X1[0]
+    y1 = X1[1]
+    z1 = X1[2]
+    x2 = X2[0]
+    y2 = X2[1]
+    z2 = X2[2]
+
     # check the original data dimensions
-    if (np.size(x1),np.size(y1),np.size(z1)) != np.shape(data3d):
+    if (np.size(x1), np.size(y1), np.size(z1)) != np.shape(data3d):
         raise XFRegridError("XF regrid dimension mismatch.")
 
     data3d_regrid = np.zeros((np.size(x2),
@@ -53,16 +60,16 @@ def xf_regrid_3d_nearest(X1, X2, data3d):
     for zi in z2:
         z_ind_nearest.append(np.argmin(np.absolute(z1-zi)))
 
+    print("\n[regrid3d] Regridding data.")        
     XX1, YY1 = np.meshgrid(x1, y1, indexing='ij')
     XX2, YY2 = np.meshgrid(x2, y2, indexing='ij')
     z_interp_ind = 0
-    for z_ind in z_ind_nearest:
-        sys.stdout.write("processing z index: %d \r" % z_ind)
-        sys.stdout.flush()
-        data3d_regrid[:,:,z_interp_ind] = griddata((XX1.ravel(), YY1.ravel()),
-                                                   data3d[:,:,z_ind].ravel(),
-                                                   (XX2, YY2),
-                                                   method='nearest')
+    for z_ind in tqdm(z_ind_nearest):
+        data3d_regrid[:, :, z_interp_ind] = griddata((XX1.ravel(),
+                                                      YY1.ravel()),
+                                                     data3d[:, :, z_ind].ravel(),
+                                                     (XX2, YY2),
+                                                     method='nearest')
         z_interp_ind += 1
-        
+
     return data3d_regrid

@@ -6,7 +6,8 @@ xfqmatrix.py creates Q matrix data from electric field data and grid data.
 from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 
-import sys, os
+import sys
+import os
 from scipy.io import loadmat, savemat
 import xfgeomod
 
@@ -32,7 +33,6 @@ class XFQMatrix(object):
         """Deleter for XF project name."""
         self._project_name = ""
     
-    @private
     def _sim_run_number_to_path(self, sim_number, run_number):
         """Converts simulation and run number to directory names."""
         # Simulation directory name is a fixed-length string with pre-pended

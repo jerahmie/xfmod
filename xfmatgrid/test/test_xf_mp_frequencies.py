@@ -11,7 +11,8 @@ import xfmatgrid
 
 TEST_FREQUENCY = 296500000.0  # 296.5 MHz
 
-TEST_COIL_DIR = os.path.normpath(os.path.join(os.getcwd(), '..', '..',
+TEST_COIL_DIR = os.path.normpath(os.path.join(os.path.realpath(__file__),
+                                              '..', '..', '..',
                                               'Test_Data', 'Test_Coil.xf'))
 
 RUN_OUT_DIR = os.path.join(TEST_COIL_DIR, 'Simulations', '000001',
@@ -26,7 +27,7 @@ class TestXFMultiPointFrequencies(unittest.TestCase):
 
     def test_single_frequency(self):
         """Read frequencies.bin from test data."""
-        self.assertEqual(TEST_FREQUENCY,self.mp_frequencies.frequencies[0])
+        self.assertEqual(TEST_FREQUENCY, self.mp_frequencies.frequencies[0])
 
     def tearDown(self):
         pass

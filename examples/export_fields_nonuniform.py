@@ -13,7 +13,7 @@ import xfmatgrid
 
 class XFFieldWriterNonUniform(object):
     """Writes raw XFdtd to mat file with nonuniform grid."""
-    def __init__(self, xfProjectDir, sim_id, run_id ):
+    def __init__(self, xfProjectDir, sim_id, run_id):
         self.fieldNonUniformGrid = xfmatgrid.XFFieldNonUniformGrid(xfProjectDir,
                                                                    sim_id,
                                                                    run_id)

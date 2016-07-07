@@ -6,7 +6,7 @@ Test XFMUltipointGeom class.
 from __future__ import(absolute_import, division, generators,
                        print_function, unicode_literals)
 
-import sys, os
+import os
 import unittest
 import numpy as np
 import xfmatgrid
@@ -27,13 +27,13 @@ class TestXFMultiPointGeometry(unittest.TestCase):
     def setUpClass(cls):
         cls.mp_info = xfmatgrid.XFMultiPointInfo(TEST_MP_INFO)
         cls.mp_geom = xfmatgrid.XFMultiPointGeometry(TEST_MP_GEOM,
-                                                      cls.mp_info.num_points)
+                                                     cls.mp_info.num_points)
     def setUp(self):
         pass
 
     def test_multipoint_geometry(self):
         """Test multipoint geometry file."""
-        self.assertEqual((self.mp_info.num_points,3),
+        self.assertEqual((self.mp_info.num_points, 3),
                          np.shape(self.mp_geom._vertices))
 
     def tearDown(self):
@@ -41,4 +41,3 @@ class TestXFMultiPointGeometry(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

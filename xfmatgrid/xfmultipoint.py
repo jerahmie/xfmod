@@ -98,8 +98,8 @@ class XFMultiPointFrequencies(object):
     def __init__(self, file_name):
         self._frequencies = []
         self._load_frequencies(file_name)
-        
-    def _load_frequencies(self,file_name):
+
+    def _load_frequencies(self, file_name):
         """Load frequencies from frequencies.bin"""
         with open(file_name, 'rb') as file_handle:
             while True:
@@ -109,7 +109,7 @@ class XFMultiPointFrequencies(object):
                 else:
                     self._frequencies.append(struct.unpack('f', chunk)[0])
         file_handle.close()
-    
+
     @property
     def frequencies(self):
         """Return list of frequencies read from frequencies.bin"""
@@ -123,32 +123,26 @@ class XFMultiPointSSField(object):
         self._load_field_data(file_name)
 
 #    @profile
-    def _load_field_data(self, file_name ):
+    def _load_field_data(self, file_name):
         """Load field data from given binary file."""
         with open(file_name, 'rb') as file_handle:
-            chunk = file_handle.read(MP_FLOAT_LEN*self._num_points)
-            temp_field_data = struct.unpack('f'*self._num_points,
-                                             chunk)
+            chunk = file_handle.read(MP_FLOAT_LEN * self._num_points)
+            temp_field_data = struct.unpack('f' * self._num_points,
+                                            chunk)
         file_handle.close()
         self._ss_field = np.empty([len(self._mp_geom.x_domain),
-                                  len(self._mp_geom.y_domain),
-                                  len(self._mp_geom.z_domain)])
+                                   len(self._mp_geom.y_domain),
+                                   len(self._mp_geom.z_domain)])
 
         min_i_domain = np.amin(self._mp_geom.x_domain)
         min_j_domain = np.amin(self._mp_geom.y_domain)
         min_k_domain = np.amin(self._mp_geom.z_domain)
 
-        ind_i = self._mp_geom.vertices[:,0] - min_i_domain
-        ind_j = self._mp_geom.vertices[:,1] - min_j_domain
-        ind_k = self._mp_geom.vertices[:,2] - min_k_domain
-        
-#        self._ss_field[ind_i[:]][ind_j[:]][ind_k[:]] = temp_field_data[:]
-#        for index in range(len(temp_field_data)):
-#            self._ss_field[ind_i[index]][ind_j[index]][ind_k[index]] = \
-#                temp_field_data[index]
-#        for index in range(len(temp_field_data)):
-#            self._ss_field[ind_i[index],ind_j[index],ind_k[index]] = temp_field_data[index]
-        self._ss_field[ind_i,ind_j,ind_k] = temp_field_data
+        ind_i = self._mp_geom.vertices[:, 0] - min_i_domain
+        ind_j = self._mp_geom.vertices[:, 1] - min_j_domain
+        ind_k = self._mp_geom.vertices[:, 2] - min_k_domain
+
+        self._ss_field[ind_i, ind_j, ind_k] = temp_field_data
 
     @property
     def ss_field(self):

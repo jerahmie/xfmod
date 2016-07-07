@@ -6,9 +6,9 @@ Represent XFdtd field data on non-uniform grid.
 from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 
-import os, re
+import os
+import re
 from glob import glob
-import struct
 import numpy as np
 from xfmatgrid.xfmultipoint import (XFMultiPointInfo, XFMultiPointFrequencies,
                                     XFMultiPointGeometry, XFMultiPointSSField)
@@ -19,13 +19,10 @@ MP_SS_RE = r'([0-9A-Za-z/_.]*)(MultiPoint_[a-zA-Z0-9/_]*_[0-9]+)'
 
 class XFFieldNonUniformGrid(object):
     """Holds XF field data on non-uniform grid."""
-    def __init__(self, project_dir, sim_id, run_id):
+    def __init__(self, xf_project_dir, sim_id, run_id):
         self._valid_types = [r'E', r'H', r'B', r'J']
         self._valid_components = [r'x', r'y', r'z']
-        xf_geometry_dir = os.path.join(project_dir, r'Simulations',
-                                       xf_sim_id_to_str(sim_id),
-                                       xf_run_id_to_str(run_id))
-        self._project_dir = project_dir
+        self._project_dir = xf_project_dir
         self._sim_id = int(sim_id)
         self._run_id = int(run_id)
         self._set_mp_info()
@@ -37,12 +34,12 @@ class XFFieldNonUniformGrid(object):
         self._ss_field_data = np.zeros(1)
         self._get_mp_field_types()
         self._load_geom()
-        self._xf_grid = XFGeometry(xf_geometry_dir)
+        self._xf_grid = XFGeometry(xf_project_dir, sim_id, run_id)
         self._load_mp_ss_grid()
 
     def _load_mp_ss_grid(self):
         """Loads subregion of grid encompassing the multipoint solid sensor."""
-        # get multipoint solid sensor x-values 
+        # get multipoint solid sensor x-values
         temp_dim = np.array(self._xf_grid.grid_data.x_coods())
         self._xdim = temp_dim[self._mp_geom.x_domain]
 
@@ -72,8 +69,8 @@ class XFFieldNonUniformGrid(object):
         """Set the project directory and set sensor file location."""
         mp_sensor_dir = re.match(MP_SS_RE, self._mp_ss_info_file[0])
         self._mp_frequencies_file = os.path.join(mp_sensor_dir.group(1),
-                                                  mp_sensor_dir.group(2),
-                                                  r'frequencies.bin')
+                                                 mp_sensor_dir.group(2),
+                                                 r'frequencies.bin')
         self._mp_freq = XFMultiPointFrequencies(self._mp_frequencies_file)
         self._mp_geom_file = os.path.join(mp_sensor_dir.group(1),
                                           mp_sensor_dir.group(2),
@@ -82,78 +79,78 @@ class XFFieldNonUniformGrid(object):
         """
         Determine which data directories should be present from info flags.
         """
-        time_domain_Scattered_E = 1<<31
-        time_domain_Total_E = 1<<30
-        time_domain_Scattered_H = 1<<29
-        time_domain_Total_H = 1<<28
-        time_domain_Scattered_B = 1<<27
-        time_domain_Total_B = 1<<26
-        time_domain_J = 1<<25
-        discrete_frequency_Total_E = 1<<24
-        discrete_frequency_Total_H = 1<<23
-        discrete_frequency_J = 1<<22
-        discrete_frequency_Total_B = 1<<21
-        discrete_frequency_Dissipated_Power_Density = 1<<20
+        time_domain_scattered_e = 1<<31
+        time_domain_total_e = 1<<30
+        time_domain_scattered_h = 1<<29
+        time_domain_total_h = 1<<28
+        time_domain_scattered_b = 1<<27
+        time_domain_total_b = 1<<26
+        time_domain_j = 1<<25
+        discrete_frequency_total_e = 1<<24
+        discrete_frequency_total_h = 1<<23
+        discrete_frequency_j = 1<<22
+        discrete_frequency_total_b = 1<<21
+        discrete_frequency_dissipated_power_density = 1<<20
 
         mask = self._mp_ss_info.fields_mask
 
-        if mask & time_domain_Scattered_E:
+        if mask & time_domain_scattered_e:
             self._mp_field_types.append(r'tr_Exs')
             self._mp_field_types.append(r'tr_Eys')
             self._mp_field_types.append(r'tr_Ezs')
-        if mask & time_domain_Total_E:
+        if mask & time_domain_total_e:
             self._mp_field_types.append(r'tr_Ext')
             self._mp_field_types.append(r'tr_Eyt')
             self._mp_field_types.append(r'tr_Ezt')
-        if mask & time_domain_Scattered_H:
+        if mask & time_domain_scattered_h:
             self._mp_field_types.append(r'tr_Hxs')
             self._mp_field_types.append(r'tr_Hys')
             self._mp_field_types.append(r'tr_Hzs')
-        if mask & time_domain_Total_H:
+        if mask & time_domain_total_h:
             self._mp_field_types.append(r'tr_Hxt')
             self._mp_field_types.append(r'tr_Hyt')
             self._mp_field_types.append(r'tr_Hzt')
-        if mask & time_domain_Scattered_B:
+        if mask & time_domain_scattered_b:
             self._mp_field_types.append(r'tr_Bxs')
             self._mp_field_types.append(r'tr_Bys')
             self._mp_field_types.append(r'tr_Bzs')
-        if mask & time_domain_Total_B:
+        if mask & time_domain_total_b:
             self._mp_field_types.append(r'tr_Bxt')
             self._mp_field_types.append(r'tr_Byt')
             self._mp_field_types.append(r'tr_Bzt')
-        if mask & time_domain_J:
+        if mask & time_domain_j:
             self._mp_field_types.append(r'tr_Jx')
             self._mp_field_types.append(r'tr_Jy')
             self._mp_field_types.append(r'tr_Jz')
-        if mask & discrete_frequency_Total_E:
+        if mask & discrete_frequency_total_e:
             self._mp_field_types.append(r'ss_Exit')
             self._mp_field_types.append(r'ss_Exrt')
             self._mp_field_types.append(r'ss_Eyit')
             self._mp_field_types.append(r'ss_Eyrt')
             self._mp_field_types.append(r'ss_Ezit')
             self._mp_field_types.append(r'ss_Ezrt')
-        if mask & discrete_frequency_Total_H:
+        if mask & discrete_frequency_total_h:
             self._mp_field_types.append(r'ss_Hxit')
             self._mp_field_types.append(r'ss_Hxrt')
             self._mp_field_types.append(r'ss_Hyit')
             self._mp_field_types.append(r'ss_Hyrt')
             self._mp_field_types.append(r'ss_Hzit')
             self._mp_field_types.append(r'ss_Hzrt')
-        if mask & discrete_frequency_J:
+        if mask & discrete_frequency_j:
             self._mp_field_types.append(r'ss_Jxi')
             self._mp_field_types.append(r'ss_Jxr')
             self._mp_field_types.append(r'ss_Jyi')
             self._mp_field_types.append(r'ss_Jyr')
             self._mp_field_types.append(r'ss_Jzi')
             self._mp_field_types.append(r'ss_Jzr')
-        if mask & discrete_frequency_Total_B:
+        if mask & discrete_frequency_total_b:
             self._mp_field_types.append(r'ss_Bxit')
             self._mp_field_types.append(r'ss_Bxrt')
             self._mp_field_types.append(r'ss_Byit')
             self._mp_field_types.append(r'ss_Byrt')
             self._mp_field_types.append(r'ss_Bzit')
             self._mp_field_types.append(r'ss_Bzrt')
-        if mask & discrete_frequency_Dissipated_Power_Density:
+        if mask & discrete_frequency_dissipated_power_density:
             self._mp_field_types.append(r'ss_PddEx')
             self._mp_field_types.append(r'ss_PddEy')
             self._mp_field_types.append(r'ss_PddEz')
@@ -165,10 +162,10 @@ class XFFieldNonUniformGrid(object):
         """Load the data in geom.bin"""
         print(r"Loading geom.bin")
         if os.path.exists(self._mp_geom_file):
-            self._mp_geom = XFMultiPointGeometry(self._mp_geom_file, 
+            self._mp_geom = XFMultiPointGeometry(self._mp_geom_file,
                                                  self._mp_ss_info.num_points)
         else:
-            print(r"Could not find geometry file: " + self._mp_geom_file )
+            print(r"Could not find geometry file: " + self._mp_geom_file)
 
     @property
     def xdim(self):
@@ -184,13 +181,13 @@ class XFFieldNonUniformGrid(object):
     def zdim(self):
         """Return the Z dimension values."""
         return self._zdim
-    
-    def _ss_Pdd_dir_name(self, field_type, component):
+
+    def _ss_pdd_dir_name(self, field_type, component):
         """
-        Construct the filename for the dissipated power for 
+        Construct the filename for the dissipated power for
         field type, component.
         """
-        return r'ss_P' + filed_type + component
+        return r'ss_P' + field_type + component
 
     def _ss_field_dir_name(self, field_type, field_component, complex_type):
         """
@@ -207,7 +204,7 @@ class XFFieldNonUniformGrid(object):
             print("Invalid field component: ", field_type)
         if not (complex_type == 'i' or complex_type == 'r'):
             print("Invalid field complex type: ", complex_type)
-        
+
         if (field_type == 'E') or (field_type == 'H') or (field_type == 'B'):
             ff_appendix = 't'
 
@@ -224,38 +221,38 @@ class XFFieldNonUniformGrid(object):
 
         # Traditional field type
         if data_type in self._valid_types:
-            field_dir_real = self._ss_field_dir_name(data_type, 
+            field_dir_real = self._ss_field_dir_name(data_type,
                                                      component, r'r')
-            field_dir_imag = self._ss_field_dir_name(data_type, 
+            field_dir_imag = self._ss_field_dir_name(data_type,
                                                      component, r'i')
 
 
             file_name_real = os.path.join(mp_ss_dir, field_dir_real, r'0.bin')
             file_name_imag = os.path.join(mp_ss_dir, field_dir_imag, r'0.bin')
             print("Loading field data from: ", file_name_real)
-            mp_ss_field_real = XFMultiPointSSField(file_name_real, 
-                                                   self._mp_ss_info, 
+            mp_ss_field_real = XFMultiPointSSField(file_name_real,
+                                                   self._mp_ss_info,
                                                    self._mp_geom)
             print("Loading field data from: ", file_name_imag)
-            mp_ss_field_imag = XFMultiPointSSField(file_name_imag, 
-                                                   self._mp_ss_info, 
+            mp_ss_field_imag = XFMultiPointSSField(file_name_imag,
+                                                   self._mp_ss_info,
                                                    self._mp_geom)
             self._ss_field_data = mp_ss_field_real.ss_field + \
                                   1j * mp_ss_field_imag.ss_field
-            
+
         # Dissipated power
         elif data_type == 'P':
-            power_dir = self._ss_Pdd_dir_name(field_type, component )
+            power_dir = self._ss_pdd_dir_name(data_type, component)
             file_name = os.path.join(mp_ss_dir, power_dir, r'0.bin')
             print("Loading dissipated power data from: ", file_name)
-            mp_ss_dissipated_power_data = XFMultiPointSSField(file_name, 
+            mp_ss_dissipated_power_data = XFMultiPointSSField(file_name,
                                                               self._mp_ss_info,
                                                               self._mp_geom)
             self._ss_field_data = mp_ss_dissipated_power_data.ss_field
 
         else:
             print(r'Invalid data_type: ', data_type)
-                
+
 
         return self._ss_field_data
 
@@ -275,7 +272,7 @@ class XFFieldNonUniformGrid(object):
         self._sim_id = int(sim_id)
 
     @property
-    def run_id(self, run_id):
+    def run_id(self):
         """Return the current run ID."""
         return self._run_id
 

@@ -5,7 +5,9 @@ Class XFMesh processes XFDtd mesh.input file.
 # Ensure python 2 and 3 compatibility
 from __future__ import absolute_import, division, generators, print_function
 
-import os, struct
+import os
+import struct
+from xfutils import xf_run_id_to_str, xf_sim_id_to_str
 
 class XFMeshEdgeRun(object):
     """
@@ -155,9 +157,12 @@ class XFMesh(object):
     """
     Process mesh.input file
     """
-    def __init__(self, sim_run_path):
-        self._file_path = sim_run_path
-        self._file_name = os.path.join(sim_run_path, 'mesh.input')
+    def __init__(self, xf_project_dir, sim_id, run_id):
+        self._mesh_input_file_path = os.path.join(xf_project_dir,
+                                                  r'Simulations',
+                                                  xf_sim_id_to_str(sim_id),
+                                                  xf_run_id_to_str(run_id),
+                                                  r'mesh.input')
         self._mesh_version = None
         self._edge_run_bytes = 0
         self._edge_run_fmt = None
@@ -183,14 +188,9 @@ class XFMesh(object):
         self._read_mesh_header()
         self._read_edge_run_data()
 
-    @property
-    def file_path(self):
-        """Return full file path name for mesh.input"""
-        return self._file_path
-
     def _read_mesh_header(self):
         """Read the mesh header."""
-        file_handle = open(self._file_name, 'rb')
+        file_handle = open(self._mesh_input_file_path, 'rb')
         if file_handle:
             # check remcom 11-byte header
             if file_handle.read(11) != b'!remcomfdtd':
@@ -251,28 +251,9 @@ class XFMesh(object):
             return
         file_handle.close()
 
-    def dump_header_info(self):
-        """Dumpp header info."""
-        print("        Filename: ", self._file_name)
-        print("    Mesh version: ", self._mesh_version)
-        print("  Edge run bytes: ", self._edge_run_bytes)
-        print(" Edge run format: ", self._edge_run_fmt)
-        print("Number of Ex edge runs: ", self._num_ex_edge_runs)
-        print("Number of Ey edge runs: ", self._num_ey_edge_runs)
-        print("Number of Ez edge runs: ", self._num_ez_edge_runs)
-        print("Number of Hx edge runs: ", self._num_hx_edge_runs)
-        print("Number of Hy edge runs: ", self._num_hy_edge_runs)
-        print("Number of Hz edge runs: ", self._num_hz_edge_runs)
-        print("Number of electric averaged materials: ", self._num_e_avg_mats)
-        print("Number of magnetic averaged materials: ", self._num_h_avg_mats)
-        print("Number of electric mesh edges using electric " + \
-              "averaged materials: ", self._num_e_mesh_edges_e_avg)
-        print("Number of magnetic mesh edges using electric " + \
-              "averaged materials: ", self._num_h_mesh_edges_h_avg)
-
     def _read_edge_run_data(self):
         """Read Edge run data"""
-        file_handle = open(self._file_name, 'rb')
+        file_handle = open(self._mesh_input_file_path, 'rb')
         file_handle.seek(self._start_ex_edge_run)
         # read Ex edges
         if self._num_ex_edge_runs > 0:
