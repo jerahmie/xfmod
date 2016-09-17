@@ -10,7 +10,6 @@ import os
 import unittest
 import scipy.io as spio
 import numpy as np
-#import matplotlib.pyplot as plt
 import xfwriter
 
 
