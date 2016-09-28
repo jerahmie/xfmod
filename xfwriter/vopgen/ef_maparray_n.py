@@ -8,9 +8,9 @@ from __future__ import (absolute_import, division,
 import numpy as np
 import scipy.io as spio
 from xfsystem import XFSystem
-from xfwriter import XFMatWriter, XFFieldWriterUniform
+from xfwriter import XFFieldWriterUniform
 
-class VopgenEFMapArrayN(XFMatWriter):
+class VopgenEFMapArrayN(XFFieldWriterUniform):
     """Matlab writer for 5-D E-Field data."""
     def __init__(self, xf_project_dir, sim_ids):
         self._xf_project_dir = xf_project_dir
@@ -67,31 +67,13 @@ class VopgenEFMapArrayN(XFMatWriter):
             print("SimID: ", sim_id, "/", self._sim_ids)
             efield_uniform_wr = XFFieldWriterUniform(self._xf_project_dir,
                                                      sim_id, 1)
-            efield_uniform_wr.set_origin(self._x0, self._y0, self._z0)
-            efield_uniform_wr.set_len(self._xlen, self._ylen, self._zlen)
+            efield_uniform_wr.set_grid_origin(self._x0, self._y0, self._z0)
+            efield_uniform_wr.set_grid_len(self._xlen, self._ylen, self._zlen)
             efield_uniform_wr.set_grid_resolution(self._dx, self._dy, self._dz)
-            [Ex, Ey, Ez] = efield_uniform_wr.regrid_fields('E')
+            [Ex, Ey, Ez] = efield_uniform_wr._regrid_fields('E')
             self._ef_map_array_n[:, :, :, 0, coil_index] = Ex
             self._ef_map_array_n[:, :, :, 1, coil_index] = Ey
             self._ef_map_array_n[:, :, :, 2, coil_index] = Ez
-
-    def set_grid_origin(self, x0, y0, z0):
-        """Set the origin of the export region."""
-        self._x0 = x0
-        self._y0 = y0
-        self._z0 = z0
-
-    def set_grid_len(self, xlen, ylen, zlen):
-        """Set the dimension of the export region."""
-        self._xlen = xlen
-        self._ylen = ylen
-        self._zlen = zlen
-
-    def set_grid_resolution(self, dx, dy, dz):
-        """Set the grid step size of the uniformly interpolated grid."""
-        self._dx = dx
-        self._dy = dy
-        self._dz = dz
 
     def savemat(self, file_name):
         """Save the field data in format expected by vopgen."""
