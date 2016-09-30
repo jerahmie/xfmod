@@ -22,7 +22,7 @@ class XFFieldWriterUniform(XFFieldWriter):
     def __init__(self, xf_project_dir, sim_id, run_id):
         self._field_nonuniform_grid = XFFieldNonUniformGrid(xf_project_dir,
                                                             sim_id, run_id)
-        self._xf_system = xfsystem.XFSystem(xf_project_dir, sim_id, run_id)
+        self._xf_sys = xfsystem.XFSystem(xf_project_dir, sim_id, run_id)
         self._fx_original = None
         self._fy_original = None
         self._fz_original = None
@@ -41,7 +41,6 @@ class XFFieldWriterUniform(XFFieldWriter):
         self._dx = 0.0
         self._dy = 0.0
         self._dz = 0.0
-        self._net_input_power = 1.0
         self._field_norm = 1.0
 
     def set_grid_origin(self, x0, y0, z0):
@@ -115,11 +114,12 @@ class XFFieldWriterUniform(XFFieldWriter):
         self._fy_original = self._field_nonuniform_grid.ss_field_data(field_type, 'y')
         self._fz_original = self._field_nonuniform_grid.ss_field_data(field_type, 'z')
 
+
     def savemat(self, field_type, file_name):
         """Export field data in mat file."""
         self._load_fields(field_type)
-        self._regrid_fields(field_type)
         self._scale_fields()
+        self._regrid_fields(field_type)        
         print("Exporting field data to mat file.")
         export_dict = dict()
         export_dict['XDim'] = self._xdim

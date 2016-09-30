@@ -23,7 +23,6 @@ class VopgenEFMapArrayN(XFFieldWriterUniform):
         self._xdim_uniform = None
         self._ydim_uniform = None
         self._zdim_uniform = None
-        self._net_input_power_per_coil = None
         self._dx = 0.0
         self._dy = 0.0
         self._dz = 0.0
@@ -33,15 +32,6 @@ class VopgenEFMapArrayN(XFFieldWriterUniform):
         self._xlen = 0.0
         self._ylen = 0.0
         self._zlen = 0.0
-        self._get_net_input_power_per_coil()
-
-    def _get_net_input_power_per_coil(self):
-        """Return array of net input powers, one per coil in simulation."""
-        self._net_input_power_per_coil = np.empty(self._num_coils,
-                                                  dtype=np.dtype(np.float64))
-        for idx, coil_index in enumerate(self._sim_ids):
-            sim_system = XFSystem(self._xf_project_dir, coil_index, 1)
-            self._net_input_power_per_coil[idx] = sim_system.net_input_power
 
     def _update_export_grid(self):
         """Updates xdim, ydim, zdim dimensions."""
@@ -70,6 +60,7 @@ class VopgenEFMapArrayN(XFFieldWriterUniform):
             efield_uniform_wr.set_grid_origin(self._x0, self._y0, self._z0)
             efield_uniform_wr.set_grid_len(self._xlen, self._ylen, self._zlen)
             efield_uniform_wr.set_grid_resolution(self._dx, self._dy, self._dz)
+            efield_uniform_wr.scale_b1_at_point(1.0e-6, [self._x0, self._y0, self._z0])
             [Ex, Ey, Ez] = efield_uniform_wr._regrid_fields('E')
             self._ef_map_array_n[:, :, :, 0, coil_index] = Ex
             self._ef_map_array_n[:, :, :, 1, coil_index] = Ey

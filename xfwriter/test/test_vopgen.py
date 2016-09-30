@@ -72,6 +72,7 @@ class TestVopgenWriter(unittest.TestCase):
     def setUp(self):
         pass
 
+    @unittest.skip("No longer normalizing by input power.")
     def test_efn_net_input_power(self):
         """Test VopgenEFMatArrayN net input power array."""
         tvopgen = xfwriter.vopgen.VopgenEFMapArrayN(COIL_XF_PATH, self.sim_ids)
@@ -153,6 +154,7 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertEqual((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM),
                          np.shape(sar_mask_mat['sarmask_new']))
         self.assertGreater(np.sum(sar_mask_mat['sarmask_new']), 0)
+
     def test_massdensity_map_3d_mat(self):
         """
         Tests to create/read massdensityMat3D.mat.
