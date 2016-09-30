@@ -8,6 +8,7 @@ from __future__ import (absolute_import, division,
 
 import os
 import sys
+import gc
 import ast
 import getopt
 import scipy.io as spio
@@ -20,6 +21,15 @@ def vopgen_all(arg_dict):
     if not os.path.exists(arg_dict['export_dir']):
         os.makedirs(arg_dict['export_dir'])
 
+    make_property_map(arg_dict)
+    gc.collect()
+    make_density_map(arg_dict)
+    gc.collect()
+    make_efield_map(arg_dict)
+    gc.collect()
+    make_bfield_map(arg_dict)
+
+def make_efield_map(arg_dict):
     # E field map
     print("-> Generating E field map.")
     sim_ids = []
@@ -42,7 +52,32 @@ def vopgen_all(arg_dict):
     ef_map.savemat(os.path.join(arg_dict['export_dir'], 'efmapArrayN.mat'))
     del ef_map
 
-    # property map
+def make_bfield_map(arg_dict):
+    # B field map
+    print("-> Generating B field map.")
+    sim_ids = []
+    project_info = XFProjectInfo(arg_dict['xf_project'])
+    simulations = project_info.xf_sim_run_list
+    for idx, sim in enumerate(simulations):
+        if sim[0]:
+            sim_ids.append(idx+1)
+
+    bf_map = xfwriter.vopgen.VopgenBFMapArrayN(arg_dict['xf_project'], sim_ids)
+    bf_map.set_grid_origin(arg_dict['origin'][0],
+                           arg_dict['origin'][1],
+                           arg_dict['origin'][2])
+    bf_map.set_grid_len(arg_dict['lengths'][0],
+                        arg_dict['lengths'][1],
+                        arg_dict['lengths'][2])
+    bf_map.set_grid_resolution(arg_dict['deltas'][0],
+                               arg_dict['deltas'][1],
+                               arg_dict['deltas'][2])
+    bf_map.savemat(os.path.join(arg_dict['export_dir'], 'bfmapArrayN.mat'))
+    del bf_map
+
+
+    
+def make_property_map(arg_dict):    
     print("-> Generating property maps.")
     prop_map = xfwriter.vopgen.VopgenPropertyMap(arg_dict['xf_project'], 1, 1)
     prop_map.set_grid_origin(arg_dict['origin'][0],
@@ -72,6 +107,7 @@ def vopgen_all(arg_dict):
     sar_mask.savemat(os.path.join(arg_dict['export_dir'], 'sarmask_aligned.mat'))
     del sar_mask
 
+def make_density_map(arg_dict):
     # mass density map
     print("-> Generating mass density map.")
     mden_map_3d = xfwriter.vopgen.VopgenMassDensityMap3D(arg_dict['xf_project'], 1, 1)

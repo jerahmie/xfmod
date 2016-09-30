@@ -21,6 +21,8 @@ COIL_XF_PATH = normpath(join(realpath(__file__),
 XF_TEST_COIL_POWERS = [5.78071000e-05, 1.27783000e-04, 1.57568000e-04]
 EF_MAP_ARRAY_FILE = normpath(join(dirname(realpath(__file__)),
                                   'efMapArrayN.mat'))
+BF_MAP_ARRAY_FILE = normpath(join(dirname(realpath(__file__)),
+                                  'bfMapArrayN.mat'))
 PROPERTY_MAP_FILE = normpath(join(dirname(realpath(__file__)),
                                   'propmap.mat'))
 SAR_MASK_FILE = normpath(join(dirname(realpath(__file__)),
@@ -56,6 +58,8 @@ class TestVopgenWriter(unittest.TestCase):
     def setUpClass(cls):
         if isfile(EF_MAP_ARRAY_FILE):
             os.remove(EF_MAP_ARRAY_FILE)
+        if isfile(BF_MAP_ARRAY_FILE):
+            os.remove(BF_MAP_ARRAY_FILE)
         if isfile(PROPERTY_MAP_FILE):
             os.remove(PROPERTY_MAP_FILE)
         if isfile(SAR_MASK_FILE):
@@ -113,6 +117,41 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertTrue((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM, 3, 3),
                         ef_map['efMapArrayN'])
 
+
+    def test_bf_map_array_n_mat(self):
+        """
+        Test the shape of data structures within the saved mat file and generate
+        png images of the magnetic field regions for bfMapArrayN.mat
+        """
+        tvopgen = xfwriter.vopgen.VopgenBFMapArrayN(COIL_XF_PATH, self.sim_ids)
+        tvopgen.set_grid_origin(X0, Y0, Z0)
+        self.assertEqual(X0, tvopgen._x0)
+        self.assertEqual(Y0, tvopgen._y0)
+        self.assertEqual(Z0, tvopgen._z0)
+        tvopgen.set_grid_len(X_ROI_LEN, Y_ROI_LEN, Z_ROI_LEN)
+        self.assertEqual(X_ROI_LEN, tvopgen._xlen)
+        self.assertEqual(Y_ROI_LEN, tvopgen._ylen)
+        self.assertEqual(Z_ROI_LEN, tvopgen._zlen)
+        tvopgen.set_grid_resolution(0.002, 0.002, 0.002)
+        self.assertEqual(DX, tvopgen._dx)
+        self.assertEqual(DY, tvopgen._dy)
+        self.assertEqual(DZ, tvopgen._dz)
+        tvopgen._update_export_grid()
+        self.assertTrue(np.allclose(np.arange(tvopgen._x0 - tvopgen._xlen/2.0,
+                                              tvopgen._x0 + tvopgen._xlen/2.0,
+                                              tvopgen._dx), tvopgen._xdim_uniform))
+        self.assertTrue(np.allclose(np.arange(tvopgen._y0 - tvopgen._ylen/2.0,
+                                              tvopgen._y0 + tvopgen._ylen/2.0,
+                                              tvopgen._dy), tvopgen._ydim_uniform))
+        self.assertTrue(np.allclose(np.arange(tvopgen._z0 - tvopgen._zlen/2.0,
+                                              tvopgen._z0 + tvopgen._zlen/2.0,
+                                              tvopgen._dz), tvopgen._zdim_uniform))
+        tvopgen.savemat(BF_MAP_ARRAY_FILE)
+        self.assertTrue(isfile(BF_MAP_ARRAY_FILE))
+        ef_map = spio.loadmat(BF_MAP_ARRAY_FILE)
+        self.assertTrue((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM, 3, 3),
+                        ef_map['bfMapArrayN'])        
+
     def test_tissue_mask(self):
         """
         Test the tissue mask dimensions.
@@ -153,6 +192,7 @@ class TestVopgenWriter(unittest.TestCase):
         self.assertEqual((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM),
                          np.shape(sar_mask_mat['sarmask_new']))
         self.assertGreater(np.sum(sar_mask_mat['sarmask_new']), 0)
+
     def test_massdensity_map_3d_mat(self):
         """
         Tests to create/read massdensityMat3D.mat.
