@@ -51,23 +51,23 @@ class XFGridDataWriterUniform(object):
         self._mesh = xfgeomod.XFMesh(xf_project_dir, sim_id, run_id)
         self._grid_exporter = xfgeomod.XFGridExporter(self._geom, self._mesh)
 
-    def set_origin(self, x0, y0, z0):
-        """Set origin of export region."""
-        self._x0 = x0
-        self._y0 = y0
-        self._z0 = z0
-
-    def set_len(self, xlen, ylen, zlen):
-        """Set dimension of export region."""
-        self._xlen = xlen
-        self._ylen = ylen
-        self._zlen = zlen
-
-    def set_grid_resolution(self, dx, dy, dz):
-        """Set the resolution of the export region."""
-        self._dx = dx
-        self._dy = dy
-        self._dz = dz
+#    def set_origin(self, x0, y0, z0):
+#        """Set origin of export region."""
+#        self._x0 = x0
+#        self._y0 = y0
+#        self._z0 = z0
+#
+#    def set_len(self, xlen, ylen, zlen):
+#        """Set dimension of export region."""
+#        self._xlen = xlen
+#        self._ylen = ylen
+#        self._zlen = zlen
+#
+#    def set_grid_resolution(self, dx, dy, dz):
+#        """Set the resolution of the export region."""
+#        self._dx = dx
+#        self._dy = dy
+#        self._dz = dz
 
     def _regrid(self):
         """Regrid the mesh and grid data."""
@@ -307,13 +307,13 @@ def main(argv):
     xf_grid_writer = XFGridDataWriterUniform(arg_dict['xf_project'],
                                              int(arg_dict['sim']),
                                              int(arg_dict['run']))
-    xf_grid_writer.set_origin(arg_dict['origin'][0],
-                              arg_dict['origin'][1],
-                              arg_dict['origin'][2])
+    xf_grid_writer.set_grid_origin(arg_dict['origin'][0],
+                                   arg_dict['origin'][1],
+                                   arg_dict['origin'][2])
 
-    xf_grid_writer.set_len(arg_dict['lengths'][0],
-                           arg_dict['lengths'][1],
-                           arg_dict['lengths'][2])
+    xf_grid_writer.set_grid_len(arg_dict['lengths'][0],
+                                arg_dict['lengths'][1],
+                                arg_dict['lengths'][2])
 
     xf_grid_writer.set_grid_resolution(arg_dict['deltas'][0],
                                        arg_dict['deltas'][1],

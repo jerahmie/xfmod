@@ -76,13 +76,6 @@ class TestVopgenWriter(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_efn_net_input_power(self):
-        """Test VopgenEFMatArrayN net input power array."""
-        tvopgen = xfwriter.vopgen.VopgenEFMapArrayN(COIL_XF_PATH, self.sim_ids)
-        self.assertEqual(3, len(tvopgen._net_input_power_per_coil))
-        self.assertTrue(np.allclose(XF_TEST_COIL_POWERS,
-                                    tvopgen._net_input_power_per_coil))
-    
     def test_ef_map_array_n_mat(self):
         """
         Test the shape of data structures within the saved mat file and generate
@@ -104,19 +97,21 @@ class TestVopgenWriter(unittest.TestCase):
         tvopgen._update_export_grid()
         self.assertTrue(np.allclose(np.arange(tvopgen._x0 - tvopgen._xlen/2.0,
                                               tvopgen._x0 + tvopgen._xlen/2.0,
-                                              tvopgen._dx), tvopgen._xdim_uniform))
+                                              tvopgen._dx),
+                                    tvopgen._xdim_uniform))
         self.assertTrue(np.allclose(np.arange(tvopgen._y0 - tvopgen._ylen/2.0,
                                               tvopgen._y0 + tvopgen._ylen/2.0,
-                                              tvopgen._dy), tvopgen._ydim_uniform))
+                                              tvopgen._dy),
+                                    tvopgen._ydim_uniform))
         self.assertTrue(np.allclose(np.arange(tvopgen._z0 - tvopgen._zlen/2.0,
                                               tvopgen._z0 + tvopgen._zlen/2.0,
-                                              tvopgen._dz), tvopgen._zdim_uniform))
+                                              tvopgen._dz),
+                                    tvopgen._zdim_uniform))
         tvopgen.savemat(EF_MAP_ARRAY_FILE)
         self.assertTrue(isfile(EF_MAP_ARRAY_FILE))
         ef_map = spio.loadmat(EF_MAP_ARRAY_FILE)
         self.assertTrue((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM, 3, 3),
                         ef_map['efMapArrayN'])
-
 
     def test_bf_map_array_n_mat(self):
         """
