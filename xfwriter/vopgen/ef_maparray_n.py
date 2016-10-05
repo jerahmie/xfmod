@@ -32,6 +32,7 @@ class VopgenEFMapArrayN(XFFieldWriterUniform):
         self._xlen = 0.0
         self._ylen = 0.0
         self._zlen = 0.0
+        self._field_norm_n = []
 
     def _update_export_grid(self):
         """Updates xdim, ydim, zdim dimensions."""
@@ -61,6 +62,7 @@ class VopgenEFMapArrayN(XFFieldWriterUniform):
             efield_uniform_wr.set_grid_len(self._xlen, self._ylen, self._zlen)
             efield_uniform_wr.set_grid_resolution(self._dx, self._dy, self._dz)
             efield_uniform_wr.scale_b1_at_point(1.0e-6, [self._x0, self._y0, self._z0])
+            self._field_norm_n.append(efield_uniform_wr.field_norm)
             [Ex, Ey, Ez] = efield_uniform_wr._regrid_fields('E')
             self._ef_map_array_n[:, :, :, 0, coil_index] = Ex
             self._ef_map_array_n[:, :, :, 1, coil_index] = Ey
@@ -75,3 +77,6 @@ class VopgenEFMapArrayN(XFFieldWriterUniform):
         export_dict['ZDim'] = self._zdim_uniform
         export_dict['efMapArrayN'] = self._ef_map_array_n
         spio.savemat(file_name, export_dict, oned_as='column')
+        print("Saved efield map array with field normalizations: " + \
+              str(self._field_norm_n))
+

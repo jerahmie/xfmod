@@ -71,6 +71,10 @@ class XFFieldWriter(XFMatWriter):
         self._field_norm = b1_mag/sqrt(abs(b1x*b1x.conjugate()) + 
                                        abs(b1y*b1y.conjugate()) +
                                        abs(b1z*b1z.conjugate()))
+    @property
+    def field_norm(self):
+        """Returns the field scale factor."""
+        return self._field_norm
 
     @property
     def net_input_power(self):
