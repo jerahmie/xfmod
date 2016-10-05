@@ -12,7 +12,7 @@ if [ -d "${XF_PROJECT}" ]; then
     python3 ../xfwriter/vopgen/vopgen.py \
         --xf_project=${XF_PROJECT} \
         --export_dir=${VOPGEN_OUT_DIR} \
-        --origin='[0.0, 0.0, 0.044]' \
+        --origin='[0.0, 0.0, 0.08]' \
         --lengths='[0.256, 0.256, 0.256]' \
         --deltas='[0.002, 0.002, 0.002]'
 fi
