@@ -38,9 +38,9 @@ DY = 0.002 # m
 DZ = 0.002 # m
 
 # roi dimensions
-X_ROI_LEN = 0.256 # m
-Y_ROI_LEN = 0.256 # m
-Z_ROI_LEN = 0.256 # m
+X_ROI_LEN = 0.128 # m
+Y_ROI_LEN = 0.128 # m
+Z_ROI_LEN = 0.064 # m
 
 # roi center
 X0 = 0.0
