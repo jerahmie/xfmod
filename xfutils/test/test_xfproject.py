@@ -18,6 +18,7 @@ class TestXFProject(unittest.TestCase):
     """Unit tests for xfproject module."""
     @classmethod
     def setUpClass(cls):
+        print("Executing tests in " + __file__)
         # Create a mock project directory structure.
         simulations = [1, 2, 3] + list(range(8,10))
         cls._sim_run_list = [[]] * simulations[-1]
@@ -37,11 +38,13 @@ class TestXFProject(unittest.TestCase):
 
     def test_xfproject_mock_xf(self):
         """"Run tests on mocked xf project."""
+        print(self.id())
         mock_info = XFProjectInfo(MOCK_XF_PROJECT)
         self.assertEqual(self._sim_run_list, mock_info.xf_sim_run_list)
         
     def test_coil_xf(self):
         """Test XFProject info run list against Test_Coil.xf"""
+        print(self.id())
         xf_test_coil_path = path.normpath(path.join(path.realpath(__file__),
                                                     '..', '..', '..',
                                                     'Test_Data',

@@ -49,6 +49,7 @@ class TestXFGeoMod(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Load XFdtd Geometry info
+        print('Executing tests in ' + __file__)
         cls.xf_geom = xfgeomod.XFGeometry(test_project_dir, test_sim_number, test_run_number)
 
         # Load XFdtd Mesh data file
@@ -66,6 +67,7 @@ class TestXFGeoMod(unittest.TestCase):
         """
         Test grid data has proper dimensions.
         """
+        print(self.id())
         self.assertAlmostEqual(grid_origin,
                                self.xf_geom.grid_data.origin,
                                delta=0.0000001)
@@ -80,6 +82,7 @@ class TestXFGeoMod(unittest.TestCase):
         """
         Test data from mesh info.
         """
+        print(self.id())
         grid_dim = (grid_num_x_cells, grid_num_y_cells, grid_num_z_cells)
         self.assertEqual(mesh_version, self.xf_mesh._mesh_version)
         self.assertEqual(mesh_edge_run_bytes, self.xf_mesh._edge_run_bytes)
@@ -134,6 +137,7 @@ class TestXFGeoMod(unittest.TestCase):
 
     def test_xfgeomod_materials(self):
         """Test the xfgeomod materials to match list."""
+        print(self.id())
         # verify the material names
         self.assertEqual(mesh_materials,
                          [mat.name for mat in self.xf_export._materials_list[2:]])

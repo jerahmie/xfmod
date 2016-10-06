@@ -23,10 +23,12 @@ FREQUENCIES_BIN = os.path.join(TEST_MP_DIR, 'frequencies.bin')
 class TestXFMultiPointFrequencies(unittest.TestCase):
     """Tests for Multipoint sensor frequencies."""
     def setUp(self):
+        print('Executing tests in ' + __file__)
         self.mp_frequencies = xfmatgrid.XFMultiPointFrequencies(FREQUENCIES_BIN)
 
     def test_single_frequency(self):
         """Read frequencies.bin from test data."""
+        print(self.id())
         self.assertEqual(TEST_FREQUENCY, self.mp_frequencies.frequencies[0])
 
     def tearDown(self):

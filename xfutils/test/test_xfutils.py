@@ -6,7 +6,8 @@ Test xfutils module.
 from __future__ import (absolute_import, division, generators,
                         print_function, unicode_literals)
 
-import sys, os
+import sys
+import os
 import unittest
 import xfutils
 
@@ -14,13 +15,14 @@ class TestXFUtils(unittest.TestCase):
     """Unit tests for xfutils module."""
     @classmethod
     def setUpClass(cls):
-        pass
+        print("Executing tests in " + __file__
 
     def setUp(self):
         pass
 
     def test_xf_sim_id_to_str(self):
         """Verify XFdtd valid simulation string composition."""
+        print(self.id())
         self.assertTrue(xfutils.is_valid_sim_id(1))
         self.assertTrue(xfutils.is_valid_sim_id(999999))
         self.assertFalse(xfutils.is_valid_sim_id(-1.1))
@@ -31,6 +33,7 @@ class TestXFUtils(unittest.TestCase):
 
     def test_xf_run_id_to_str(self):
         """Verify XFdtd valid run string composition."""
+        print(self.id())
         self.assertTrue(xfutils.is_valid_run_id(1))
         self.assertTrue(xfutils.is_valid_run_id(9999))
         self.assertFalse(xfutils.is_valid_run_id(-1))
@@ -41,6 +44,7 @@ class TestXFUtils(unittest.TestCase):
 
     def test_is_valid_run_id_str(self):
         """Check if run id string is valid."""
+        print(self.id())
         self.assertFalse(xfutils.is_valid_run_id_str('Run0'))
         self.assertFalse(xfutils.is_valid_run_id_str('Xxx0001'))
         self.assertTrue(xfutils.is_valid_run_id_str('Run0001'))
@@ -48,6 +52,7 @@ class TestXFUtils(unittest.TestCase):
         self.assertTrue(xfutils.is_valid_run_id_str('Run9999'))
         
     def test_xf_run_str_to_int(self):
+        print(self.id())
         """Verify XFdtd run int from 'RunXXXX' string."""
         self.assertEqual(1, xfutils.xf_run_str_to_int('Run0001'))
         self.assertEqual(9999, xfutils.xf_run_str_to_int('Run9999'))

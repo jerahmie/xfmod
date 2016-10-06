@@ -34,7 +34,7 @@ class TestRegrid(unittest.TestCase):
     """Unit tests for regrid helper functions."""
     @classmethod
     def setUpClass(cls):
-        print(TEST_COIL_DIR)
+        print("Executing tests in " + __file__)
         cls.field_nugrid = xfmatgrid.XFFieldNonUniformGrid(TEST_COIL_DIR, 1, 1)
         
 
@@ -46,6 +46,7 @@ class TestRegrid(unittest.TestCase):
 
     def test_regrid_data_shape(self):
         """Verify exception is thrown if dimensions and data shapes mismatch."""
+        print(self.id())
         n1 = 10
         x_try = np.linspace(1.0, 5.0, num=5)
         y_try = np.linspace(0.0, 1.0, num=10)
@@ -62,8 +63,8 @@ class TestRegrid(unittest.TestCase):
 
     def test_regrid_same_points(self):
         """Regrid data to same grid.  Data should be preserved."""
+        print(self.id())
         n1 = 16
-
         x1 = np.linspace(0.0, 10.0, num=n1)
         y1 = np.linspace(0.0, 10.0, num=n1)
         z1 = np.linspace(0.0, 10.0, num=n1)
@@ -77,8 +78,8 @@ class TestRegrid(unittest.TestCase):
     @unittest.skip("Enable this test to visually compare regrid data.")
     def test_regrid(self):
         """Test the regrid routine."""
+        print(self.id())
         n1 = 16
-        #n2 = 64
         zInd = 6
         
         x1 = np.linspace(-5.0, 5.0, num=n1)
@@ -133,6 +134,7 @@ class TestRegrid(unittest.TestCase):
 
     def test_complex_regrid(self):
         """test regrid for complex numbers."""
+        print(self.id())
         mat3d_regrid = xfutils.xf_regrid_3d_nearest((self.field_nugrid.xdim,
                                                      self.field_nugrid.ydim,
                                                      self.field_nugrid.zdim),

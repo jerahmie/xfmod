@@ -30,7 +30,7 @@ class TestXFMatWriter(unittest.TestCase):
     """Tests for xfmatwriter."""
     @classmethod
     def setUpClass(cls):
-        print("loading xfmatwriter...")
+        print("Executing tests in " + __file__)
         try:
             cls.xfmw = xfwriter.XFMatWriter()
             cls.xfmw_nu = xfwriter.XFFieldWriterNonUniform(TEST_PROJECT_DIR,
@@ -94,7 +94,6 @@ class TestXFMatWriter(unittest.TestCase):
         self.xfmw_nu.net_input_power = 9.0
         self.assertAlmostEqual(9.0, self.xfmw_nu.net_input_power)
 
-
         # point for B-field normalization
         x0 = 0.0
         y0 = 0.0
@@ -157,7 +156,7 @@ class TestXFMatWriter(unittest.TestCase):
             xf_e_mat_u = self.xfmw_uniform.savemat('E', SAVE_MAT_FILE_UNIFORM)
 
         self.xfmw_uniform.set_grid_origin(0,0,0.044)
-        self.xfmw_uniform.set_grid_len(0.256, 0.256, 0.256)
+        self.xfmw_uniform.set_grid_len(0.128, 0.100, 0.50)
         self.xfmw_uniform.set_grid_resolution(0.002, 0.002, 0.002)
         self.xfmw_uniform.net_input_power = 1.0e-6
         xf_e_mat_u = self.xfmw_uniform.savemat('E', SAVE_MAT_FILE_UNIFORM)

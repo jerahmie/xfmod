@@ -1,4 +1,4 @@
-"""
+n"""
 Test for vopgen exporter.
 """
 
@@ -56,6 +56,7 @@ class TestVopgenWriter(unittest.TestCase):
     """Tests for vopgen matfile writers."""
     @classmethod
     def setUpClass(cls):
+        print('Executing tests in ' + __file__)
         if isfile(EF_MAP_ARRAY_FILE):
             os.remove(EF_MAP_ARRAY_FILE)
         if isfile(BF_MAP_ARRAY_FILE):
@@ -81,6 +82,7 @@ class TestVopgenWriter(unittest.TestCase):
         Test the shape of data structures within the saved mat file and generate
         png images of the electric field regions for efMapArrayN.mat
         """
+        print(self.id())
         tvopgen = xfwriter.vopgen.VopgenEFMapArrayN(COIL_XF_PATH, self.sim_ids)
         tvopgen.set_grid_origin(X0, Y0, Z0)
         self.assertEqual(X0, tvopgen._x0)
@@ -118,6 +120,7 @@ class TestVopgenWriter(unittest.TestCase):
         Test the shape of data structures within the saved mat file and generate
         png images of the magnetic field regions for bfMapArrayN.mat
         """
+        print(self.id())
         tvopgen = xfwriter.vopgen.VopgenBFMapArrayN(COIL_XF_PATH, self.sim_ids)
         tvopgen.set_grid_origin(X0, Y0, Z0)
         self.assertEqual(X0, tvopgen._x0)
@@ -151,6 +154,7 @@ class TestVopgenWriter(unittest.TestCase):
         """
         Test the tissue mask dimensions.
         """
+        print(self.id())
         ttissue_mask = xfwriter.vopgen.VopgenSarMask(COIL_XF_PATH,
                                                      SIM_ID, RUN_ID)
         ttissue_mask.set_grid_origin(X0, Y0, Z0)
@@ -172,6 +176,7 @@ class TestVopgenWriter(unittest.TestCase):
         """
         Tests to create/read sarmask_aligned.mat.
         """
+        print(self.id())
         print("sar_mask_file: ", SAR_MASK_FILE)
         tsar_mask = xfwriter.vopgen.VopgenSarMask(COIL_XF_PATH,
                                                   SIM_ID, RUN_ID)
@@ -192,6 +197,7 @@ class TestVopgenWriter(unittest.TestCase):
         """
         Tests to create/read massdensityMat3D.mat.
         """
+        print(self.id())
         tmdenmap3d = xfwriter.vopgen.VopgenMassDensityMap3D(COIL_XF_PATH,
                                                         SIM_ID, RUN_ID)
         tmdenmap3d.set_grid_origin(X0, Y0, Z0)

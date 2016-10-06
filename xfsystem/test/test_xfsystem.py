@@ -25,14 +25,17 @@ class testXFSystemFile(unittest.TestCase):
 
     def test_unittest(self):
         """Test set of steady state system info file."""
+        print(self.id())
         self.assertEqual(SYSTEM_SSOUT,self.xfSystem._system_ssout)
 
     def test_system_frequency(self):
         """Test steady state system frequency."""
+        print(self.id())
         self.assertAlmostEqual(296500000.0, self.xfSystem.frequency)
 
     def test_system_computed_power(self):
         """Test computed power values."""
+        print(self.id())
         self.assertAlmostEqual(5.10857e-5, self.xfSystem.net_input_power)
         
 

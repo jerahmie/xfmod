@@ -25,6 +25,7 @@ class TestXFMultiPointGeometry(unittest.TestCase):
     """Tests for Multipoint sensor info."""
     @classmethod
     def setUpClass(cls):
+        print('Executing tests in ' + __file__)
         cls.mp_info = xfmatgrid.XFMultiPointInfo(TEST_MP_INFO)
         cls.mp_geom = xfmatgrid.XFMultiPointGeometry(TEST_MP_GEOM,
                                                      cls.mp_info.num_points)
@@ -33,6 +34,7 @@ class TestXFMultiPointGeometry(unittest.TestCase):
 
     def test_multipoint_geometry(self):
         """Test multipoint geometry file."""
+        print(self.id())
         self.assertEqual((self.mp_info.num_points, 3),
                          np.shape(self.mp_geom._vertices))
 

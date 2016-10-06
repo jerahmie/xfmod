@@ -27,10 +27,12 @@ MP_NUM_POINTS = struct.unpack('>Q', struct.pack('<Q', 0x581eb10000000000))[0]
 class TestXFMultiPointInfo(unittest.TestCase):
     """Tests for XF Multipoint sensor info."""
     def setUp(self):
+        print('Executing tests in ' + __file__)
         self.mp_info = xfmatgrid.XFMultiPointInfo(TEST_MP_FILE)
 
     def test_header_info(self):
         """Test the multipoint header info."""
+        print(self.id())
         self.assertEqual(MP_HEADER, self.mp_info.header)
         self.assertEqual(MP_VERSION, self.mp_info.version)
         self.assertEqual(MP_FIELDS_MASK, self.mp_info.fields_mask)

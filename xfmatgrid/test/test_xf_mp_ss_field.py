@@ -31,6 +31,7 @@ MP_SS_RE = r'([0-9A-Za-z/_.]*)(MultiPoint_Solid_Sensor[0-9]*_[0-9]*)'
 class TestXFMultiPointFrequencies(unittest.TestCase):
     """Tests for Multipoint solid state field."""
     def setUp(self):
+        print('Executing tests in ' + __file__)
         self.mp_info = xfmatgrid.XFMultiPointInfo(TEST_MP_INFO_FILE)
         mp_sensor_dir = re.match(MP_SS_RE, TEST_MP_INFO_FILE)
         mp_geom_file = os.path.join(mp_sensor_dir.group(1),
@@ -44,6 +45,7 @@ class TestXFMultiPointFrequencies(unittest.TestCase):
 
     def test_ss_bxit(self):
         """Read steady-state field data from test project."""
+        print(self.id())
         self.assertEqual(self.mp_info.num_points,
                          np.size(self.mp_ss_field.ss_field))
 

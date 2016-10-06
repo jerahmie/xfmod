@@ -225,33 +225,39 @@ class TestXFMatGrid(unittest.TestCase):
     """Tests for xfmatgrid module."""
     @classmethod
     def setUpClass(cls):
+        print('Executing tests in ' + __file__)
         cls.field_nugrid = xfmatgrid.XFFieldNonUniformGrid(TEST_COIL_DIR, 1, 1)
 
     def setUp(self):
         self.fieldName = r'B'
 
     def test_project_file(self):
+        print(self.id())
         self.assertEqual(TEST_COIL_DIR, self.field_nugrid.project_dir)
         self.assertEqual(MULTIPOINT_SENSOR_FILE,
                          self.field_nugrid._mp_ss_info_file[0])
         self.assertEqual('Rmpt', self.field_nugrid._mp_ss_info.header)
 
     def test_frequencies_bin(self):
+        print(self.id())
         self.assertEqual(TEST_FREQUENCY,
                          self.field_nugrid._mp_freq._frequencies[0])
 
     def test_field_data(self):
+        print(self.id())
         self.assertEqual(TEST_MULTIPOINT_DIRS,
                          self.field_nugrid._mp_field_types)
 
     def test_ranges(self):
         """Test x-, y-, and z-dimenions."""
+        print(self.id())
         self.assertTrue(np.allclose(X_DIM_VALS, self.field_nugrid.xdim))
         self.assertTrue(np.allclose(Y_DIM_VALS, self.field_nugrid.ydim))
         self.assertTrue(np.allclose(Z_DIM_VALS, self.field_nugrid.zdim))
 
     def test_write_matfile(self):
         """Write and verify the x-, y-, and z-dimension values."""
+        print(self.id())
         export_dict = dict()
         export_dict['X_Dimension_3'] = self.field_nugrid.xdim
         export_dict['Y_Dimension_2'] = self.field_nugrid.ydim
