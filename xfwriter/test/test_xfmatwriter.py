@@ -155,8 +155,8 @@ class TestXFMatWriter(unittest.TestCase):
         with self.assertRaises(ZeroDivisionError):
             xf_e_mat_u = self.xfmw_uniform.savemat('E', SAVE_MAT_FILE_UNIFORM)
 
-        self.xfmw_uniform.set_grid_origin(0,0,0.044)
-        self.xfmw_uniform.set_grid_len(0.128, 0.100, 0.50)
+        self.xfmw_uniform.set_grid_origin(0.001,-0.002,0.044)
+        self.xfmw_uniform.set_grid_len(0.032, 0.032, 0.050)
         self.xfmw_uniform.set_grid_resolution(0.002, 0.002, 0.002)
         self.xfmw_uniform.net_input_power = 1.0e-6
         xf_e_mat_u = self.xfmw_uniform.savemat('E', SAVE_MAT_FILE_UNIFORM)

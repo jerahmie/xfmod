@@ -1,4 +1,4 @@
-n"""
+"""
 Test for vopgen exporter.
 """
 
