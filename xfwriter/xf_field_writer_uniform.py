@@ -199,7 +199,7 @@ def main(argv):
     xf_field_writer = XFFieldWriterUniform(arg_dict['xf_project'],
                                            int(arg_dict['sim']),
                                            int(arg_dict['run']))
-    xf_field_writer.set_origin(arg_dict['origin'][0],
+    xf_field_writer.set_grid_origin(arg_dict['origin'][0],
                                arg_dict['origin'][1],
                                arg_dict['origin'][2])
     xf_field_writer.set_grid_len(arg_dict['lengths'][0],
@@ -212,5 +212,6 @@ def main(argv):
     xf_field_writer.savemat(arg_dict['field'], arg_dict['export_file'])
 
 if __name__ == "__main__":
+    print(sys.argv[1:])
     main(sys.argv[1:])
     print("Done.")

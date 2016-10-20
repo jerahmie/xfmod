@@ -7,25 +7,31 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
 import os
+from os.path import (normpath, join)
 import unittest
 import scipy.io as spio
 import numpy as np
 import xfwriter
 
-TEST_PROJECT_DIR = os.path.normpath(os.path.join(os.path.realpath(__file__),
-                                                 '..', '..', '..',
-                                                 'Test_Data', 'Test_Coil.xf'))
+FILE_PATH=os.path.realpath(__file__)
+
+TEST_PROJECT_DIR = normpath(join(FILE_PATH, '..', '..', '..',
+                                 'Test_Data', 'Test_Coil.xf'))
 TEST_SIM_NUMBER = 1
 TEST_RUN_NUMBER = 1
-XF_RAW_MAT_FILE = os.path.normpath(os.path.join(TEST_PROJECT_DIR,
-                                                'Export', 'Raw',
-                                                'total_E_field_data_raw_000001.mat'))
-SAVE_MAT_FILE_NONUNIFORM = os.path.normpath(os.path.join(os.path.realpath(__file__),
-                                                         '..', 'test_E_field_nonuniform.mat'))
-SAVE_MAT_FILE_UNIFORM = os.path.normpath(os.path.join(os.path.realpath(__file__),
-                                                      '..', 'test_E_field_uniform.mat'))
-SAVE_MAT_FILE_B_NONUNIFORM_SCALED = os.path.normpath(os.path.join(os.path.realpath(__file__),
-                                                      '..', 'test_B_field_nonuniform_scaled.mat'))
+XF_RAW_MAT_FILE = normpath(join(TEST_PROJECT_DIR,
+                                'Export', 'Raw',
+                                'total_E_field_data_raw_000001.mat'))
+SAVE_MAT_FILE_NONUNIFORM = normpath(join(FILE_PATH, '..',
+                                         'test_E_field_nonuniform.mat'))
+SAVE_MAT_FILE_UNIFORM = normpath(join(FILE_PATH, '..',
+                                      'test_E_field_uniform.mat'))
+SAVE_MAT_FILE_UNIFORM_MAIN = normpath(join(FILE_PATH, '..',
+                                           'test_E_field_uniform_from_main.mat'))
+SAVE_MAT_FILE_B_NONUNIFORM_SCALED = normpath(join(FILE_PATH, '..',
+                                                  'test_B_field_nonuniform_scaled.mat'))
+
+
 class TestXFMatWriter(unittest.TestCase):
     """Tests for xfmatwriter."""
     @classmethod
@@ -64,6 +70,14 @@ class TestXFMatWriter(unittest.TestCase):
             except:
                 print("Error while removing file: " +
                       SAVE_MAT_FILE_B_NONUNIFORM_SCALED)
+                raise
+
+        if(os.path.exists(SAVE_MAT_FILE_UNIFORM_MAIN)):
+            try:
+                os.remove(SAVE_MAT_FILE_UNIFORM_MAIN)
+            except:
+                print("Error while removing file: " +
+                      SAVE_MAT_FILE_UNIFORM_MAIN)
                 raise
 
     def setUp(self):
@@ -146,7 +160,7 @@ class TestXFMatWriter(unittest.TestCase):
                          b1y*b1y.conjugate() +
                          b1z*b1z.conjugate())
         self.assertAlmostEqual(1.0e-6, abs(b1_mag))
-        
+
     def test_xf_write_uniform_matfile(self):
         """
         Write mat file and verify the file exists and data is reasonable.
@@ -191,8 +205,23 @@ class TestXFMatWriter(unittest.TestCase):
                                     xfmatgrid_e_mat['ZDim']))
         xfdtd_ex = xf_e_mat['TotalField_E_X\x00 '][:,:,:,0]
         self.assertTrue(np.shape(xfdtd_ex), xfmatgrid_e_mat['Ex'])
-        self.assertTrue(np.allclose(np.transpose(xfdtd_ex, (2,1,0)), xfmatgrid_e_mat['Ex']))
+        self.assertTrue(np.allclose(np.transpose(xfdtd_ex, (2,1,0)),
+                                    xfmatgrid_e_mat['Ex']))
         del xfmw_nu
+
+    def test_xf_uniform_field_writer_main(self):
+        """
+        Write mat file using main routine to test call from command line.
+        """
+        test_argv = [r'--xf_project=' + TEST_PROJECT_DIR, 
+                     r'--export_file=' + SAVE_MAT_FILE_UNIFORM_MAIN,
+                     r'--sim=1', r'--run=1', r'--field=E',
+                     r'--origin=[0.001, 0.002, 0.044]',
+                     r'--lengths=[0.032, 0.032, 0.050]',
+                     r'--deltas=[0.002, 0.002, 0.002]'
+                 ]
+        xfwriter.xf_field_writer_uniform.main(test_argv)
+        self.assertTrue(os.path.exists(SAVE_MAT_FILE_UNIFORM_MAIN))
 
     def tearDown(self):
         pass
