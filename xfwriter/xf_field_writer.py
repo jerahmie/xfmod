@@ -23,7 +23,20 @@ class XFFieldError(Exception):
 class XFFieldWriter(XFMatWriter):
     """Base class for writing xf field data to mat file."""
     __metaclass__ = abc.ABCMeta
-    
+    def __init__(self):
+        self._fx = None
+        self._fy = None
+        self._fz = None
+        self._fx_original = None
+        self._fy_original = None
+        self._fz_original = None
+        self._xdim = None
+        self._ydim = None
+        self._zdim = None
+        self._field_norm = None
+        self._field_nonuniform_grid = None
+        self._xf_sys = None
+
     @property
     def xdim(self):
         """Return x grid values."""
@@ -45,7 +58,7 @@ class XFFieldWriter(XFMatWriter):
         """
         if len(b1_point) != 3:
             raise XFFieldError("Scaling positions must be [x,y,z]")
-    
+
         x_ind = np.argmin(abs(self._field_nonuniform_grid.xdim - b1_point[0]))
         if (x_ind == 0) or \
            (x_ind == (len(self._field_nonuniform_grid.xdim) - 1)):
@@ -58,7 +71,7 @@ class XFFieldWriter(XFMatWriter):
         if (z_ind == 0) or \
            (z_ind == (len(self._field_nonuniform_grid.zdim) - 1)):
             raise XFFieldError("Scaling by B1 outside of computational domain.")
-        
+
         b1x = self._field_nonuniform_grid.ss_field_data('B', 'x')[x_ind,
                                                                   y_ind,
                                                                   z_ind]
@@ -68,7 +81,7 @@ class XFFieldWriter(XFMatWriter):
         b1z = self._field_nonuniform_grid.ss_field_data('B', 'z')[x_ind,
                                                                   y_ind,
                                                                   z_ind]
-        self._field_norm = b1_mag/sqrt(abs(b1x*b1x.conjugate()) + 
+        self._field_norm = b1_mag/sqrt(abs(b1x*b1x.conjugate()) +
                                        abs(b1y*b1y.conjugate()) +
                                        abs(b1z*b1z.conjugate()))
     @property

@@ -19,6 +19,20 @@ class XFMatWriter(object):
 
 class XFMatWriterUniform(XFMatWriter):
     """Writer for xfdata to Mat file on uniformly spaced grid."""
+    def __init__(self):
+        self._x0 = None
+        self._y0 = None
+        self._z0 = None
+        self._dx = None
+        self._dy = None
+        self._dz = None
+        self._xlen = None
+        self._ylen = None
+        self._zlen = None
+        self._xdim_uniform = None
+        self._ydim_uniform = None
+        self._zdim_uniform = None
+
     def set_grid_origin(self, x0, y0, z0):
         """Set the origin of the export region."""
         self._x0 = x0
@@ -48,4 +62,3 @@ class XFMatWriterUniform(XFMatWriter):
         self._zdim_uniform = np.arange(self._z0 - self._zlen/2.0,
                                        self._z0 + self._zlen/2.0,
                                        self._dz)
-

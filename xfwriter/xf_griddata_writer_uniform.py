@@ -12,9 +12,10 @@ import getopt
 import numpy as np
 import scipy.io as spio
 import xfgeomod
+from xfwriter import XFMatWriterUniform
 from xfutils import xf_regrid_3d_nearest
 
-class XFGridDataWriterUniform(object):
+class XFGridDataWriterUniform(XFMatWriterUniform):
     """Write XFdtd field data to mat file on uniform grid."""
     def __init__(self, xf_project_dir, sim_id, run_id):
         self._x0 = 0.0
@@ -50,24 +51,6 @@ class XFGridDataWriterUniform(object):
         self._geom = xfgeomod.XFGeometry(xf_project_dir, sim_id, run_id)
         self._mesh = xfgeomod.XFMesh(xf_project_dir, sim_id, run_id)
         self._grid_exporter = xfgeomod.XFGridExporter(self._geom, self._mesh)
-
-#    def set_origin(self, x0, y0, z0):
-#        """Set origin of export region."""
-#        self._x0 = x0
-#        self._y0 = y0
-#        self._z0 = z0
-#
-#    def set_len(self, xlen, ylen, zlen):
-#        """Set dimension of export region."""
-#        self._xlen = xlen
-#        self._ylen = ylen
-#        self._zlen = zlen
-#
-#    def set_grid_resolution(self, dx, dy, dz):
-#        """Set the resolution of the export region."""
-#        self._dx = dx
-#        self._dy = dy
-#        self._dz = dz
 
     def _regrid(self):
         """Regrid the mesh and grid data."""
