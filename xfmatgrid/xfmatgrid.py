@@ -15,7 +15,7 @@ from xfmatgrid.xfmultipoint import (XFMultiPointInfo, XFMultiPointFrequencies,
 from xfutils import xf_sim_id_to_str, xf_run_id_to_str
 from xfgeomod import XFGeometry
 
-MP_SS_RE = r'([0-9A-Za-z/_.]*)(MultiPoint_[a-zA-Z0-9/_]*_[0-9]+)'
+MP_SS_RE = r'(.*)(MultiPoint_[a-zA-Z0-9/_]*_[0-9]+)'
 
 class XFFieldNonUniformGrid(object):
     """Holds XF field data on non-uniform grid."""
@@ -67,14 +67,23 @@ class XFFieldNonUniformGrid(object):
 
     def _set_data_dirs(self):
         """Set the project directory and set sensor file location."""
-        mp_sensor_dir = re.match(MP_SS_RE, self._mp_ss_info_file[0])
-        self._mp_frequencies_file = os.path.join(mp_sensor_dir.group(1),
-                                                 mp_sensor_dir.group(2),
-                                                 r'frequencies.bin')
-        self._mp_freq = XFMultiPointFrequencies(self._mp_frequencies_file)
-        self._mp_geom_file = os.path.join(mp_sensor_dir.group(1),
-                                          mp_sensor_dir.group(2),
-                                          r'geom.bin')
+        try:
+            mp_sensor_dir = re.match(MP_SS_RE, self._mp_ss_info_file[0])
+            self._mp_frequencies_file = os.path.join(mp_sensor_dir.group(1),
+                                                     mp_sensor_dir.group(2),
+                                                     r'frequencies.bin')
+            self._mp_freq = XFMultiPointFrequencies(self._mp_frequencies_file)
+            self._mp_geom_file = os.path.join(mp_sensor_dir.group(1),
+                                              mp_sensor_dir.group(2),
+                                              r'geom.bin')
+        except:
+            print("[Warning] Multipoint Sensor data file missing.")
+            print("self._mp_ss_info_file")
+            print(self._mp_ss_info_file)
+            print(self._mp_ss_info_file[0])
+            print(self._mp_ss_info)
+            raise
+            
     def _get_mp_field_types(self):
         """
         Determine which data directories should be present from info flags.

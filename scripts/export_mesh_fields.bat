@@ -12,7 +12,7 @@ set ORIGIN="[0.0, 0.0, 0.0]"
 set LENGTHS="[0.256, 0.256, 0.256]"
 set DELTAS="[0.002, 0.002, 0.002]"
 
-rem Material properties export and regrid
+echo "Material properties export and regrid"
 
 python ..\xfwriter\xf_griddata_writer_uniform.py^
  --xf_project=%XF_PROJECT% ^
@@ -23,7 +23,7 @@ python ..\xfwriter\xf_griddata_writer_uniform.py^
  --lengths=%LENGTHS% ^
  --deltas=%DELTAS%
 
-rem B-field export and regrid
+echo "B-field export and regrid"
 
 python ..\xfwriter\xf_field_writer_uniform.py ^
  --xf_project=%XF_PROJECT% ^
@@ -35,7 +35,7 @@ python ..\xfwriter\xf_field_writer_uniform.py ^
  --lengths=%LENGTHS% ^
  --deltas=%DELTAS%
 
-rem E-field export and regrid
+echo "E-field export and regrid"
 
 python ..\xfwriter\xf_field_writer_uniform.py^
  --xf_project=%XF_PROJECT% ^
