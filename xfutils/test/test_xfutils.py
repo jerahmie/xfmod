@@ -15,7 +15,7 @@ class TestXFUtils(unittest.TestCase):
     """Unit tests for xfutils module."""
     @classmethod
     def setUpClass(cls):
-        print("Executing tests in " + __file__
+        print("Executing tests in " + __file__)
 
     def setUp(self):
         pass
@@ -50,7 +50,7 @@ class TestXFUtils(unittest.TestCase):
         self.assertTrue(xfutils.is_valid_run_id_str('Run0001'))
         self.assertFalse(xfutils.is_valid_run_id_str('Run999999'))
         self.assertTrue(xfutils.is_valid_run_id_str('Run9999'))
-        
+
     def test_xf_run_str_to_int(self):
         print(self.id())
         """Verify XFdtd run int from 'RunXXXX' string."""
