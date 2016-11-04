@@ -218,7 +218,8 @@ class TestXFMatWriter(unittest.TestCase):
                      r'--sim=1', r'--run=1', r'--field=E',
                      r'--origin=[0.001, 0.002, 0.044]',
                      r'--lengths=[0.032, 0.032, 0.050]',
-                     r'--deltas=[0.002, 0.002, 0.002]'
+                     r'--deltas=[0.002, 0.002, 0.002]',
+                     r'--net_input_power=1.0'
                  ]
         xfwriter.xf_field_writer_uniform.main(test_argv)
         self.assertTrue(os.path.exists(SAVE_MAT_FILE_UNIFORM_MAIN))

@@ -6,14 +6,15 @@ if [ ! -d $EXPORT_DIR ]; then
 fi
 SIMID=2
 RUNID=1
-
+NET_INPUT_POWER=1.0
 python3 ../xfwriter/xf_griddata_writer_uniform.py --xf_project=${XF_PROJECT} \
     --export_file=$EXPORT_DIR/Simple_loop_MRT_grid.mat \
     --sim=$SIMID \
     --run=$RUNID \
     --origin='[0.0, 0.0, 0.0]' \
     --lengths='[0.256, 0.256, 0.256]' \
-    --deltas='[0.002, 0.002, 0.002]'
+    --deltas='[0.002, 0.002, 0.002]' \
+    --net_input_power=${NET_INPUT_POWER}
 
 python3 ../xfwriter/xf_field_writer_uniform.py --xf_project=${XF_PROJECT} \
     --export_file=$EXPORT_DIR/Simple_loop_MRT_B.mat \
@@ -22,7 +23,8 @@ python3 ../xfwriter/xf_field_writer_uniform.py --xf_project=${XF_PROJECT} \
     --run=$RUNID \
     --origin='[0.0, 0.0, 0.0]' \
     --lengths='[0.256, 0.256, 0.256]' \
-    --deltas='[0.002, 0.002, 0.002]'
+    --deltas='[0.002, 0.002, 0.002]' \
+    --net_input_power=${NET_INPUT_POWER}
 
 python3 ../xfwriter/xf_field_writer_uniform.py --xf_project=${XF_PROJECT} \
     --export_file=$EXPORT_DIR/Simple_loop_MRT_E.mat \
@@ -31,4 +33,5 @@ python3 ../xfwriter/xf_field_writer_uniform.py --xf_project=${XF_PROJECT} \
     --run=$RUNID \
     --origin='[0.0, 0.0, 0.0]' \
     --lengths='[0.256, 0.256, 0.256]' \
-    --deltas='[0.002, 0.002, 0.002]'
+    --deltas='[0.002, 0.002, 0.002]' \
+    --net_input_power=${NET_INPUT_POWER}

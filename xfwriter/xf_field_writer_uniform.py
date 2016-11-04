@@ -156,7 +156,7 @@ def main(argv):
     arg_dict = {}
     switches = {'origin':list, 'lengths':list, 'deltas':list,
                 'xf_project':str, 'run':str, 'sim':str,
-                'export_file':str, 'field':str}
+                'net_input_power':str, 'export_file':str, 'field':str}
     singles = ''
     long_form = [x + '=' for x in switches]
     d = {x[0] + ':' : '--' + x for x in switches}
@@ -200,18 +200,21 @@ def main(argv):
                                            int(arg_dict['sim']),
                                            int(arg_dict['run']))
     xf_field_writer.set_grid_origin(arg_dict['origin'][0],
-                               arg_dict['origin'][1],
-                               arg_dict['origin'][2])
+                                    arg_dict['origin'][1],
+                                    arg_dict['origin'][2])
     xf_field_writer.set_grid_len(arg_dict['lengths'][0],
                                  arg_dict['lengths'][1],
                                  arg_dict['lengths'][2])
     xf_field_writer.set_grid_resolution(arg_dict['deltas'][0],
                                         arg_dict['deltas'][1],
                                         arg_dict['deltas'][2])
+    try:
+        xf_field_writer.net_input_power = float(arg_dict['net_input_power'])
+    except KeyError:
+        print("Net input power not specified.  Skipping field normalization.")
 
     xf_field_writer.savemat(arg_dict['field'], arg_dict['export_file'])
 
 if __name__ == "__main__":
-    print(sys.argv[1:])
     main(sys.argv[1:])
     print("Done.")

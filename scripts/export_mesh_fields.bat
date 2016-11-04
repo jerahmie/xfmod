@@ -5,8 +5,9 @@ set RUNID=1
 set ORIGIN="[0.002, -0.064, 0.0]"
 set LENGTHS="[0.180, 0.180, 0.180]"
 set DELTAS="[0.002, 0.002, 0.002]"
+set NET_INPUT_POWER="1.0"
 
-rem --------------------------------------------------------------------------------------------------
+rem --------------------------------------------------------------------------
 rem Get XF project name from XF_PROJECT string
 for %%i in ("%XF_PROJECT%") do (
 set XF_PROJECT_NAME=%%~ni
@@ -25,7 +26,8 @@ python ..\xfwriter\xf_griddata_writer_uniform.py^
  --run=%RUNID% ^
  --origin=%ORIGIN% ^
  --lengths=%LENGTHS% ^
- --deltas=%DELTAS%
+ --deltas=%DELTAS%^
+ -- net_input_power=%NET_INPUT_POWER%
 
 echo "B-field export and regrid"
 
@@ -37,7 +39,8 @@ python ..\xfwriter\xf_field_writer_uniform.py ^
  --run=%RUNID% ^
  --origin=%ORIGIN% ^
  --lengths=%LENGTHS% ^
- --deltas=%DELTAS%
+ --deltas=%DELTAS% ^
+ --net_input_power=%NET_INPUT_POWER%
 
 echo "E-field export and regrid"
 
@@ -49,6 +52,7 @@ python ..\xfwriter\xf_field_writer_uniform.py^
  --run=%RUNID% ^
  --origin=%ORIGIN% ^
  --lengths=%LENGTHS% ^
- --deltas=%DELTAS%
+ --deltas=%DELTAS% ^
+ --net_input_power=%NET_INPUT_POWER%
 
 PAUSE
