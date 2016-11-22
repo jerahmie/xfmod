@@ -212,6 +212,8 @@ def main(argv):
         xf_field_writer.net_input_power = float(arg_dict['net_input_power'])
     except KeyError:
         print("Net input power not specified.  Skipping field normalization.")
+    print("Input power: ", xf_field_writer.net_input_power)
+    print("Field Normalization: ", xf_field_writer._field_norm)
 
     xf_field_writer.savemat(arg_dict['field'], arg_dict['export_file'])
 

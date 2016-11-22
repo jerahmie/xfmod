@@ -27,7 +27,6 @@ python ..\xfwriter\xf_griddata_writer_uniform.py^
  --origin=%ORIGIN% ^
  --lengths=%LENGTHS% ^
  --deltas=%DELTAS%^
- --net_input_power=%NET_INPUT_POWER%
 
 echo "B-field export and regrid"
 
