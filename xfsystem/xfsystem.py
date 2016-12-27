@@ -39,7 +39,6 @@ class XFSystem(object):
         self._available_power = None
         self._parse_system_ssout()
 
-
     def _set_system_ssout(self):
         """Set the simulation system file."""
         system_ssout = os.path.join(self._project_dir,
@@ -82,3 +81,5 @@ class XFSystem(object):
     def net_input_power(self):
         """Return the net input power."""
         return self._net_input_power
+
+

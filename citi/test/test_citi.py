@@ -82,7 +82,17 @@ class TestCiti(unittest.TestCase):
         self.assertEqual('RI', tc._data_type)
         self.assertEqual(121, len(tc.var_list))
         self.assertEqual(121, len(tc.data))
-
+    
+    def test_citi_data_at_var(self):
+        """
+        Test data_at_var interpolation 
+        """
+        
+        tc = citi.Citi(TEST_CITI_FILE)
+        self.assertAlmostEqual(-0.5490502-0.4400053j, tc.data_at_var(447.0e6), 
+                               places=5)
+        self.assertAlmostEqual(-0.5709536-0.4329997j, tc.data_at_var(460.0e6), 
+                               places=5)
     def teardown(self):
         pass
     
