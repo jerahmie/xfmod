@@ -18,7 +18,7 @@ for d in ${simdirs[@]}; do
     if [ -f "${md}" ]; then
         simid="$(basename ${d} | sed 's/^0*//')"
         sname="$(sed -n 's/.*sname=\"\([^\"]*\)\".*/\1/p' ${md})"
-        printf "${simid}) ${sname}\n"
+        printf "\n${simid}) ${sname}\n"
 
         simtype="$(sed -n 's/.*SimulationType=\"\([a-zA-Z]*\).*/\1/p' ${md})"
         printf "\tType:\t${simtype}\n" 
