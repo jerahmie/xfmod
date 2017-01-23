@@ -9,10 +9,10 @@ from __future__ import (absolute_import, division, generators,
 from os import path, makedirs
 from shutil import rmtree
 import unittest
-from xfutils import xf_sim_id_to_str, xf_run_id_to_str
-from xfutils.xfproject import XFProjectInfo
+from xfutils import (xf_sim_id_to_str, xf_run_id_to_str, 
+                     XFProjectInfo, XFProjectError)
 
-MOCK_XF_PROJECT = 'mock.xf'
+_MOCK_XF_PROJECT = 'mock.xf'
 
 class TestXFProject(unittest.TestCase):
     """Unit tests for xfproject module."""
@@ -25,7 +25,7 @@ class TestXFProject(unittest.TestCase):
         for sim_id in simulations:
             run_list = []
             for run_id in range(sim_id % 3 + 1):
-                sim_run_dir = path.join(MOCK_XF_PROJECT,
+                sim_run_dir = path.join(_MOCK_XF_PROJECT,
                                         r'Simulations',
                                         xf_sim_id_to_str(sim_id),
                                         xf_run_id_to_str(run_id + 1))
@@ -36,10 +36,28 @@ class TestXFProject(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_empty_constructor(self):
+        """
+        What happens when XFProjectInfo constructor is called without 
+        valid project.
+        """
+        xfmt = XFProjectInfo()
+        xfmt.xf_project_dir(_MOCK_XF_PROJECT)
+        self.assertEqual(self._sim_run_list, xfmt.xf_sim_run_list)
+        with self.assertRaises(FileNotFoundError) as err:
+            xfmt.xf_project_dir('/my/bad/project.xf')
+
+    def test_xf_project_error_exception(self):
+        """
+        Test raise XFProjectError exception.
+        """
+        with self.assertRaises(XFProjectError) as err:
+            raise XFProjectError("Project has error.")
+        
     def test_xfproject_mock_xf(self):
         """"Run tests on mocked xf project."""
         print(self.id())
-        mock_info = XFProjectInfo(MOCK_XF_PROJECT)
+        mock_info = XFProjectInfo(_MOCK_XF_PROJECT)
         self.assertEqual(self._sim_run_list, mock_info.xf_sim_run_list)
         
     def test_coil_xf(self):
@@ -52,14 +70,22 @@ class TestXFProject(unittest.TestCase):
         xf_test_coil_info = XFProjectInfo(xf_test_coil_path)
         self.assertEqual([[1],[1],[1]], xf_test_coil_info.xf_sim_run_list)
 
+    def test_bad_project(self):
+        """
+        Ensure proper exception is raised during attempt to extract info 
+        from bad or missing project.
+        """
+        with self.assertRaises(FileNotFoundError) as err:
+            XFProjectInfo('/my/bad/project')
+
     def tearDown(self):
         pass
 
     @classmethod
     def tearDownClass(cls):
         # remove mock directory structure
-        print("Removing ", MOCK_XF_PROJECT)
-        rmtree(MOCK_XF_PROJECT)
+        print("Removing ", _MOCK_XF_PROJECT)
+        rmtree(_MOCK_XF_PROJECT)
 
 if __name__ == "__main__":
     unittest.main()

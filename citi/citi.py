@@ -5,6 +5,7 @@ CITI Data Format object.
 from __future__ import(absolute_import, division, generators,
                        print_function, unicode_literals)
 
+import os
 import sys
 import re
 
@@ -33,6 +34,7 @@ class Citi(object):
         self._citi_data = None    # CITI DATA
         if self._file_name:
             self._parse_citi()
+        
 
     def _parse_citi(self):
         """
@@ -107,6 +109,44 @@ class Citi(object):
         """Set the file name and extract data."""
         self._file_name = file_name
         self._parse_citi()
+
+    def data_at_var(self, var, interp='linear'):
+        """Return data at given value."""
+        PRECISION = 1.0e-6
+        data_at_var = 0.0
+        if interp=='linear':
+            nearest_ind = self._find_nearest_ind(self._var_list, var)
+            if abs(self._var_list[nearest_ind] - var) <= PRECISION:
+                data_at_var =  self._citi_data[nearest_ind] 
+            elif var > self._var_list[nearest_ind]:
+                data_at_var = self._lin_fit(var,
+                                            [self._var_list[nearest_ind], 
+                                             self._var_list[nearest_ind + 1]],
+                                            [self._citi_data[nearest_ind],
+                                             self._citi_data[nearest_ind + 1]])
+            elif var < self._var_list[nearest_ind]:
+                data_at_var = self._lin_fit(var,
+                                            [self._var_list[nearest_ind - 1],
+                                             self._var_list[nearest_ind]],
+                                            [self._citi_data[nearest_ind - 1],
+                                             self._citi_data[nearest_ind]])
+
+        return data_at_var
+        
+    def _lin_fit(self, xs, x0, y0):
+        """Calculate linear fit given two points and sample point."""
+        ai = (y0[1].imag - y0[0].imag)/(x0[1] - x0[0])
+        ar = (y0[1].real - y0[0].real)/(x0[1] - x0[0])
+        ysi = y0[0].imag + ai * (xs - x0[0])
+        ysr = y0[0].real + ar * (xs - x0[0])
+
+        return ysr + ysi*1.0j
+
+    def _find_nearest_ind(self, data, val):
+        """Return index nearest to value in data."""
+        tmp = [abs(d-val) for d in data]
+        idx = tmp.index(min(tmp))
+        return idx
 
 def main(argv):
     pass
