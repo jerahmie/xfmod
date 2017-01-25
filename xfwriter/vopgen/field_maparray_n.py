@@ -52,6 +52,9 @@ class VopgenFieldMapArrayN(XFFieldWriterUniform):
             field_uniform_wr.scale_b1_at_point(1.0e-6, [self._x0, self._y0, self._z0])
             self._field_norm_n.append(field_uniform_wr.field_norm)
             [field_x, field_y, field_z] = field_uniform_wr._regrid_fields(self._field_type_str)
+            self._f_map_array_n[:,:,:,0,coil_index] = field_x
+            self._f_map_array_n[:,:,:,1,coil_index] = field_y
+            self._f_map_array_n[:,:,:,2,coil_index] = field_z
 
 
 class VopgenEFMapArrayN(VopgenFieldMapArrayN):

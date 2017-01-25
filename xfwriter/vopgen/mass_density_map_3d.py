@@ -10,7 +10,7 @@ import scipy.io as spio
 from  xfutils import xf_regrid_3d_nearest
 from xfgeomod import XFMesh, XFGeometry, XFGridExporter
 from xfwriter import XFMatWriterUniform
-from xfwriter.vopgen import VopgenSarMask, VopgenPropertyMap
+from xfwriter.vopgen import VopgenSarMask, VopgenPropertyMap, removeNaNs
 
 class VopgenMassDensityMap3D(XFMatWriterUniform):
     """Matlab writer for 3D mass density maps."""
@@ -42,7 +42,7 @@ class VopgenMassDensityMap3D(XFMatWriterUniform):
         self._sar_mask.set_grid_len(self._xlen, self._ylen, self._zlen)
         self._sar_mask.set_grid_resolution(self._dx, self._dy, self._dz)
         sar_mask_3d = self._sar_mask.make_sar_mask()
-        mass_density_map = self._prop_map.make_conductivity_map()
+        mass_density_map = removeNaNs(self._prop_map.make_mass_density_map())
         self._mass_density_3d = (mass_density_map[:, :, :, 0] + \
                                  mass_density_map[:, :, :, 1] + \
                                  mass_density_map[:, :, :, 2]) / 3.0
