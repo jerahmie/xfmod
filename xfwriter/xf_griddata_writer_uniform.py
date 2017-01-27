@@ -1,5 +1,5 @@
 """
-Example grid data exporter on uniform grid.
+Grid data exporter on uniform grid.
 """
 
 from __future__ import (absolute_import, division,
@@ -16,7 +16,7 @@ from xfwriter import XFMatWriterUniform
 from xfutils import xf_regrid_3d_nearest
 
 class XFGridDataWriterUniform(XFMatWriterUniform):
-    """Write XFdtd field data to mat file on uniform grid."""
+    """Write XFdtd grid data to mat file on uniform grid."""
     def __init__(self, xf_project_dir, sim_id, run_id):
         self._x0 = 0.0
         self._y0 = 0.0

@@ -6,30 +6,19 @@ Export steady-state XFdtd field results using xfmatgrid module.
 from __future__ import(absolute_import, division, generators,
                        print_function, unicode_literals)
 
-import sys
-import numpy as np
-import scipy.io as spio
-import xfmatgrid
-
-class XFFieldWriterNonUniform(object):
-    """Writes raw XFdtd to mat file with nonuniform grid."""
-    def __init__(self, xfProjectDir, sim_id, run_id):
-        self.fieldNonUniformGrid = xfmatgrid.XFFieldNonUniformGrid(xfProjectDir,
-                                                                   sim_id,
-                                                                   run_id)
-    def exportMatFile(self, field_type, file_name):
-        """Export the field data to matlab file."""
-        export_dict = dict()
-        export_dict['XDim'] = self.fieldNonUniformGrid.xdim
-        export_dict['YDim'] = self.fieldNonUniformGrid.ydim
-        export_dict['ZDim'] = self.fieldNonUniformGrid.zdim
-        export_dict[field_type + 'x'] = self.fieldNonUniformGrid.ss_field_data(field_type, 'x')
-        export_dict[field_type + 'y'] = self.fieldNonUniformGrid.ss_field_data(field_type, 'y')
-        export_dict[field_type + 'z'] = self.fieldNonUniformGrid.ss_field_data(field_type, 'z')
-        spio.savemat(file_name, export_dict, oned_as='column')
-        
+from xfwriter import XFGridDataWriterNonUniform, XFFieldWriterNonUniform
 
 if __name__ == "__main__":
-    print("Exporting XFdtd field data on nonuniformgrid.")
-    xfFieldW = XFFieldWriterNonUniform('/mnt/DATA/XFdtd_Test_Projects/Simple_Loop.xf',84,1)
-    xfFieldW.exportMatFile('E','testE.mat')
+    xf_project = '/run/media/jerahmie/Scratch/Loop_Dipole_10p5T_V3_Phantom.xf'
+    xf_sim_id = 4
+    xf_run_id = 1
+    print("Exporting XFdtd grid data on nonunoform grid.")
+    xfGridW = XFGridDataWriterNonUniform(xf_project, xf_sim_id, xf_run_id)
+    xfGridW.savemat('Loop_Dipole_V3_Phantom_Loop_grid.mat')
+    
+    print("Exporting XFdtd field data on nonuniform grid.")
+    #xfFieldW = XFFieldWriterNonUniform('/mnt/DATA/XFdtd_Projects/Loop_Dipole_10p5T_V2_Phantom.xf',18,1)
+    xfFieldW = XFFieldWriterNonUniform(xf_project, xf_sim_id, xf_run_id)
+    xfFieldW.net_input_power = 1.0
+    #xfFieldW.savemat('E','Loop_Dipole_V3_Phantom_Loop_E.mat')
+    #xfFieldW.savemat('B','Loop_Dipole_V3_Phantom_Loop_B.mat')
