@@ -114,6 +114,7 @@ class TestVopgenWriter(unittest.TestCase):
         ef_map = spio.loadmat(EF_MAP_ARRAY_FILE)
         self.assertTrue((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM, 3, 3),
                         ef_map['efMapArrayN'])
+        self.assertLess(0.0, np.abs(np.sum(ef_map['efMapArrayN'])))
 
     def test_bf_map_array_n_mat(self):
         """
@@ -146,9 +147,10 @@ class TestVopgenWriter(unittest.TestCase):
                                               tvopgen._dz), tvopgen._zdim_uniform))
         tvopgen.savemat(BF_MAP_ARRAY_FILE)
         self.assertTrue(isfile(BF_MAP_ARRAY_FILE))
-        ef_map = spio.loadmat(BF_MAP_ARRAY_FILE)
+        bf_map = spio.loadmat(BF_MAP_ARRAY_FILE)
         self.assertTrue((X_ROI_DIM, Y_ROI_DIM, Z_ROI_DIM, 3, 3),
-                        ef_map['bfMapArrayN'])        
+                        bf_map['bfMapArrayN'])
+        self.assertLess(0, np.abs(np.sum(bf_map['bfMapArrayN'])))
 
     def test_tissue_mask(self):
         """

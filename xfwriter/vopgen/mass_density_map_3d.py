@@ -10,7 +10,8 @@ import scipy.io as spio
 from  xfutils import xf_regrid_3d_nearest
 from xfgeomod import XFMesh, XFGeometry, XFGridExporter
 from xfwriter import XFMatWriterUniform
-from xfwriter.vopgen import VopgenSarMask, VopgenPropertyMap, removeNaNs
+from xfwriter.vopgen import VopgenSarMask, VopgenPropertyMap
+from xfwriter.vopgen.removeNaNs import removeNaNs
 
 class VopgenMassDensityMap3D(XFMatWriterUniform):
     """Matlab writer for 3D mass density maps."""
