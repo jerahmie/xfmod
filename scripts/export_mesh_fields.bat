@@ -1,9 +1,9 @@
 @echo off
-set XF_PROJECT="C:\xFDTD_simulation_data\Bent_dipole_comparison\Orthogonal_Duke\Bent_dipole_orthogonal_withDuke.xf"
-set SIMID=3
+set XF_PROJECT="F:\7T_Dipole.xf"
+set SIMID=1
 set RUNID=1
-set ORIGIN="[0.002, -0.064, 0.0]"
-set LENGTHS="[0.180, 0.180, 0.180]"
+set ORIGIN="[0.300, 0.160, 0.128]"
+set LENGTHS="[0.256, 0.256, 0.256]"
 set DELTAS="[0.002, 0.002, 0.002]"
 set NET_INPUT_POWER="1.0"
 
@@ -26,7 +26,7 @@ python ..\xfwriter\xf_griddata_writer_uniform.py^
  --run=%RUNID% ^
  --origin=%ORIGIN% ^
  --lengths=%LENGTHS% ^
- --deltas=%DELTAS%^
+ --deltas=%DELTAS%
 
 echo "B-field export and regrid"
 

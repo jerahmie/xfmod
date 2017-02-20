@@ -46,7 +46,7 @@ class XFMatWriterUniform(XFMatWriter):
         self._zlen = zlen
 
     def set_grid_resolution(self, dx, dy, dz):
-        """Set the grid step size of he uniformly interpolated grid."""
+        """Set the grid step size of the uniformly interpolated grid."""
         self._dx = dx
         self._dy = dy
         self._dz = dz

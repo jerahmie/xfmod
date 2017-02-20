@@ -70,6 +70,7 @@ class XFFieldWriterUniform(XFFieldWriter):
         XLen (list): Dimensions of regrid region [xLen, yLen, zLen].
         dX (list): Grid spacing [dx, dy, dz] .
         """
+        print("Net Input Power: " + str(self.net_input_power))
         self._xdim = np.arange(self._x0 - self._xlen/2.0,
                                self._x0 + self._xlen/2.0,
                                self._dx)
@@ -87,24 +88,25 @@ class XFFieldWriterUniform(XFFieldWriter):
                                         (self._xdim,
                                          self._ydim,
                                          self._zdim),
-                                        self._field_nonuniform_grid.ss_field_data(field_type, 'x'))
+                                        self._field_nonuniform_grid.ss_field_data(field_type, 'x')) * self._field_norm
         self._fy = xf_regrid_3d_nearest((self._field_nonuniform_grid.xdim,
                                          self._field_nonuniform_grid.ydim,
                                          self._field_nonuniform_grid.zdim),
                                         (self._xdim,
                                          self._ydim,
                                          self._zdim),
-                                        self._field_nonuniform_grid.ss_field_data(field_type, 'y'))
+                                        self._field_nonuniform_grid.ss_field_data(field_type, 'y')) * self._field_norm
         self._fz = xf_regrid_3d_nearest((self._field_nonuniform_grid.xdim,
                                          self._field_nonuniform_grid.ydim,
                                          self._field_nonuniform_grid.zdim),
                                         (self._xdim,
                                          self._ydim,
                                          self._zdim),
-                                        self._field_nonuniform_grid.ss_field_data(field_type, 'z'))
+                                        self._field_nonuniform_grid.ss_field_data(field_type, 'z')) * self._field_norm
+
         return self._fx, self._fy, self._fz
 
-    
+
     def _load_fields(self, field_type):
         """Extract fields from XFdtd data structures."""
         self._xdim = self._field_nonuniform_grid.xdim
@@ -118,8 +120,7 @@ class XFFieldWriterUniform(XFFieldWriter):
     def savemat(self, field_type, file_name):
         """Export field data in mat file."""
         self._load_fields(field_type)
-        self._scale_fields()
-        self._regrid_fields(field_type)        
+        self._regrid_fields(field_type)
         print("Exporting field data to mat file.")
         export_dict = dict()
         export_dict['XDim'] = self._xdim
@@ -214,7 +215,6 @@ def main(argv):
         print("Net input power not specified.  Skipping field normalization.")
     print("Input power: ", xf_field_writer.net_input_power)
     print("Field Normalization: ", xf_field_writer._field_norm)
-
     xf_field_writer.savemat(arg_dict['field'], arg_dict['export_file'])
 
 if __name__ == "__main__":
