@@ -35,7 +35,7 @@ class VopgenFieldMapArrayN(XFFieldWriterUniform):
                                        self._dz)
 
     def _field_map_array_n(self):
-        """Populate field map array for N coils."""
+        """Populate field map array for N channels."""
         self._update_export_grid()
         self._f_map_array_n = np.empty([len(self._xdim_uniform),
                                             len(self._ydim_uniform),
@@ -117,9 +117,31 @@ class VopgenBFMapArrayN(VopgenFieldMapArrayN):
         self._get_net_input_power_per_coil()
         self._field_norm_n = []
 
+    def _rotating_field_map_array_n(self):
+        """Populate B1 rotating field map array for N channels."""
+        self._update_export_grid()
+        self._f_map_array_n = np.empty([len(self._xdim_uniform),
+                                        len(self._ydim_uniform),
+                                        len(self._zdim_uniform),
+                                        2, self._num_coils],
+                                       dtype=np.dtype(np.complex_))
+        for coil_index, sim_id in enumerate(self._sim_ids):
+            print("SimID: ", sim_id, "/", self._sim_ids)
+            field_uniform_wr = XFFieldWriterUniform(self._xf_project_dir,
+                                                    sim_id, 1)
+            field_uniform_wr.set_grid_origin(self._x0, self._y0, self._z0)
+            field_uniform_wr.set_grid_len(self._xlen, self._ylen, self._zlen)
+            field_uniform_wr.set_grid_resolution(self._dx, self._dy, self._dz)
+            field_uniform_wr.net_input_power = 1.0
+            self._field_norm_n.append(field_uniform_wr.field_norm)
+            [field_x, field_y, field_z] = field_uniform_wr._regrid_fields(self._field_type_str)
+            self._f_map_array_n[:,:,:,0,coil_index] = 0.5*(field_x + 1j*field_y)
+            self._f_map_array_n[:,:,:,1,coil_index] = 0.5*(np.conj(field_x) 
+                                                           + 1j*np.conj(field_y))
+
     def savemat(self, file_name):
         """Save the B-field data in format expected by vopgen."""
-        self._field_map_array_n()
+        self._rotating_field_map_array_n()
         export_dict = dict()
         export_dict['XDim'] = self._xdim_uniform
         export_dict['YDim'] = self._ydim_uniform

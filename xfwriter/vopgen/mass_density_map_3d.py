@@ -34,7 +34,9 @@ class VopgenMassDensityMap3D(XFMatWriterUniform):
         self._sar_mask = VopgenSarMask(xf_project_dir, sim_id, run_id)
 
     def _make_mass_density_map_3d(self):
-        """Construct mass density map and masked mass density map on 3d grid."""
+        """
+        Construct mass density map and masked mass density map on 3d grid.
+        """
         self._update_export_grid()
         self._prop_map.set_grid_origin(self._x0, self._y0, self._z0)
         self._prop_map.set_grid_len(self._xlen, self._ylen, self._zlen)

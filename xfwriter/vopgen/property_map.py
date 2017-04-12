@@ -7,7 +7,7 @@ from __future__ import (absolute_import, division,
 
 import numpy as np
 import scipy.io as spio
-from xfutils import xf_regrid_3d_nearest
+from xfutils import xf_regrid_3d_nearest as regrid3d
 from xfgeomod import XFMesh, XFGeometry, XFGridExporter
 from xfwriter import XFMatWriterUniform, XFGridDataWriterUniform
 from xfwriter.vopgen.sarmask import VopgenSarMask
@@ -48,39 +48,44 @@ class VopgenPropertyMap(XFMatWriterUniform):
         
         
     def make_mass_density_map(self):
-        """Construct the mass density map: [xdim, ydim, zdim, 3]"""
+        """
+        Construct the mass density map with dimensions [xdim, ydim, zdim, 3]
+        """
         self._update_export_grid()
         self._mass_density_map = np.empty([len(self._xdim_uniform), 
                                            len(self._ydim_uniform),
                                            len(self._zdim_uniform), 3],
                                           dtype = np.dtype(np.double))
 
-        # Mass density components on Ex grid locations, resampled on uniform grid
-        self._mass_density_map[:,:,:,0] = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                                                self._grid_exporter.grid_y,
-                                                                self._grid_exporter.grid_z),
-                                                               (self._xdim_uniform,
-                                                                self._ydim_uniform,
-                                                                self._zdim_uniform),
-                                                               self._grid_exporter.ex_density)
+        # Mass density components on Ex grid locations,
+        # resampled on uniform grid
+        self._mass_density_map[:,:,:,0] = regrid3d((self._grid_exporter.grid_x,
+                                                    self._grid_exporter.grid_y,
+                                                    self._grid_exporter.grid_z),
+                                                   (self._xdim_uniform,
+                                                    self._ydim_uniform,
+                                                    self._zdim_uniform),
+                                                   self._grid_exporter.ex_density)
         
-        # Mass density components on Ey grid locations, resampled on uniform grid
-        self._mass_density_map[:,:,:,1] = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                                                self._grid_exporter.grid_y,
-                                                                self._grid_exporter.grid_z),
-                                                               (self._xdim_uniform,
-                                                                self._ydim_uniform,
-                                                                self._zdim_uniform),
-                                                               self._grid_exporter.ey_density)
+        # Mass density components on Ey grid locations,
+        # resampled on uniform grid
+        self._mass_density_map[:,:,:,1] = regrid3d((self._grid_exporter.grid_x,
+                                                    self._grid_exporter.grid_y,
+                                                    self._grid_exporter.grid_z),
+                                                   (self._xdim_uniform,
+                                                    self._ydim_uniform,
+                                                    self._zdim_uniform),
+                                                   self._grid_exporter.ey_density)
 
-        # Mass density components on Ez grid locations, resampled on uniform grid
-        self._mass_density_map[:,:,:,2] = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                                                self._grid_exporter.grid_y,
-                                                                self._grid_exporter.grid_z),
-                                                               (self._xdim_uniform,
-                                                                self._ydim_uniform,
-                                                                self._zdim_uniform),
-                                                               self._grid_exporter.ez_density)
+        # Mass density components on Ez grid locations,
+        # resampled on uniform grid
+        self._mass_density_map[:,:,:,2] = regrid3d((self._grid_exporter.grid_x,
+                                                    self._grid_exporter.grid_y,
+                                                    self._grid_exporter.grid_z),
+                                                   (self._xdim_uniform,
+                                                    self._ydim_uniform,
+                                                    self._zdim_uniform),
+                                                   self._grid_exporter.ez_density)
 
         # apply mask
         if self._mask == None:
@@ -103,32 +108,35 @@ class VopgenPropertyMap(XFMatWriterUniform):
                                            len(self._zdim_uniform), 3],
                                           dtype = np.dtype(np.double))
 
-        # Conductivity component on Ex grid locations, resampled on uniform grid
-        self._conductivity_map[:,:,:,0] = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                                                self._grid_exporter.grid_y,
-                                                                self._grid_exporter.grid_z),
-                                                               (self._xdim_uniform,
-                                                                self._ydim_uniform,
-                                                                self._zdim_uniform),
-                                                               self._grid_exporter.ex_sigma)
+        # Conductivity component on Ex grid locations,
+        # resampled on uniform grid
+        self._conductivity_map[:,:,:,0] = regrid3d((self._grid_exporter.grid_x,
+                                                    self._grid_exporter.grid_y,
+                                                    self._grid_exporter.grid_z),
+                                                   (self._xdim_uniform,
+                                                    self._ydim_uniform,
+                                                    self._zdim_uniform),
+                                                   self._grid_exporter.ex_sigma)
 
-        # Conductivity component on Ex grid locations, resampled on uniform grid
-        self._conductivity_map[:,:,:,1] = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                                                self._grid_exporter.grid_y,
-                                                                self._grid_exporter.grid_z),
-                                                               (self._xdim_uniform,
-                                                                self._ydim_uniform,
-                                                                self._zdim_uniform),
-                                                               self._grid_exporter.ey_sigma)
+        # Conductivity component on Ex grid locations,
+        # resampled on uniform grid
+        self._conductivity_map[:,:,:,1] = regrid3d((self._grid_exporter.grid_x,
+                                                    self._grid_exporter.grid_y,
+                                                    self._grid_exporter.grid_z),
+                                                   (self._xdim_uniform,
+                                                    self._ydim_uniform,
+                                                    self._zdim_uniform),
+                                                   self._grid_exporter.ey_sigma)
         
-        # Conductivity component on Ex grid locations, resampled on uniform grid
-        self._conductivity_map[:,:,:,2] = xf_regrid_3d_nearest((self._grid_exporter.grid_x,
-                                                         self._grid_exporter.grid_y,
-                                                         self._grid_exporter.grid_z),
-                                                        (self._xdim_uniform,
-                                                         self._ydim_uniform,
-                                                         self._zdim_uniform),
-                                                        self._grid_exporter.ez_sigma)
+        # Conductivity component on Ex grid locations,
+        # resampled on uniform grid
+        self._conductivity_map[:,:,:,2] = regrid3d((self._grid_exporter.grid_x,
+                                                    self._grid_exporter.grid_y,
+                                                    self._grid_exporter.grid_z),
+                                                   (self._xdim_uniform,
+                                                    self._ydim_uniform,
+                                                    self._zdim_uniform),
+                                                   self._grid_exporter.ez_sigma)
         if self._mask == None:
             self._make_mask()
         self._conductivity_map[:,:,:,0] = np.multiply(self._conductivity_map[:,:,:,0], self._mask)

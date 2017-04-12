@@ -23,7 +23,6 @@ def xf_regrid_3d_nearest(X1, X2, data3d):
     """
     Regrid the 3d data to on new grid.
 
-
     Keyword arguments:
     x1,y1,z1 -- list of original grid points
           [x1(1,xdim1), y1(1,ydim1), z1(1,zdim1)]

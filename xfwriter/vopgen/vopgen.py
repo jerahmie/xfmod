@@ -22,11 +22,8 @@ def vopgen_all(arg_dict):
         os.makedirs(arg_dict['export_dir'])
 
     make_property_map(arg_dict)
-    gc.collect()
     make_density_map(arg_dict)
-    gc.collect()
     make_efield_map(arg_dict)
-    gc.collect()
     make_bfield_map(arg_dict)
 
 def make_efield_map(arg_dict):
@@ -51,6 +48,7 @@ def make_efield_map(arg_dict):
                                arg_dict['deltas'][2])
     ef_map.savemat(os.path.join(arg_dict['export_dir'], 'efmapArrayN.mat'))
     del ef_map
+    gc.collect()
 
 def make_bfield_map(arg_dict):
     # B field map
@@ -74,7 +72,7 @@ def make_bfield_map(arg_dict):
                                arg_dict['deltas'][2])
     bf_map.savemat(os.path.join(arg_dict['export_dir'], 'bfmapArrayN.mat'))
     del bf_map
-
+    gc.collect()
 
     
 def make_property_map(arg_dict):    
@@ -106,6 +104,7 @@ def make_property_map(arg_dict):
                                  arg_dict['deltas'][2])
     sar_mask.savemat(os.path.join(arg_dict['export_dir'], 'sarmask_aligned.mat'))
     del sar_mask
+    gc.collect()
 
 def make_density_map(arg_dict):
     # mass density map
@@ -122,6 +121,7 @@ def make_density_map(arg_dict):
                                  arg_dict['deltas'][2])
     mden_map_3d.savemat(os.path.join(arg_dict['export_dir'], 'massdensityMap3D.mat'))
     del mden_map_3d
+    gc.collect()
 
 def usage(exit_status = None):
     """Print the usage statement and exit with given status."""
