@@ -88,7 +88,7 @@ class VopgenPropertyMap(XFMatWriterUniform):
                                                    self._grid_exporter.ez_density)
 
         # apply mask
-        if self._mask == None:
+        if self._mask is None:
             self._make_mask()        
         self._mass_density_map[:,:,:,0] = np.multiply(self._mass_density_map[:,:,:,0], self._mask)
         self._mass_density_map[:,:,:,1] = np.multiply(self._mass_density_map[:,:,:,1], self._mask)
@@ -100,7 +100,7 @@ class VopgenPropertyMap(XFMatWriterUniform):
         """Construct the conductivity map."""
         self._update_export_grid()
 
-        if self._mask == None:
+        if self._mask is None:
             self._make_mask()
 
         self._conductivity_map = np.empty([len(self._xdim_uniform),
@@ -137,7 +137,7 @@ class VopgenPropertyMap(XFMatWriterUniform):
                                                     self._ydim_uniform,
                                                     self._zdim_uniform),
                                                    self._grid_exporter.ez_sigma)
-        if self._mask == None:
+        if self._mask is None:
             self._make_mask()
         self._conductivity_map[:,:,:,0] = np.multiply(self._conductivity_map[:,:,:,0], self._mask)
         self._conductivity_map[:,:,:,1] = np.multiply(self._conductivity_map[:,:,:,1], self._mask)

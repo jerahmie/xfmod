@@ -1,7 +1,6 @@
 #!/bin/bash
 source $HOME/cmrr_venv/bin/activate
-#XF_PROJECT=$1
-XF_PROJECT='/run/media/jerahmie/Scratch/Loop_Dipole_array_SAR.xf'
+XF_PROJECT='/mnt/Data/XFdtd_Results/SG_Head_Coil_MRT.xf'
 
 if [ ! -d "${XF_PROJECT}" ]; then
     echo "Could not find ${XF_PROJECT}"
@@ -15,8 +14,8 @@ else
     python ../xfwriter/vopgen/vopgen.py \
         --xf_project=${XF_PROJECT} \
         --export_dir=${VOPGEN_OUT_DIR} \
-        --origin='[0.317, 0.150, 0.1375]' \
-        --lengths='[0.275, 0.300, 0.275]' \
+        --origin='[0.0, 0.0, 0.0625]' \
+        --lengths='[0.325, 0.325, 0.325]' \
         --deltas='[0.002, 0.002, 0.002]'
 fi
 
