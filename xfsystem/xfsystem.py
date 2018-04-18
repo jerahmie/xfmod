@@ -18,6 +18,7 @@ COMPUTED_POWER_RE = r"begin_<ComputedPower>\s*\n" + \
                     r"AvailablePower\s*([0-9.]*)\s*\n" + \
                     r"NetInputPower\s*([0-9.eE\-+]*)\s*\n" + \
                     r"FeedLoss\s*([0-9.eE\-+]*)\n" + \
+                    r"(ComponentMatchingCircuitLoss\s*([0-9.eE\-+])\s*\n)?" +\
                     r"WaveguideLoss\s*([0-9.eE\-+]*)\n" + \
                     r"DissipatedPower\s*([0-9.eE\-+]*)\n" + \
                     r"DissipatedPowerInTissue\s*([0-9.eE\-+]*)\n" + \
