@@ -21,8 +21,8 @@ def vopgen_all(arg_dict):
     if not os.path.exists(arg_dict['export_dir']):
         os.makedirs(arg_dict['export_dir'])
 
-    make_property_map(arg_dict)
-    make_density_map(arg_dict)
+    #make_property_map(arg_dict)
+    #make_density_map(arg_dict)
     make_efield_map(arg_dict)
     make_bfield_map(arg_dict)
 
@@ -46,7 +46,7 @@ def make_efield_map(arg_dict):
     ef_map.set_grid_resolution(arg_dict['deltas'][0],
                                arg_dict['deltas'][1],
                                arg_dict['deltas'][2])
-    ef_map.savemat(os.path.join(arg_dict['export_dir'], 'efmapArrayN.mat'))
+    ef_map.savemat(os.path.join(arg_dict['export_dir'], 'efMapArrayN.mat'))
     del ef_map
     gc.collect()
 
@@ -70,7 +70,7 @@ def make_bfield_map(arg_dict):
     bf_map.set_grid_resolution(arg_dict['deltas'][0],
                                arg_dict['deltas'][1],
                                arg_dict['deltas'][2])
-    bf_map.savemat(os.path.join(arg_dict['export_dir'], 'bfmapArrayN.mat'))
+    bf_map.savemat(os.path.join(arg_dict['export_dir'], 'bfMapArrayN.mat'))
     del bf_map
     gc.collect()
 

@@ -14,7 +14,7 @@ from xfmatgrid.xfmultipoint import (XFMultiPointInfo, XFMultiPointFrequencies,
 from xfutils import xf_sim_id_to_str, xf_run_id_to_str
 from xfgeomod import XFGeometry
 
-MP_SS_RE = r'(.*)(MultiPoint_[a-zA-Z0-9/_]*_[0-9]+)'
+MP_SS_RE = r'(.*)(MultiPoint_Field_Sensor_[0-9]+)'
 
 class XFFieldNonUniformGrid(object):
     """Holds XF field data on non-uniform grid."""
@@ -57,7 +57,8 @@ class XFFieldNonUniformGrid(object):
                                         r'Simulations',
                                         xf_sim_id_to_str(self._sim_id),
                                         xf_run_id_to_str(self._run_id),
-                                        r'output', r'*_info.bin')
+                                        r'output',
+                                        r'MultiPoint_Field_Sensor_*_info.bin')
             self._mp_ss_info_file = glob(mp_info_file)
             self._mp_ss_info = XFMultiPointInfo(self._mp_ss_info_file[0])
 
@@ -67,6 +68,7 @@ class XFFieldNonUniformGrid(object):
     def _set_data_dirs(self):
         """Set the project directory and set sensor file location."""
         try:
+            print("Info file",self._mp_ss_info_file[0])
             mp_sensor_dir = re.match(MP_SS_RE, self._mp_ss_info_file[0])
             self._mp_frequencies_file = os.path.join(mp_sensor_dir.group(1),
                                                      mp_sensor_dir.group(2),
