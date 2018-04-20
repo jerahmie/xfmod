@@ -2,7 +2,7 @@
 source $HOME/cmrr_venv/bin/activate
 #XF_PROJECT='/mnt/Data/XFdtd_Projects/pHCP_MRS_MRT.xf'
 #XF_PROJECT='/mnt/Data/XFdtd_Results/pHCP_MRS_Duke_Head_2mm.xf'
-XF_PROJECT='/mnt/Data/XFdtd_Projects/VTOC48_Duke_Head_2mm_quick.xf'
+XF_PROJECT='/mnt/d/XFdtd_Projects/VTOC48_Duke_Head_2mm_quick.xf'
 EXPORT_DIR=$XF_PROJECT/Export
 if [ ! -d $EXPORT_DIR ]; then
     mkdir $EXPORT_DIR
@@ -15,7 +15,7 @@ runId=1
 net_input_power=1.0
 for simId in {1..8}; do
     echo $simId
-    python3 ../xfwriter/xf_griddata_writer_uniform.py \
+    python ../xfwriter/xf_griddata_writer_uniform.py \
 	--xf_project=${XF_PROJECT} \
 	--export_file=$EXPORT_DIR/ld_ch"$simid"_grid.mat \
 	--sim=$simId \
@@ -24,7 +24,7 @@ for simId in {1..8}; do
 	--lengths="${lengths}" \
 	--deltas="${dx}"
 
-    python3 ../xfwriter/xf_field_writer_uniform.py \
+    python ../xfwriter/xf_field_writer_uniform.py \
 	--xf_project=${XF_PROJECT} \
 	--export_file=$EXPORT_DIR/ld_ch"$simid"_B.mat \
 	--field=B \
@@ -35,7 +35,7 @@ for simId in {1..8}; do
 	--deltas="${dx}" \
 	--net_input_power=${net_input_power}
 
-    python3 ../xfwriter/xf_field_writer_uniform.py \
+    python ../xfwriter/xf_field_writer_uniform.py \
 	--xf_project=${XF_PROJECT} \
 	--export_file=$EXPORT_DIR/ld_ch"$simid"_E.mat \
 	--field=E \
