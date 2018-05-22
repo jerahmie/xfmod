@@ -134,10 +134,12 @@ class VopgenSarMask(XFMatWriterUniform):
     def savemat(self, file_name):
         """Save the SAR mask to a matlab file."""
         self.make_sar_mask()
+        self.make_tissue_mask()
         export_dict = dict()
         export_dict['XDim'] = self._xdim_uniform
         export_dict['YDim'] = self._ydim_uniform
         export_dict['ZDim'] = self._zdim_uniform
         export_dict['sarmask_new'] = self._sar_mask
+        export_dict['sar_tissue_mask'] = self._tissue_mask
         spio.savemat(file_name, export_dict, oned_as = 'column')
 

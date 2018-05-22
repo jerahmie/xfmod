@@ -21,8 +21,8 @@ def vopgen_all(arg_dict):
     if not os.path.exists(arg_dict['export_dir']):
         os.makedirs(arg_dict['export_dir'])
 
-    #make_property_map(arg_dict)
-    #make_density_map(arg_dict)
+    make_property_map(arg_dict)
+    make_density_map(arg_dict)
     make_efield_map(arg_dict)
     make_bfield_map(arg_dict)
 
