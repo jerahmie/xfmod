@@ -7,7 +7,7 @@ from __future__ import (absolute_import, division, generators,
 
 import os
 import re
-from xfutils.xfutils import xf_run_str_to_int
+from .xfutils import xf_run_str_to_int
 
 class XFProjectError(Exception):
     """

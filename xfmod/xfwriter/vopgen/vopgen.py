@@ -12,7 +12,7 @@ import gc
 import ast
 import getopt
 import scipy.io as spio
-from xfutils.xfproject import XFProjectInfo
+from xfutils import XFProjectInfo
 import xfwriter.vopgen
 
 def vopgen_all(arg_dict):
