@@ -7,13 +7,13 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 import sys, os
 import unittest
-from xfutils import xf_run_id_to_str, xf_sim_id_to_str
+from xfmod.xfutils import xf_run_id_to_str, xf_sim_id_to_str
 import numpy as np
-import xfgeomod
+from xfmod import xfgeomod
 
 # Location of Test_Coil.xf XFdtd project relative to this file.
 test_project_dir = os.path.normpath(os.path.join(os.path.realpath(__file__),
-                                                 '..', '..', '..',
+                                                 '..', '..', '..', '..',
                                                   'Test_Data', 'Test_Coil.xf'))
 test_sim_number = 1
 test_run_number = 1

@@ -8,10 +8,10 @@ from __future__ import(absolute_import, division, generators,
 
 import sys, os
 import unittest
-import xfsystem
+from xfmod import xfsystem
 
 TEST_COIL_DIR = os.path.normpath(os.path.join(os.path.realpath(__file__), 
-                                              '..', '..', '..',
+                                              '..', '..', '..', '..',
                                               'Test_Data', 'Test_Coil.xf'))
 SYSTEM_SSOUT = os.path.normpath(os.path.join(TEST_COIL_DIR, 'Simulations', 
                                              '000001','Run0001','output',
@@ -36,7 +36,7 @@ class testXFSystemFile(unittest.TestCase):
     def test_system_computed_power(self):
         """Test computed power values."""
         print(self.id())
-        self.assertAlmostEqual(5.10857e-5, self.xfSystem.net_input_power)
+        self.assertAlmostEqual(5.78071e-5, self.xfSystem.net_input_power)
         
 
 if __name__ == '__main__':

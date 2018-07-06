@@ -11,9 +11,9 @@ import ast
 import getopt
 import numpy as np
 import scipy.io as spio
-import xfgeomod
-from xfwriter import XFMatWriterUniform
-from xfutils import xf_regrid_3d_nearest
+import xfmod.xfgeomod
+from xfmod.xfwriter import XFMatWriterUniform
+from xfmod.xfutils import xf_regrid_3d_nearest
 
 class XFGridDataWriterUniform(XFMatWriterUniform):
     """Write XFdtd grid data to mat file on uniform grid."""

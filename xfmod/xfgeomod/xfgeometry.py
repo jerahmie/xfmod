@@ -9,8 +9,8 @@ from __future__ import (absolute_import, division, generators,
 
 import re
 import os
-from xfutils import xf_run_id_to_str, xf_sim_id_to_str
-from xfgeomod import XFGridData, XFMaterial
+from xfmod.xfutils import xf_run_id_to_str, xf_sim_id_to_str
+from xfmod.xfgeomod import XFGridData, XFMaterial
 
 # Regex expressions
 _MAT_FREESPACE_PATTERN = r'^begin_<electricfreespace> ' + \

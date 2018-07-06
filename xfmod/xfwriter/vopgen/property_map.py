@@ -7,10 +7,10 @@ from __future__ import (absolute_import, division,
 
 import numpy as np
 import scipy.io as spio
-from xfutils import xf_regrid_3d_nearest as regrid3d
-from xfgeomod import XFMesh, XFGeometry, XFGridExporter
-from xfwriter import XFMatWriterUniform, XFGridDataWriterUniform
-from xfwriter.vopgen.sarmask import VopgenSarMask
+from xfmod.xfutils import xf_regrid_3d_nearest as regrid3d
+from xfmod.xfgeomod import XFMesh, XFGeometry, XFGridExporter
+from xfmod.xfwriter import XFMatWriterUniform, XFGridDataWriterUniform
+from xfmod.xfwriter.vopgen.sarmask import VopgenSarMask
 
 class VopgenPropertyMap(XFMatWriterUniform):
     """Matlab writer for 4-D conductivity and mass density maps."""

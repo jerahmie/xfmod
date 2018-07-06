@@ -9,9 +9,9 @@ import abc
 from math import sqrt
 import numpy as np
 import scipy.io as spio
-from xfwriter import XFMatWriter
-from xfsystem import XFSystem
-from xfmatgrid import XFFieldNonUniformGrid
+from xfmod.xfwriter import XFMatWriter
+from xfmod.xfsystem import XFSystem
+from xfmod.xfmatgrid import XFFieldNonUniformGrid
 
 class XFFieldError(Exception):
     """

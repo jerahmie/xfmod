@@ -4,8 +4,8 @@ Grid data exporter on simulation grid.
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
-import xfgeomod
-from xfwriter import XFMatWriter
+import xfmod.xfgeomod
+from xfmod.xfwriter import XFMatWriter
 
 class XFGridDataWriterNonUniform(XFMatWriter):
     """Write XFdtd grid data to mat file on native simulation grid."""

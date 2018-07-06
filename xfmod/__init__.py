@@ -8,7 +8,8 @@
 """
 
 # Import the required submodules
-#from .xfutils import xfutils, xfregrid, xfproject
-
-
-
+from . import xfutils
+from . import xfgeomod
+from . import xfmatgrid
+from . import xfsystem
+from . import xfwriter

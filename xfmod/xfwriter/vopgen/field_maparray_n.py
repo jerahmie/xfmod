@@ -7,8 +7,8 @@ from __future__ import (absolute_import, division,
 
 import numpy as np
 import scipy.io as spio
-from xfsystem import XFSystem
-from xfwriter import XFFieldWriterUniform
+from xfmod.xfsystem import XFSystem
+from xfmod.xfwriter import XFFieldWriterUniform
 
 class VopgenFieldMapArrayN(XFFieldWriterUniform):
     """Matlab writer base class for 5-D Field data."""

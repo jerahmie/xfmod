@@ -7,12 +7,12 @@ from __future__ import(absolute_import, division, generators,
                        print_function, unicode_literals)
 import os
 import unittest
-import xfmatgrid
+from xfmod import xfmatgrid
 
 TEST_FREQUENCY = 296500000.0  # 296.5 MHz
 
 TEST_COIL_DIR = os.path.normpath(os.path.join(os.path.realpath(__file__),
-                                              '..', '..', '..',
+                                              '..', '..', '..', '..',
                                               'Test_Data', 'Test_Coil.xf'))
 
 RUN_OUT_DIR = os.path.join(TEST_COIL_DIR, 'Simulations', '000001',

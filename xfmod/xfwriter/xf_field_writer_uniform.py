@@ -12,10 +12,10 @@ import getopt
 import numpy as np
 import scipy.io as spio
 from scipy.interpolate import griddata
-import xfsystem
-from xfmatgrid import XFFieldNonUniformGrid
-from xfutils import xf_regrid_3d_nearest
-from xfwriter import XFFieldWriter
+from xfmod import xfsystem
+from xfmod.xfmatgrid import XFFieldNonUniformGrid
+from xfmod.xfutils import xf_regrid_3d_nearest
+from xfmod.xfwriter import XFFieldWriter
 
 class XFFieldWriterUniform(XFFieldWriter):
     """Writes XFdtd field data to mat file on uniform grid. """

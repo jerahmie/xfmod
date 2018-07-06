@@ -7,10 +7,10 @@ from __future__ import (absolute_import, division,
 
 import numpy as np
 import scipy.io as spio
-from xfutils import xf_regrid_3d_nearest
-from xfgeomod import XFMesh, XFGeometry, XFGridExporter
-from xfwriter import XFMatWriterUniform
-from xfwriter.vopgen.removeNaNs import removeNaNs
+from xfmod.xfutils import xf_regrid_3d_nearest
+from xfmod.xfgeomod import XFMesh, XFGeometry, XFGridExporter
+from xfmod.xfwriter import XFMatWriterUniform
+from xfmod.xfwriter.vopgen.removeNaNs import removeNaNs
 
 # threshold for scaling/rounding to ensure tissue only if ex, ey, and ez grid
 # values are tissue.

@@ -9,12 +9,14 @@ import os
 import re
 from glob import glob
 import numpy as np
-from xfmatgrid.xfmultipoint import (XFMultiPointInfo, XFMultiPointFrequencies,
-                                    XFMultiPointGeometry, XFMultiPointSSField)
-from xfutils import xf_sim_id_to_str, xf_run_id_to_str
-from xfgeomod import XFGeometry
+from xfmod.xfmatgrid.xfmultipoint import (XFMultiPointInfo,
+                                          XFMultiPointFrequencies,
+                                          XFMultiPointGeometry,
+                                          XFMultiPointSSField)
+from xfmod.xfutils import xf_sim_id_to_str, xf_run_id_to_str
+from xfmod.xfgeomod import XFGeometry
 
-MP_SS_RE = r'(.*)(MultiPoint_Field_Sensor_[0-9]+)'
+MP_SS_RE = r'(.*)(MultiPoint_Solid_Sensor1_[0-9]+)'
 
 class XFFieldNonUniformGrid(object):
     """Holds XF field data on non-uniform grid."""
@@ -24,6 +26,8 @@ class XFFieldNonUniformGrid(object):
         self._project_dir = xf_project_dir
         self._sim_id = int(sim_id)
         self._run_id = int(run_id)
+#        self._mp_ss_info_file = []
+#        self._mp_ss_info = None
         self._set_mp_info()
         self._set_data_dirs()
         self._mp_field_types = []
@@ -58,7 +62,7 @@ class XFFieldNonUniformGrid(object):
                                         xf_sim_id_to_str(self._sim_id),
                                         xf_run_id_to_str(self._run_id),
                                         r'output',
-                                        r'MultiPoint_Field_Sensor_*_info.bin')
+                                        r'MultiPoint_*_Sensor*_info.bin')
             self._mp_ss_info_file = glob(mp_info_file)
             self._mp_ss_info = XFMultiPointInfo(self._mp_ss_info_file[0])
 

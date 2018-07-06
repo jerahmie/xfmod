@@ -11,11 +11,12 @@ from os.path import (normpath, join)
 import unittest
 import scipy.io as spio
 import numpy as np
-import xfwriter
+from xfmod import xfwriter
 
 FILE_PATH=os.path.realpath(__file__)
 
-TEST_PROJECT_DIR = normpath(join(FILE_PATH, '..', '..', '..',
+TEST_PROJECT_DIR = normpath(join(FILE_PATH,
+                                 '..', '..', '..', '..',
                                  'Test_Data', 'Test_Coil.xf'))
 TEST_SIM_NUMBER = 1
 TEST_RUN_NUMBER = 1

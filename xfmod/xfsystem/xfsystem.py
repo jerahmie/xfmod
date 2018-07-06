@@ -8,7 +8,7 @@ from __future__ import (absolute_import, division, generators,
 
 import os
 import re
-from xfutils import xf_sim_id_to_str, xf_run_id_to_str
+from xfmod.xfutils import xf_sim_id_to_str, xf_run_id_to_str
 
 STEADY_STATE_FREQ_RE = r"begin_<SteadyStateFrequency>\s*\n" + \
                        r"Frequency\s*([0-9.eE\-+]*)\s*\n" + \

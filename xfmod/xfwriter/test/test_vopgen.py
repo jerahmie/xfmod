@@ -10,11 +10,11 @@ from os.path import normpath, dirname, realpath, join, isfile
 import unittest
 import numpy as np
 import scipy.io as spio
-from xfutils.xfproject import XFProjectInfo
-import xfwriter.vopgen
+from xfmod.xfutils.xfproject import XFProjectInfo
+from xfmod import xfwriter
 
 COIL_XF_PATH = normpath(join(realpath(__file__),
-                             '..', '..', '..',
+                             '..', '..', '..', '..',
                              'Test_Data',
                              'Test_Coil.xf'))
 
