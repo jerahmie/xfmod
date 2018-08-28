@@ -14,6 +14,7 @@ from tkinter import ttk
 from threading import Thread
 import multiprocessing as mp
 import multiprocessing.queues as mpq
+import xfmod
 
 class StdoutQueue(mpq.Queue):
     """
@@ -44,6 +45,7 @@ class VopgenGUI(object):
     def __init__(self, master):
         self.initial_dir = os.getenv("HOME")
         self.master = master
+        self.compute_p = None  # compute process
 
         # GUI element: Title
         self.master.title("XFmod Vopgen Export")
@@ -98,15 +100,23 @@ class VopgenGUI(object):
         self.process_button = ttk.Button(self.master, text = "Export",
                                          command = self.export_vopgen)
         self.process_button.grid(row = 7, column = 1)
+        self.stop_button = ttk.Button(self.master, text = "Stop",
+                                      command = self.stop_vopgen)
+        self.stop_button.grid(row = 7, column = 2)
         self.quit_button = ttk.Button(self.master, text = "Quit",
                                       command = self.close_window)
-        self.quit_button.grid(row = 7, column = 2)
+        self.quit_button.grid(row = 7, column = 3)
 
         # Instantiate and start text monitor
         self.q = StdoutQueue()
         monitor = Thread(target = text_catcher, args = (self.text_box, self.q))
         monitor.daemon = True
         monitor.start()
+
+        # Instantiate the process monitor
+        p_monitor = Thread(target = self.process_monitor, args=())
+        p_monitor.daemon = True
+        p_monitor.start()
 
         # Redirect stdout to tkinter textbox
         sys.stdout = self.q
@@ -115,7 +125,21 @@ class VopgenGUI(object):
         """
         Execute vopgen exporter process.
         """
+        self.process_button['state'] = 'disabled'
         print("Processing XFdtd Project: ", self.entry_xf_proj.get())
+        self.compute_p = mp.Process(target=worker_function, args =(self.q,))
+        self.compute_p.start()
+        #self.process_button['state'] = 'normal'
+
+    def stop_vopgen(self):
+        """
+        Stop the vopgen exporter and reset
+        """
+        if self.compute_p is not None:
+            if self.compute_p.is_alive():
+                self.compute_p.terminate()
+            self.compute_p.join()
+            self.process_button['state'] = 'normal'
 
     def choose_project(self):
         """
@@ -137,6 +161,33 @@ class VopgenGUI(object):
         close main window and exit.
         """
         self.master.quit()
+        if self.compute_p is not None:
+            if self.compute_p.is_alive():
+                self.compute_p.terminate()
+            self.compute_p.join()
+
+    def process_monitor(self):
+        """
+        check the compute process. If not alive, join and reset gui.
+        """
+        while True:
+            sleep(0.5)
+            if (self.compute_p is not None) and (self.compute_p.exitcode == 0):
+                self.compute_p.join()
+                self.process_button['state'] = 'normal'
+
+            
+
+
+def worker_function(q):
+    """
+    wrapper for worker function.
+    """
+    sys.stdout = q
+    print("in worker function")
+    for i in range(10):
+        sleep(1)
+        print(i)
 
 if __name__ == '__main__':
     vg = VopgenGUI(tk.Tk())
