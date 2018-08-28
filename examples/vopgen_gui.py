@@ -14,7 +14,7 @@ from tkinter import ttk
 from threading import Thread
 import multiprocessing as mp
 import multiprocessing.queues as mpq
-import xfmod
+from xfmod import *
 
 class StdoutQueue(mpq.Queue):
     """
@@ -42,8 +42,9 @@ class VopgenGUI(object):
     """
     Class to represent the tkinter-based vopgen exporter
     """
-    def __init__(self, master):
-        self.initial_dir = os.getenv("HOME")
+    def __init__(self, master, x0=('0.0','0.0','0.0'), dx0=('2.0','2.0','2.0'),
+                 initial_dir = os.getenv("HOME")):
+        self.initial_dir = initial_dir
         self.master = master
         self.compute_p = None  # compute process
 
@@ -55,6 +56,7 @@ class VopgenGUI(object):
                   font = ("Arial", 12)).grid(row = 1, column = 0)
         self.entry_xf_proj = ttk.Entry(self.master, text = "", exportselection = 0)
         self.entry_xf_proj.grid(row = 1, column = 1, columnspan = 2, sticky=tk.W+tk.E)
+        self.entry_xf_proj.insert(tk.END, self.initial_dir)
 
         ttk.Label(self.master, text = 'origin (mm)',
                   font = ("Arial", 10)).grid(row = 3, column = 0)
@@ -64,12 +66,18 @@ class VopgenGUI(object):
                   font = ("Arial", 10)).grid(row = 2, column = 2)
         ttk.Label(self.master, text = 'z0',
                   font = ("Arial", 10)).grid(row = 2, column = 3)
-        self.entry_x0 = ttk.Entry(self.master, text = "", exportselection = 0)
+        self.entry_x0 = ttk.Entry(self.master, text = "",
+                                  exportselection = 0, justify = 'right')
         self.entry_x0.grid(row = 3, column = 1)
-        self.entry_y0 = ttk.Entry(self.master, text = "", exportselection = 0)
+        self.entry_x0.insert(tk.END, x0[0])
+        self.entry_y0 = ttk.Entry(self.master, text = "",
+                                  exportselection = 0, justify = 'right')
         self.entry_y0.grid(row = 3, column = 2)
-        self.entry_z0 = ttk.Entry(self.master, text = "", exportselection = 0)
+        self.entry_y0.insert(tk.END, x0[1])
+        self.entry_z0 = ttk.Entry(self.master, text = "",
+                                  exportselection = 0, justify = 'right')
         self.entry_z0.grid(row = 3, column = 3)
+        self.entry_z0.insert(tk.END, x0[2])
 
         ttk.Label(self.master, text = 'resolution (mm)', 
                   font = ("Arial", 10)).grid(row = 5, column = 0)
@@ -80,12 +88,18 @@ class VopgenGUI(object):
         ttk.Label(self.master, text = 'dz',
                   font = ("Arial", 10)).grid(row = 4, column = 3)
 
-        self.entry_dx = ttk.Entry(self.master, text = "", exportselection = 0)
+        self.entry_dx = ttk.Entry(self.master, text = "",
+                                  exportselection = 0, justify = 'right')
         self.entry_dx.grid(row = 5, column = 1)
-        self.entry_dy = ttk.Entry(self.master, text = "", exportselection = 0)
+        self.entry_dx.insert(tk.END, dx0[0])
+        self.entry_dy = ttk.Entry(self.master, text = "",
+                                  exportselection = 0, justify = 'right')
         self.entry_dy.grid(row = 5, column = 2)
-        self.entry_dz = ttk.Entry(self.master, text = "", exportselection = 0)
+        self.entry_dy.insert(tk.END, dx0[1])
+        self.entry_dz = ttk.Entry(self.master, text = "",
+                                  exportselection = 0, justify = 'right')
         self.entry_dz.grid(row = 5, column = 3)
+        self.entry_dz.insert(tk.END, dx0[2])
 
         # GUI element: text output window
         self.frame = tk.Frame(master)
@@ -127,7 +141,15 @@ class VopgenGUI(object):
         """
         self.process_button['state'] = 'disabled'
         print("Processing XFdtd Project: ", self.entry_xf_proj.get())
-        self.compute_p = mp.Process(target=worker_function, args =(self.q,))
+        self.compute_p = mp.Process(target=worker_function,
+                                    args =(self.q, self.entry_xf_proj.get(),
+                                           (float(self.entry_x0.get()),
+                                            float(self.entry_y0.get()),
+                                            float(self.entry_z0.get())),
+                                           (float(self.entry_dx.get()),
+                                            float(self.entry_dy.get()),
+                                            float(self.entry_dz.get())),))
+                                           
         self.compute_p.start()
         #self.process_button['state'] = 'normal'
 
@@ -176,18 +198,21 @@ class VopgenGUI(object):
                 self.compute_p.join()
                 self.process_button['state'] = 'normal'
 
-            
-
-
-def worker_function(q):
+def worker_function(q, project_path, origin, resolution):
     """
     wrapper for worker function.
     """
     sys.stdout = q
     print("in worker function")
-    for i in range(10):
-        sleep(1)
-        print(i)
+    print("   Project: ", project_path)
+    print("    origin: ", origin)
+    print("resolution: ", resolution)
+    arg_dict = {'xf_project':project_path,
+                'export_dir':os.path.join(project_path, 'Export','Vopgen'),
+                'origin':origin,
+                'deltas':resolution,
+                'lengths':(100, 100, 100)}
+    xfwriter.vopgen.vopgen_all(arg_dict)
 
 if __name__ == '__main__':
     vg = VopgenGUI(tk.Tk())

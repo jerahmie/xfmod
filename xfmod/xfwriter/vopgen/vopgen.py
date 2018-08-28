@@ -12,8 +12,9 @@ import gc
 import ast
 import getopt
 import scipy.io as spio
-from xfutils import XFProjectInfo
-import xfwriter.vopgen
+from xfmod.xfutils import XFProjectInfo
+#import xfmod.xfwriter.vopgen
+from xfmod import xfwriter
 
 def vopgen_all(arg_dict):
     """Run all vopgen writers."""
