@@ -6,6 +6,7 @@ base_url="http://www2.cmrr.umn.edu/~jerahmie"
 # Test files
 test_files=('Custom_Cosim.xf.tar.gz' \
                 'Test_Coil.xf.tar.gz' \
+		'Test_Coil_v771.xf.tar.gz' \
                 'green_coil_7T_duke_2mm_vopgen.tar.gz' \
                 'project-s11.cti')
 
