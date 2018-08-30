@@ -7,12 +7,8 @@ from __future__ import absolute_import, division, generators, print_function
 
 import os
 import struct
-<<<<<<< HEAD:xfmod/xfgeomod/xfmesh.py
 from xfmod.xfutils import xf_run_id_to_str, xf_sim_id_to_str
-=======
 from math import floor
-from xfutils import xf_run_id_to_str, xf_sim_id_to_str
->>>>>>> issue0017:xfgeomod/xfmesh.py
 
 class XFMeshEdgeRun(object):
     """

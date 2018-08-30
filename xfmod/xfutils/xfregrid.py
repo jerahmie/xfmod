@@ -8,11 +8,6 @@ from __future__ import (absolute_import, division,
 import sys
 import numpy as np
 from scipy.interpolate import griddata
-try:
-    from tqdm import tqdm
-except ImportError:
-    def tqdm(iterator):
-        return iterator
 
 class XFRegridError(Exception):
     """Exception xf data regridding."""
@@ -63,7 +58,8 @@ def xf_regrid_3d_nearest(X1, X2, data3d):
     XX1, YY1 = np.meshgrid(x1, y1, indexing='ij')
     XX2, YY2 = np.meshgrid(x2, y2, indexing='ij')
     z_interp_ind = 0
-    for z_ind in tqdm(z_ind_nearest):
+
+    for z_ind in z_ind_nearest:
         data3d_regrid[:, :, z_interp_ind] = griddata((XX1.ravel(),
                                                       YY1.ravel()),
                                                      data3d[:, :, z_ind].ravel(),
