@@ -259,6 +259,7 @@ def worker_function(q, project_path, roi_origin, roi_resolution, roi_dim):
     print("Done.")
 
 if __name__ == '__main__':
+    mp.freeze_support() # prevent new windows during multiprocessing calls
     root = tk.Tk()
     root.resizable(False, False)
     vg = VopgenGUI(root)
