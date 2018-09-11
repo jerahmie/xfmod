@@ -44,7 +44,7 @@ class VopgenGUI(object):
     """
     def __init__(self, master, x0=('0.0','0.0','0.0'), dx0=('2.0','2.0','2.0'),
                  lx0=('100.0','100.0', '100.0'),
-                 initial_dir = os.getenv("HOME")):
+                 initial_dir = os.path.expanduser('~')):
         self.initial_dir = initial_dir
         self.master = master
         self.compute_p = None  # compute process
