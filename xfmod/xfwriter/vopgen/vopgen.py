@@ -142,7 +142,7 @@ def usage(exit_status = None):
     print("Example: ")
     print("  $ vopgen.py --xf_project='my_project.xf' --export_dir='/path/to/export' \ ")
     print("              --origin='[0.0,0.0,0.0]' --lengths='[0.01,0.01,0.02]' \ ")
-    print("              --deltas='[0.02, 0.02, 0.02]'\n")
+    print("              --deltas='[0.002, 0.002, 0.002]'\n")
     if exit_status:
         sys.exit(exit_status)
     else:
