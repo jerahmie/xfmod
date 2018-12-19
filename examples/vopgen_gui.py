@@ -31,7 +31,7 @@ class StdoutQueue(mpq.Queue):
 
 def text_catcher(text_widget, queue):
     """
-    Helper function to tunnel queue text to text widget. 
+    Helper function to tunnel queue text to text widget.
     """
     while True:
         sleep(0.001)
@@ -51,11 +51,11 @@ class VopgenGUI(object):
 
         # GUI element: Title
         self.master.title("XFmod Vopgen Export")
-        ttk.Label(self.master, text = "Vopgen Exporter", 
+        ttk.Label(self.master, text = "Vopgen Exporter",
                   font = ("Arial", 16)).grid(row = 0, column = 0)
 
         # GUI element: Project browser
-        ttk.Label(self.master, text = "XF Input Project: ", 
+        ttk.Label(self.master, text = "XF Input Project: ",
                   font = ("Arial", 12)).grid(row = 1, column = 0)
         self.entry_xf_proj = ttk.Entry(self.master, text = "", exportselection = 0)
         self.entry_xf_proj.grid(row = 1, column = 1, columnspan = 2, sticky=tk.W+tk.E)
@@ -84,7 +84,7 @@ class VopgenGUI(object):
         self.entry_z0.insert(tk.END, x0[2])
 
         # GUI element: resolution entry
-        ttk.Label(self.master, text = 'resolution (mm)', 
+        ttk.Label(self.master, text = 'resolution (mm)',
                   font = ("Arial", 10)).grid(row = 5, column = 0)
         ttk.Label(self.master, text = 'dx',
                   font = ("Arial", 10)).grid(row = 4, column = 1)
@@ -107,7 +107,7 @@ class VopgenGUI(object):
         self.entry_dz.insert(tk.END, dx0[2])
 
         # GUI element: export ROI dimensions
-        ttk.Label(self.master, text = 'ROI dimensions (mm)', 
+        ttk.Label(self.master, text = 'ROI dimensions (mm)',
                   font = ("Arial", 10)).grid(row = 7, column = 0)
         ttk.Label(self.master, text = 'Lx',
                   font = ("Arial", 10)).grid(row = 6, column = 1)
@@ -182,7 +182,6 @@ class VopgenGUI(object):
                                             float(self.entry_ly.get()),
                                             float(self.entry_lz.get())),
                                     ))
-                                           
         self.compute_p.start()
 
     def stop_vopgen(self):
@@ -209,7 +208,7 @@ class VopgenGUI(object):
         self.entry_xf_proj.insert(0, directory_path)
 
         return directory_path
-    
+
     def close_window(self):
         """
         close main window and exit.
@@ -241,7 +240,7 @@ def worker_function(q, project_path, roi_origin, roi_resolution, roi_dim):
     print("    origin: ", roi_origin)
     print("resolution: ", roi_resolution)
     print(" dimension: ", roi_dim)
-    
+
     arg_dict = {'xf_project':project_path,
                 'export_dir':os.path.join(project_path, 'Export','Vopgen'),
                 'origin':(float(roi_origin[0])/1000.0,
