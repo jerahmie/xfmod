@@ -62,7 +62,7 @@ def xf_regrid_3d_nearest(X1, X2, data3d):
     for z_ind in z_ind_nearest:
         data3d_regrid[:, :, z_interp_ind] = griddata((XX1.ravel(),
                                                       YY1.ravel()),
-                                                     data3d[:, :, z_ind].ravel(),
+                                                     data3d[:,:,z_ind].ravel(),
                                                      (XX2, YY2),
                                                      method='nearest')
         z_interp_ind += 1

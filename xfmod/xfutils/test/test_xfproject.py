@@ -9,8 +9,8 @@ from __future__ import (absolute_import, division, generators,
 from os import path, makedirs
 from shutil import rmtree
 import unittest
-from xfutils import (xf_sim_id_to_str, xf_run_id_to_str, 
-                     XFProjectInfo, XFProjectError)
+from xfmod.xfutils import (xf_sim_id_to_str, xf_run_id_to_str, 
+                           XFProjectInfo, XFProjectError)
 
 _MOCK_XF_PROJECT = 'mock.xf'
 
@@ -33,6 +33,7 @@ class TestXFProject(unittest.TestCase):
                 makedirs(sim_run_dir)
             cls._sim_run_list[sim_id - 1] = run_list
 
+
     def setUp(self):
         pass
 
@@ -43,6 +44,7 @@ class TestXFProject(unittest.TestCase):
         """
         xfmt = XFProjectInfo()
         xfmt.xf_project_dir(_MOCK_XF_PROJECT)
+
         self.assertEqual(self._sim_run_list, xfmt.xf_sim_run_list)
         with self.assertRaises(FileNotFoundError) as err:
             xfmt.xf_project_dir('/my/bad/project.xf')
@@ -59,12 +61,12 @@ class TestXFProject(unittest.TestCase):
         print(self.id())
         mock_info = XFProjectInfo(_MOCK_XF_PROJECT)
         self.assertEqual(self._sim_run_list, mock_info.xf_sim_run_list)
-        
+
     def test_coil_xf(self):
         """Test XFProject info run list against Test_Coil.xf"""
         print(self.id())
         xf_test_coil_path = path.normpath(path.join(path.realpath(__file__),
-                                                    '..', '..', '..',
+                                                    '..', '..', '..', '..',
                                                     'Test_Data',
                                                     'Test_Coil.xf'))
         xf_test_coil_info = XFProjectInfo(xf_test_coil_path)

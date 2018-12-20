@@ -16,19 +16,20 @@ from xfmod.xfmatgrid.xfmultipoint import (XFMultiPointInfo,
 from xfmod.xfutils import xf_sim_id_to_str, xf_run_id_to_str
 from xfmod.xfgeomod import XFGeometry
 
-MP_SS_RE = r'(.*)(MultiPoint_Solid_Sensor1_[0-9]+)'
 
 class XFFieldNonUniformGrid(object):
     """Holds XF field data on non-uniform grid."""
-    def __init__(self, xf_project_dir, sim_id, run_id):
+    def __init__(self, xf_project_dir, sim_id, run_id, mp_sensor_name):
         self._valid_types = [r'E', r'H', r'B', r'J']
         self._valid_components = [r'x', r'y', r'z']
         self._project_dir = xf_project_dir
         self._sim_id = int(sim_id)
         self._run_id = int(run_id)
-#        self._mp_ss_info_file = []
-#        self._mp_ss_info = None
-        self._set_mp_info()
+        self._mp_sensor_name_re  = r'(.*)(MultiPoint_' + mp_sensor_name \
+                                   + r'_[0-9]+)'
+        self._mp_ss_info_file = []
+        self._mp_ss_info = None
+        self._set_mp_info(r'MultiPoint_' + mp_sensor_name + '*_info.bin')
         self._set_data_dirs()
         self._mp_field_types = []
         self._xdim = np.zeros(1)
@@ -54,7 +55,7 @@ class XFFieldNonUniformGrid(object):
         temp_dim = np.array(self._xf_grid.grid_data.z_coods())
         self._zdim = temp_dim[self._mp_geom.z_domain]
 
-    def _set_mp_info(self):
+    def _set_mp_info(self, mp_ss_info_file_name):
         """Load multipoint sensor info."""
         if os.path.exists(self._project_dir):
             mp_info_file = os.path.join(self._project_dir,
@@ -62,7 +63,8 @@ class XFFieldNonUniformGrid(object):
                                         xf_sim_id_to_str(self._sim_id),
                                         xf_run_id_to_str(self._run_id),
                                         r'output',
-                                        r'MultiPoint_*_Sensor*_info.bin')
+                                        mp_ss_info_file_name)
+
             self._mp_ss_info_file = glob(mp_info_file)
             self._mp_ss_info = XFMultiPointInfo(self._mp_ss_info_file[0])
 
@@ -72,8 +74,10 @@ class XFFieldNonUniformGrid(object):
     def _set_data_dirs(self):
         """Set the project directory and set sensor file location."""
         try:
-            print("Info file",self._mp_ss_info_file[0])
-            mp_sensor_dir = re.match(MP_SS_RE, self._mp_ss_info_file[0])
+            print(self._mp_ss_info_file[0])
+            
+            mp_sensor_dir = re.match(self._mp_sensor_name_re,
+                                     self._mp_ss_info_file[0])
             self._mp_frequencies_file = os.path.join(mp_sensor_dir.group(1),
                                                      mp_sensor_dir.group(2),
                                                      r'frequencies.bin')

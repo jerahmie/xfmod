@@ -32,7 +32,7 @@ class XFProjectInfo(object):
         try:
             sims = [os.path.join(self._xf_project_dir, 'Simulations', sim) \
                     for sim in os.listdir(sims_dir) if re.search(sim_re, sim)]
-            max_sim = len(sims)
+            max_sim = int(os.path.basename(os.path.normpath(sims[-1])))
             self._xf_sim_run = [[]] * max_sim
             for sim in sims:
                 sim_index = int(os.path.basename(sim)) - 1

@@ -9,13 +9,14 @@ from __future__ import (absolute_import, division, generators,
 import sys, os
 import unittest
 import numpy as np
-import xfmatgrid, xfutils
+from xfmod import xfmatgrid, xfutils
 
 TEST_COIL_DIR = os.path.normpath(os.path.join(os.path.realpath(__file__),
-                                              '..','..','..',
+                                              '..', '..', '..', '..',
                                               'Test_Data', 'Test_Coil.xf'))
 RUN_OUT_DIR = os.path.join(TEST_COIL_DIR, 'Simulations', '000001',
                            'Run0001', 'output')
+SOLID_SENSOR_NAME = r'Solid_Sensor1'
 try:
     import matplotlib.pyplot as plt
     from matplotlib import cm
@@ -35,9 +36,9 @@ class TestRegrid(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         print("Executing tests in " + __file__)
-        cls.field_nugrid = xfmatgrid.XFFieldNonUniformGrid(TEST_COIL_DIR, 1, 1)
-        
-
+        cls.field_nugrid = xfmatgrid.XFFieldNonUniformGrid(TEST_COIL_DIR,
+                                                           1, 1,
+                                                           SOLID_SENSOR_NAME)
     def setUp(self):
         n2 = 64
         self.x2 = np.linspace(-5.0, 5.0, num=n2)

@@ -9,7 +9,7 @@ from __future__ import (absolute_import, division, generators,
 import sys
 import os
 import unittest
-import xfutils
+import xfmod.xfutils as xfutils
 
 class TestXFUtils(unittest.TestCase):
     """Unit tests for xfutils module."""
