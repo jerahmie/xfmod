@@ -19,9 +19,10 @@ from xfmod.xfwriter import XFFieldWriter
 
 class XFFieldWriterUniform(XFFieldWriter):
     """Writes XFdtd field data to mat file on uniform grid. """
-    def __init__(self, xf_project_dir, sim_id, run_id):
+    def __init__(self, xf_project_dir, sim_id, run_id, mp_sensor_name):
         self._field_nonuniform_grid = XFFieldNonUniformGrid(xf_project_dir,
-                                                            sim_id, run_id)
+                                                            sim_id, run_id,
+                                                            mp_sensor_name)
         self._xf_sys = xfsystem.XFSystem(xf_project_dir, sim_id, run_id)
         self._fx_original = None
         self._fy_original = None
@@ -156,7 +157,7 @@ def main(argv):
     """Parse command line arguments and make call to exporter."""
     arg_dict = {}
     switches = {'origin':list, 'lengths':list, 'deltas':list,
-                'xf_project':str, 'run':str, 'sim':str,
+                'xf_project':str, 'sim':str, 'run':str, 'mp_sensor':str,
                 'net_input_power':str, 'export_file':str, 'field':str}
     singles = ''
     long_form = [x + '=' for x in switches]
@@ -199,7 +200,8 @@ def main(argv):
 
     xf_field_writer = XFFieldWriterUniform(arg_dict['xf_project'],
                                            int(arg_dict['sim']),
-                                           int(arg_dict['run']))
+                                           int(arg_dict['run']),
+                                           arg_dict['mp_sensor'])
     xf_field_writer.set_grid_origin(arg_dict['origin'][0],
                                     arg_dict['origin'][1],
                                     arg_dict['origin'][2])

@@ -221,12 +221,16 @@ Z_DIM_VALS = [-2.05277938e-02, -1.86039625e-02, -1.66801312e-02, \
               3.04651386e-01, 3.06644549e-01, 3.08637712e-01, 3.10630875e-01, \
               3.12624038e-01, 3.14617201e-01]
 
+
+MP_SENSOR_NAME = r'Solid_Sensor1'
+
 class TestXFMatGrid(unittest.TestCase):
     """Tests for xfmatgrid module."""
     @classmethod
     def setUpClass(cls):
         print('Executing tests in ' + __file__)
-        cls.field_nugrid = xfmatgrid.XFFieldNonUniformGrid(TEST_COIL_DIR, 1, 1)
+        cls.field_nugrid = xfmatgrid.XFFieldNonUniformGrid(TEST_COIL_DIR,
+                                                           1, 1, MP_SENSOR_NAME)
 
     def setUp(self):
         self.fieldName = r'B'

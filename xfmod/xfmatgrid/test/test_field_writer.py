@@ -19,11 +19,14 @@ TEST_COIL_DIR = os.path.normpath(os.path.join(os.path.realpath(__file__),
 RUN_OUT_DIR = os.path.join(TEST_COIL_DIR, 'Simulations', '000001',
                            'Run0001', 'output')
 
+MP_SENSOR_NAME = r'Solid_Sensor1'
+
 class TestXFFieldWriter(unittest.TestCase):
     """Tests for the XFFieldWriter."""
     @classmethod
     def setUpClass(cls):
-        cls.field_nugrid = xfmatgrid.XFFieldNonUniformGrid(TEST_COIL_DIR, 1, 1)
+        cls.field_nugrid = xfmatgrid.XFFieldNonUniformGrid(TEST_COIL_DIR,
+                                                           1, 1, MP_SENSOR_NAME)
 
     def setUp(self):
         self.field_name = r'B'

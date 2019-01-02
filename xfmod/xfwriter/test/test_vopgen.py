@@ -32,6 +32,8 @@ MASS_DENSITY_MAP_3D_FILE = normpath(join(dirname(realpath(__file__)),
 SIM_ID = 1
 RUN_ID = 1
 
+MP_SENSOR_NAME = r'Solid_Sensor1'
+
 # Uniform grid resolution
 DX = 0.002 # m
 DY = 0.002 # m
@@ -83,7 +85,9 @@ class TestVopgenWriter(unittest.TestCase):
         png images of the electric field regions for efMapArrayN.mat
         """
         print(self.id())
-        tvopgen = xfwriter.vopgen.VopgenEFMapArrayN(COIL_XF_PATH, self.sim_ids)
+        tvopgen = xfwriter.vopgen.VopgenEFMapArrayN(COIL_XF_PATH,
+                                                    self.sim_ids,
+                                                    MP_SENSOR_NAME)
         tvopgen.set_grid_origin(X0, Y0, Z0)
         self.assertEqual(X0, tvopgen._x0)
         self.assertEqual(Y0, tvopgen._y0)
@@ -122,7 +126,8 @@ class TestVopgenWriter(unittest.TestCase):
         png images of the magnetic field regions for bfMapArrayN.mat
         """
         print(self.id())
-        tvopgen = xfwriter.vopgen.VopgenBFMapArrayN(COIL_XF_PATH, self.sim_ids)
+        tvopgen = xfwriter.vopgen.VopgenBFMapArrayN(COIL_XF_PATH, self.sim_ids,
+                                                    MP_SENSOR_NAME)
         tvopgen.set_grid_origin(X0, Y0, Z0)
         self.assertEqual(X0, tvopgen._x0)
         self.assertEqual(Y0, tvopgen._y0)

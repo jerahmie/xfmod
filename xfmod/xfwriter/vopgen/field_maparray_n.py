@@ -45,7 +45,7 @@ class VopgenFieldMapArrayN(XFFieldWriterUniform):
         for coil_index, sim_id in enumerate(self._sim_ids):
             print("SimID: ", sim_id, "/", self._sim_ids)
             field_uniform_wr = XFFieldWriterUniform(self._xf_project_dir,
-                                                    sim_id, 1)
+                                                    sim_id, 1, self._mp_sensor_name)
             field_uniform_wr.set_grid_origin(self._x0, self._y0, self._z0)
             field_uniform_wr.set_grid_len(self._xlen, self._ylen, self._zlen)
             field_uniform_wr.set_grid_resolution(self._dx, self._dy, self._dz)
@@ -58,9 +58,10 @@ class VopgenFieldMapArrayN(XFFieldWriterUniform):
 
 class VopgenEFMapArrayN(VopgenFieldMapArrayN):
     """Matlab writer for 5-D E-Field data."""
-    def __init__(self, xf_project_dir, sim_ids):
+    def __init__(self, xf_project_dir, sim_ids, mp_sensor_name):
         self._xf_project_dir = xf_project_dir
         self._sim_ids = sim_ids
+        self._mp_sensor_name = mp_sensor_name
         self._num_coils = len(sim_ids)
         self._f_map_array_n = None
         self._field_type_str = 'E'
@@ -95,9 +96,10 @@ class VopgenEFMapArrayN(VopgenFieldMapArrayN):
 
 class VopgenBFMapArrayN(VopgenFieldMapArrayN):
     """Matlab writer for 5-D E-Field data."""
-    def __init__(self, xf_project_dir, sim_ids):
+    def __init__(self, xf_project_dir, sim_ids, mp_sensor_name):
         self._xf_project_dir = xf_project_dir
         self._sim_ids = sim_ids
+        self._mp_sensor_name = mp_sensor_name
         self._num_coils = len(sim_ids)
         self._f_map_array_n = None
         self._field_type_str = 'B'
@@ -128,7 +130,8 @@ class VopgenBFMapArrayN(VopgenFieldMapArrayN):
         for coil_index, sim_id in enumerate(self._sim_ids):
             print("SimID: ", sim_id, "/", self._sim_ids)
             field_uniform_wr = XFFieldWriterUniform(self._xf_project_dir,
-                                                    sim_id, 1)
+                                                    sim_id, 1, 
+                                                    self._mp_sensor_name)
             field_uniform_wr.set_grid_origin(self._x0, self._y0, self._z0)
             field_uniform_wr.set_grid_len(self._xlen, self._ylen, self._zlen)
             field_uniform_wr.set_grid_resolution(self._dx, self._dy, self._dz)

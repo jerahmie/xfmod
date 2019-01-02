@@ -122,10 +122,11 @@ class XFFieldWriter(XFMatWriter):
 
 class XFFieldWriterNonUniform(XFFieldWriter):
     """Field writer for XFdtd field data on nonuniform computational grid."""
-    def __init__(self, xf_project_dir, sim_id, run_id):
+    def __init__(self, xf_project_dir, sim_id, run_id, mp_sensor_name):
         self._field_nonuniform_grid = XFFieldNonUniformGrid(xf_project_dir,
                                                             sim_id,
-                                                            run_id)
+                                                            run_id,
+                                                            mp_sensor_name)
         self._xf_sys = XFSystem(xf_project_dir, sim_id, run_id)
         self._fx_original = None
         self._fy_original = None

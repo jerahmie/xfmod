@@ -32,6 +32,8 @@ SAVE_MAT_FILE_UNIFORM_MAIN = normpath(join(FILE_PATH, '..',
 SAVE_MAT_FILE_B_NONUNIFORM_SCALED = normpath(join(FILE_PATH, '..',
                                                   'test_B_field_nonuniform_scaled.mat'))
 
+MP_SENSOR_NAME = r'Solid_Sensor1'
+
 
 class TestXFMatWriter(unittest.TestCase):
     """Tests for xfmatwriter."""
@@ -42,10 +44,12 @@ class TestXFMatWriter(unittest.TestCase):
             cls.xfmw = xfwriter.XFMatWriter()
             cls.xfmw_nu = xfwriter.XFFieldWriterNonUniform(TEST_PROJECT_DIR,
                                                            TEST_SIM_NUMBER,
-                                                           TEST_RUN_NUMBER)
+                                                           TEST_RUN_NUMBER, 
+                                                           MP_SENSOR_NAME)
             cls.xfmw_uniform = xfwriter.XFFieldWriterUniform(TEST_PROJECT_DIR,
                                                              TEST_SIM_NUMBER,
-                                                             TEST_RUN_NUMBER)
+                                                             TEST_RUN_NUMBER,
+                                                             MP_SENSOR_NAME)
         except NameError as err:
             print("Unable to create instance of XFMatWriter.")
             raise err
@@ -217,11 +221,13 @@ class TestXFMatWriter(unittest.TestCase):
         test_argv = [r'--xf_project=' + TEST_PROJECT_DIR, 
                      r'--export_file=' + SAVE_MAT_FILE_UNIFORM_MAIN,
                      r'--sim=1', r'--run=1', r'--field=E',
+                     r'--mp_sensor=Solid_Sensor1',
                      r'--origin=[0.001, 0.002, 0.044]',
                      r'--lengths=[0.032, 0.032, 0.050]',
                      r'--deltas=[0.002, 0.002, 0.002]',
-                     r'--net_input_power=1.0'
-                 ]
+                     r'--net_input_power=1.0']
+
+        print(test_argv)
         xfwriter.xf_field_writer_uniform.main(test_argv)
         self.assertTrue(os.path.exists(SAVE_MAT_FILE_UNIFORM_MAIN))
 
