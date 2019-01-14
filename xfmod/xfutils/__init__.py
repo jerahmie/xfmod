@@ -14,8 +14,10 @@ from .xfutils import is_valid_run_id, \
     xf_run_str_to_int
 
 
-from .xfregrid import (xf_regrid_3d_nearest,
-                              XFRegridError)
+from .xfregrid import xf_regrid_3d_nearest, XFRegridError
 
 from .xfproject import XFProjectInfo, XFProjectError
+
+from .xfsimulation import XFSimulationInfo
+
 

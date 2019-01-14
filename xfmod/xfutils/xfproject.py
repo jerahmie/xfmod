@@ -1,5 +1,5 @@
 """
-Helper functions for XFdtd project directory.
+Helper class for XFdtd project directory.
 """
 
 from __future__ import (absolute_import, division, generators,
@@ -10,22 +10,23 @@ import re
 from .xfutils import xf_run_str_to_int
 
 class XFProjectError(Exception):
-    """
-    XFdtd Field Error
+    """XFdtd Field Error
     """
     def __init__(self, message):
         self.message = "[XFProjectError] " + str(message)
 
 class XFProjectInfo(object):
-    """Class to query and save xfproject metadata."""
+    """Class to query and save xfproject metadata.
+    """
     def __init__(self, xf_project_dir = None):
         self._xf_project_dir = xf_project_dir
         self._xf_sim_run = []
-        if (self._xf_project_dir != None):
+        if self._xf_project_dir is not None:
             self._find_sims_runs()
 
     def _find_sims_runs(self):
-        """Find all simulations and runs in project."""
+        """Find all simulations and runs in project.
+        """
         sims_dir = os.path.join(self._xf_project_dir, 'Simulations')
         sim_re = r'[0-9]{6}'
         run_re = r'Run[0-9]{3}'
@@ -45,11 +46,13 @@ class XFProjectInfo(object):
 
     @property
     def xf_sim_run_list(self):
-        """Return the simulation/run list."""
+        """Return the simulation/run list.
+        """
         return self._xf_sim_run
 
     def xf_project_dir(self, value):
-        """Set the xf_project directory and compile list"""
+        """Set the xf_project directory and compile list.
+        """
         self._xf_project_dir = value
         self._find_sims_runs()
         
