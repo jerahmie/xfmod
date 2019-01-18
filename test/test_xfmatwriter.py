@@ -16,7 +16,7 @@ from xfmod import xfwriter
 FILE_PATH=os.path.realpath(__file__)
 
 TEST_PROJECT_DIR = normpath(join(FILE_PATH,
-                                 '..', '..', '..', '..',
+                                 '..', '..',
                                  'Test_Data', 'Test_Coil.xf'))
 TEST_SIM_NUMBER = 1
 TEST_RUN_NUMBER = 1
@@ -197,7 +197,8 @@ class TestXFMatWriter(unittest.TestCase):
         print(self.id())
         xfmw_nu = xfwriter.XFFieldWriterNonUniform(TEST_PROJECT_DIR,
                                                    TEST_SIM_NUMBER,
-                                                   TEST_RUN_NUMBER)
+                                                   TEST_RUN_NUMBER,
+                                                   MP_SENSOR_NAME)
         xfmw_nu.savemat('E', SAVE_MAT_FILE_NONUNIFORM)
         self.assertTrue(os.path.exists(SAVE_MAT_FILE_NONUNIFORM))
         xf_e_mat = spio.loadmat(XF_RAW_MAT_FILE)

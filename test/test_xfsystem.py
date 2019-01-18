@@ -8,11 +8,11 @@ from __future__ import(absolute_import, division, generators,
 
 import sys, os
 import unittest
-from xfmod import xfsystem
+from xfmod.xfsystem import XFSystem
 
 TEST_COIL_DIR = os.path.normpath(os.path.join(os.path.realpath(__file__), 
-                                              '..', '..', '..', '..',
-                                              'Test_Data', 'Test_Coil.xf'))
+                                              '..', '..', 'Test_Data',
+                                              'Test_Coil.xf'))
 SYSTEM_SSOUT = os.path.normpath(os.path.join(TEST_COIL_DIR, 'Simulations', 
                                              '000001','Run0001','output',
                                              'SteadyStateOutput','f0',
@@ -21,7 +21,8 @@ class testXFSystemFile(unittest.TestCase):
     """Test for xfsystem module."""
     @classmethod
     def setUpClass(cls):
-        cls.xfSystem = xfsystem.XFSystem(TEST_COIL_DIR,1,1)
+        print(TEST_COIL_DIR)
+        cls.xfSystem = XFSystem(TEST_COIL_DIR,1,1)
 
     def test_unittest(self):
         """Test set of steady state system info file."""
@@ -32,7 +33,7 @@ class testXFSystemFile(unittest.TestCase):
         """Test steady state system frequency."""
         print(self.id())
         self.assertAlmostEqual(296500000.0, self.xfSystem.frequency)
-
+    
     def test_system_computed_power(self):
         """Test computed power values."""
         print(self.id())

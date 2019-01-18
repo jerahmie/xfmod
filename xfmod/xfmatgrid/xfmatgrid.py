@@ -25,6 +25,7 @@ class XFFieldNonUniformGrid(object):
         self._project_dir = xf_project_dir
         self._sim_id = int(sim_id)
         self._run_id = int(run_id)
+        self._mp_sensor_name = mp_sensor_name
         self._mp_sensor_name_re  = r'(.*)(MultiPoint_' + mp_sensor_name \
                                    + r'_[0-9]+)'
         self._mp_ss_info_file = []
@@ -76,15 +77,6 @@ class XFFieldNonUniformGrid(object):
         try:
             print(self._mp_ss_info_file[0])
             
-            mp_sensor_dir = re.match(self._mp_sensor_name_re,
-                                     self._mp_ss_info_file[0])
-            self._mp_frequencies_file = os.path.join(mp_sensor_dir.group(1),
-                                                     mp_sensor_dir.group(2),
-                                                     r'frequencies.bin')
-            self._mp_freq = XFMultiPointFrequencies(self._mp_frequencies_file)
-            self._mp_geom_file = os.path.join(mp_sensor_dir.group(1),
-                                              mp_sensor_dir.group(2),
-                                              r'geom.bin')
         except:
             print("[Warning] Multipoint Sensor data file missing.")
             print("self._mp_ss_info_file")
@@ -92,6 +84,23 @@ class XFFieldNonUniformGrid(object):
             print(self._mp_ss_info_file[0])
             print(self._mp_ss_info)
             raise
+
+        try:
+            mp_sensor_dir = re.match(self._mp_sensor_name_re,
+                                     self._mp_ss_info_file[0])
+            self._mp_frequencies_file = os.path.join(mp_sensor_dir.group(1),
+                                                     mp_sensor_dir.group(2),
+                                                     r'frequencies.bin')
+        except:
+            print("[Warning] Mulipoint Sensor data file missing")
+            print("MPSensor name: " , self._mp_sensor_name)
+            raise
+
+            self._mp_freq = XFMultiPointFrequencies(self._mp_frequencies_file)
+            self._mp_geom_file = os.path.join(mp_sensor_dir.group(1),
+                                              mp_sensor_dir.group(2),
+                                              r'geom.bin')
+
             
     def _get_mp_field_types(self):
         """

@@ -18,7 +18,7 @@ if __name__ == "__main__":
     
     print("Exporting XFdtd field data on nonuniform grid.")
     #xfFieldW = XFFieldWriterNonUniform('/mnt/DATA/XFdtd_Projects/Loop_Dipole_10p5T_V2_Phantom.xf',18,1)
-    xfFieldW = XFFieldWriterNonUniform(xf_project, xf_sim_id, xf_run_id)
+    xfFieldW = XFFieldWriterNonUniform(xf_project, xf_sim_id, xf_run_id, 'Solid_Sensor1')
     xfFieldW.net_input_power = 1.0
     #xfFieldW.savemat('E','Loop_Dipole_V3_Phantom_Loop_E.mat')
     #xfFieldW.savemat('B','Loop_Dipole_V3_Phantom_Loop_B.mat')

@@ -45,7 +45,8 @@ class VopgenFieldMapArrayN(XFFieldWriterUniform):
         for coil_index, sim_id in enumerate(self._sim_ids):
             print("SimID: ", sim_id, "/", self._sim_ids)
             field_uniform_wr = XFFieldWriterUniform(self._xf_project_dir,
-                                                    sim_id, 1, self._mp_sensor_name)
+                                                    sim_id, 1,
+                                                    self._mp_sensor_name)
             field_uniform_wr.set_grid_origin(self._x0, self._y0, self._z0)
             field_uniform_wr.set_grid_len(self._xlen, self._ylen, self._zlen)
             field_uniform_wr.set_grid_resolution(self._dx, self._dy, self._dz)
@@ -62,6 +63,7 @@ class VopgenEFMapArrayN(VopgenFieldMapArrayN):
         self._xf_project_dir = xf_project_dir
         self._sim_ids = sim_ids
         self._mp_sensor_name = mp_sensor_name
+        print("----> mp_sensor_name: ", mp_sensor_name)
         self._num_coils = len(sim_ids)
         self._f_map_array_n = None
         self._field_type_str = 'E'
@@ -86,7 +88,7 @@ class VopgenEFMapArrayN(VopgenFieldMapArrayN):
         self._field_map_array_n()
         export_dict = dict()
         export_dict['XDim'] = self._xdim_uniform
-        export_dict['YDim'] = self._ydim_uniform
+        export_dpict['YDim'] = self._ydim_uniform
         export_dict['ZDim'] = self._zdim_uniform
         export_dict['efMapArrayN'] = self._f_map_array_n
         spio.savemat(file_name, export_dict, oned_as='column')
@@ -100,6 +102,7 @@ class VopgenBFMapArrayN(VopgenFieldMapArrayN):
         self._xf_project_dir = xf_project_dir
         self._sim_ids = sim_ids
         self._mp_sensor_name = mp_sensor_name
+        print("----> mp_sensor_name: ", mp_sensor_name)
         self._num_coils = len(sim_ids)
         self._f_map_array_n = None
         self._field_type_str = 'B'

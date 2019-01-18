@@ -12,7 +12,7 @@ import scipy.io as spio
 from xfmod import xfmatgrid
 
 TEST_COIL_DIR = os.path.normpath(os.path.join(os.path.realpath(__file__),
-                                              '..', '..', '..', '..',
+                                              '..', '..',
                                               'Test_Data', 'Test_Coil.xf'))
 RUN_OUT_DIR = os.path.join(TEST_COIL_DIR, 'Simulations', '000001',
                            'Run0001', 'output')
@@ -35,7 +35,7 @@ TEST_MULTIPOINT_DIRS = ['ss_Exit', 'ss_Exrt', 'ss_Eyit', 'ss_Eyrt', 'ss_Ezit',
                         'ss_PddHz']
 
 XF_MAT_FILE_NAME = os.path.normpath(os.path.join(os.path.realpath(__file__),
-                                                 '..', '..', '..', '..',
+                                                 '..', '..',
                                                  'Test_Data', 'Test_Coil.xf',
                                                  'Export', 'Raw',
                                                  'total_B_field_data_raw_000001.mat'))

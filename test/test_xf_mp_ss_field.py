@@ -12,7 +12,7 @@ import numpy as np
 from xfmod import xfmatgrid
 
 TEST_COIL_DIR = os.path.normpath(os.path.join(os.path.realpath(__file__),
-                                              '..', '..', '..', '..',
+                                              '..', '..',
                                               'Test_Data', 'Test_Coil.xf'))
 
 RUN_OUT_DIR = os.path.join(TEST_COIL_DIR, 'Simulations', '000001',

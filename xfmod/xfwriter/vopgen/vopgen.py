@@ -22,8 +22,8 @@ def vopgen_all(arg_dict):
     if not os.path.exists(arg_dict['export_dir']):
         os.makedirs(arg_dict['export_dir'])
 
-    make_property_map(arg_dict)
-    make_density_map(arg_dict)
+    #make_property_map(arg_dict)
+    #make_density_map(arg_dict)
     make_efield_map(arg_dict)
     make_bfield_map(arg_dict)
 
@@ -37,7 +37,9 @@ def make_efield_map(arg_dict):
         if sim[0]:
             sim_ids.append(idx+1)
 
-    ef_map = xfwriter.vopgen.VopgenEFMapArrayN(arg_dict['xf_project'], sim_ids)
+    ef_map = xfwriter.vopgen.VopgenEFMapArrayN(arg_dict['xf_project'],
+                                               sim_ids, 
+                                               arg_dict['mp_sensor'])
     ef_map.set_grid_origin(arg_dict['origin'][0],
                            arg_dict['origin'][1],
                            arg_dict['origin'][2])
@@ -61,7 +63,9 @@ def make_bfield_map(arg_dict):
         if sim[0]:
             sim_ids.append(idx+1)
 
-    bf_map = xfwriter.vopgen.VopgenBFMapArrayN(arg_dict['xf_project'], sim_ids)
+    bf_map = xfwriter.vopgen.VopgenBFMapArrayN(arg_dict['xf_project'],
+                                               sim_ids,
+                                               arg_dict['mp_sensor'])
     bf_map.set_grid_origin(arg_dict['origin'][0],
                            arg_dict['origin'][1],
                            arg_dict['origin'][2])
@@ -128,11 +132,15 @@ def usage(exit_status = None):
     """Print the usage statement and exit with given status."""
     print("\nUsage: python vopgen.py --xf_project=project \\")
     print("                          [--export_dir=dir ]\\")
+    print("                          [--mp_sensor=sensor_name ]\\")
     print("                          [--origin='[x0,y0,z0]'] \\")
     print("                          [--lengths='[x,y,z]'] \\")
     print("                          [--deltas='[dx, dy, dz]']")
     print("  --xf_project: location of XFdtd project")
-    print("  --export_dir: directory to write vopgen output, creates it if necessary.")
+    print("  --export_dir: directory to write vopgen output, creates it if " +
+          "necessary.")
+    print("  --mp_sensor: name of multipoint sensor containing 3d EM field " +
+          "simulation results.")
     print("  --origin: the origin coordinates, string representing a " +
           "Python list.")
     print("  --lengths: dimensions of the ROI, centered at the origin, " +
@@ -142,7 +150,10 @@ def usage(exit_status = None):
     print("Example: ")
     print("  $ vopgen.py --xf_project='my_project.xf' --export_dir='/path/to/export' \ ")
     print("              --origin='[0.0,0.0,0.0]' --lengths='[0.01,0.01,0.02]' \ ")
+    print("              --mp_name='Solid_Sensor1'\n")
     print("              --deltas='[0.002, 0.002, 0.002]'\n")
+    print("              --deltas='[0.002, 0.002, 0.002]'\n")
+
     if exit_status:
         sys.exit(exit_status)
     else:
@@ -152,7 +163,7 @@ def main(argv):
     """Parse command line arguments and make call to exporter."""
     arg_dict = {}
     switches = {'origin':list, 'lengths':list, 'deltas':list,
-                'xf_project':str, 'export_dir':str}
+                'xf_project':str, 'export_dir':str, 'mp_sensor':str}
     singles = ''
     long_form = [x + '=' for x in switches]
     d = {x[0] + ':' : '--' + x for x in switches}

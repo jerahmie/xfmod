@@ -13,7 +13,7 @@ from xfmod import xfgeomod
 
 # Location of Test_Coil.xf XFdtd project relative to this file.
 test_project_dir = os.path.normpath(os.path.join(os.path.realpath(__file__),
-                                                 '..', '..', '..', '..',
+                                                 '..', '..',
                                                   'Test_Data', 'Test_Coil.xf'))
 test_sim_number = 1
 test_run_number = 1
